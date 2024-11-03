@@ -623,8 +623,8 @@ public class Configuration {
     return config.getBoolean(JULIE_ENABLE_MULTIPLE_CONTEXT_PER_DIR);
   }
 
-  public String getJulieKafkaConfigTopic() {
-    return getString(JULIE_KAFKA_CONFIG_TOPIC);
+  public String getKafkaBackendStateTopic() {
+    return getString(JULIE_KAFKA_STATE_TOPIC);
   }
 
   public String getJulieInstanceId() {
@@ -658,11 +658,11 @@ public class Configuration {
   }
 
   public String getKafkaBackendConsumerGroupId() {
-    return getString(JULIE_KAFKA_CONSUMER_GROUP_ID);
+    return getString(JULIE_KAFKA_STATE_CONSUMER_GROUP_ID);
   }
 
   public Integer getKafkaBackendConsumerRetries() {
-    return config.getInt(JULIE_KAFKA_CONSUMER_RETRIES);
+    return config.getInt(JULIE_KAFKA_STATE_CONSUMER_RETRIES);
   }
 
   public BasicAuth getConfluentCloudClusterAuth() {

@@ -2,7 +2,7 @@ package com.purbon.kafka.topology.integration.backend;
 
 import static com.purbon.kafka.topology.CommandLineInterface.BROKERS_OPTION;
 import static com.purbon.kafka.topology.Constants.JULIE_INSTANCE_ID;
-import static com.purbon.kafka.topology.Constants.JULIE_KAFKA_CONSUMER_GROUP_ID;
+import static com.purbon.kafka.topology.Constants.JULIE_KAFKA_STATE_CONSUMER_GROUP_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.purbon.kafka.topology.Configuration;
@@ -54,7 +54,7 @@ public class KafkaBackendIT {
 
     var adminClient = ContainerTestUtils.getSaslAdminClient(container);
     var topologyAdminClient = new TopologyBuilderAdminClient(adminClient);
-    topologyAdminClient.createTopic(config.getJulieKafkaConfigTopic());
+    topologyAdminClient.createTopic(config.getKafkaBackendStateTopic());
   }
 
   @After
@@ -82,7 +82,7 @@ public class KafkaBackendIT {
 
     HashMap<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, container.getBootstrapServers());
-    props.put(JULIE_KAFKA_CONSUMER_GROUP_ID, "julieops" + System.currentTimeMillis());
+    props.put(JULIE_KAFKA_STATE_CONSUMER_GROUP_ID, "julieops" + System.currentTimeMillis());
     Configuration config = new Configuration(cliOps, props);
     newBackend.configure(config);
 
@@ -102,7 +102,7 @@ public class KafkaBackendIT {
     HashMap<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, container.getBootstrapServers());
 
-    props.put(Constants.JULIE_KAFKA_CONFIG_TOPIC, "foo");
+    props.put(Constants.JULIE_KAFKA_STATE_TOPIC, "foo");
 
     Configuration config = new Configuration(cliOps, props);
 

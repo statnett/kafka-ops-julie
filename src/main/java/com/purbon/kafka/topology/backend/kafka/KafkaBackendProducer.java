@@ -39,7 +39,7 @@ public class KafkaBackendProducer {
   }
 
   public void save(BackendState backendState) {
-    var record = new ProducerRecord<>(config.getJulieKafkaConfigTopic(), instanceId, backendState);
+    var record = new ProducerRecord<>(config.getKafkaBackendStateTopic(), instanceId, backendState);
     future =
         producer.send(
             record,
