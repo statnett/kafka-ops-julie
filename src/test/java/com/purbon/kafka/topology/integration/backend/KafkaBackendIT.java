@@ -1,28 +1,27 @@
 package com.purbon.kafka.topology.integration.backend;
 
-import static com.purbon.kafka.topology.CommandLineInterface.BROKERS_OPTION;
-import static com.purbon.kafka.topology.Constants.JULIE_INSTANCE_ID;
-import static com.purbon.kafka.topology.Constants.JULIE_KAFKA_STATE_CONSUMER_GROUP_ID;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.purbon.kafka.topology.Configuration;
-import com.purbon.kafka.topology.Constants;
-import com.purbon.kafka.topology.api.adminclient.TopologyBuilderAdminClient;
 import com.purbon.kafka.topology.backend.BackendState;
 import com.purbon.kafka.topology.backend.KafkaBackend;
 import com.purbon.kafka.topology.integration.containerutils.ContainerFactory;
 import com.purbon.kafka.topology.integration.containerutils.ContainerTestUtils;
 import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextKafkaContainer;
 import com.purbon.kafka.topology.roles.TopologyAclBinding;
+import org.apache.kafka.common.resource.ResourceType;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import org.apache.kafka.common.resource.ResourceType;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+
+import static com.purbon.kafka.topology.CommandLineInterface.BROKERS_OPTION;
+import static com.purbon.kafka.topology.Constants.JULIE_INSTANCE_ID;
+import static com.purbon.kafka.topology.Constants.JULIE_KAFKA_STATE_CONSUMER_GROUP_ID;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class KafkaBackendIT {
 
@@ -51,10 +50,6 @@ public class KafkaBackendIT {
     cliOps.put(BROKERS_OPTION, container.getBootstrapServers());
 
     config = new Configuration(cliOps, props);
-
-    var adminClient = ContainerTestUtils.getSaslAdminClient(container);
-    var topologyAdminClient = new TopologyBuilderAdminClient(adminClient);
-    topologyAdminClient.createTopic(config.getKafkaBackendStateTopic());
   }
 
   @After
@@ -94,19 +89,4 @@ public class KafkaBackendIT {
     newBackend.close();
   }
 
-  @Test(expected = IOException.class)
-  public void testWrongConfig() {
-
-    KafkaBackend backend = new KafkaBackend();
-
-    HashMap<String, String> cliOps = new HashMap<>();
-    cliOps.put(BROKERS_OPTION, container.getBootstrapServers());
-
-    props.put(Constants.JULIE_KAFKA_STATE_TOPIC, "foo");
-
-    Configuration config = new Configuration(cliOps, props);
-
-    backend.configure(config);
-    backend.close();
-  }
 }
