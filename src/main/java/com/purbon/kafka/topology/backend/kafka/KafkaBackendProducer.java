@@ -3,7 +3,6 @@ package com.purbon.kafka.topology.backend.kafka;
 import com.purbon.kafka.topology.Configuration;
 import com.purbon.kafka.topology.backend.BackendState;
 import java.util.Properties;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -51,8 +50,8 @@ public class KafkaBackendProducer {
             });
     try {
       future.get();
-    } catch (InterruptedException | ExecutionException e) {
-      e.printStackTrace();
+    } catch (Exception e) {
+      LOGGER.error(e);
     }
   }
 
@@ -60,7 +59,7 @@ public class KafkaBackendProducer {
     if (future != null) {
       try {
         future.get();
-      } catch (InterruptedException | ExecutionException e) {
+      } catch (Exception e) {
         LOGGER.error(e);
       }
     }
