@@ -176,9 +176,11 @@ public final class Constants {
 
   public static final String JULIE_ROLES = "julie.roles";
 
-  public static final String JULIE_KAFKA_CONFIG_TOPIC = "julie.kafka.config.topic";
-  public static final String JULIE_KAFKA_CONSUMER_GROUP_ID = "julie.kafka.consumer.group.id";
-  public static final String JULIE_KAFKA_CONSUMER_RETRIES = "julie.kafka.consumer.retries";
+  public static final String JULIE_KAFKA_STATE_TOPIC = "julie.kafka.state.topic";
+  public static final String JULIE_KAFKA_STATE_CONSUMER_GROUP_ID =
+      "julie.kafka.state.consumer.group.id";
+  public static final String JULIE_KAFKA_STATE_CONSUMER_RETRIES =
+      "julie.kafka.state.consumer.retries";
   public static final String JULIE_INSTANCE_ID = "julie.instance.id";
 
   public static final String MANAGED_BY = "Managed by JulieOps";

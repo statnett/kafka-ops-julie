@@ -41,7 +41,7 @@ public class KafkaBackendConsumer {
     consumerProperties.put(GROUP_ID_CONFIG, config.getKafkaBackendConsumerGroupId());
     consumer = new KafkaConsumer<>(consumerProperties);
 
-    var topicPartition = new TopicPartition(config.getJulieKafkaConfigTopic(), 0);
+    var topicPartition = new TopicPartition(config.getKafkaBackendStateTopic(), 0);
     var topicPartitions = Collections.singletonList(topicPartition);
     consumer.assign(topicPartitions);
     consumer.seekToBeginning(topicPartitions);

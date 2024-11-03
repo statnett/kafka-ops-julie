@@ -61,10 +61,10 @@ public class KafkaBackend implements Backend, RecordReceivedCallback {
     consumer.configure();
 
     var topics = consumer.listTopics();
-    if (!topics.containsKey(config.getJulieKafkaConfigTopic())) {
+    if (!topics.containsKey(config.getKafkaBackendStateTopic())) {
       throw new IOException(
           "The internal julie kafka configuration topic topic "
-              + config.getJulieKafkaConfigTopic()
+              + config.getKafkaBackendStateTopic()
               + " should exist in the cluster");
     }
     producer = new KafkaBackendProducer(config);
