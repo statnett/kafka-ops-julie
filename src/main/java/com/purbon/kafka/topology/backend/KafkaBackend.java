@@ -3,8 +3,8 @@ package com.purbon.kafka.topology.backend;
 import com.purbon.kafka.topology.Configuration;
 import com.purbon.kafka.topology.backend.kafka.KafkaBackendConsumer;
 import com.purbon.kafka.topology.backend.kafka.KafkaBackendProducer;
+import com.purbon.kafka.topology.backend.kafka.KafkaBackendTopicCreator;
 import com.purbon.kafka.topology.backend.kafka.RecordReceivedCallback;
-import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.SneakyThrows;
@@ -19,6 +19,7 @@ public class KafkaBackend implements Backend, RecordReceivedCallback {
 
   private boolean isCompleted;
 
+  private KafkaBackendTopicCreator topicCreator;
   private KafkaBackendConsumer consumer;
   private KafkaBackendProducer producer;
 
@@ -57,16 +58,14 @@ public class KafkaBackend implements Backend, RecordReceivedCallback {
     instanceId = config.getJulieInstanceId();
     latest = new AtomicReference<>(new BackendState());
     shouldWaitForLoad.set(true);
+
+    topicCreator = new KafkaBackendTopicCreator(config);
+    topicCreator.configure();
+    topicCreator.createConfigTopicUnlessPresent();
+
     consumer = new KafkaBackendConsumer(config);
     consumer.configure();
 
-    var topics = consumer.listTopics();
-    if (!topics.containsKey(config.getKafkaBackendStateTopic())) {
-      throw new IOException(
-          "The internal julie kafka configuration topic topic "
-              + config.getKafkaBackendStateTopic()
-              + " should exist in the cluster");
-    }
     producer = new KafkaBackendProducer(config);
     producer.configure();
 
