@@ -513,7 +513,7 @@
     <commons.version>1.9.0</commons.version>
     <confluent-ce.version>7.7.1-ce</confluent-ce.version>
     <confluent.version>7.7.1</confluent.version>
-    <gcp.java.sdk.version>26.50.0</gcp.java.sdk.version>
+    <gcp.java.sdk.version>26.49.0</gcp.java.sdk.version>
     <jackson.version>2.18.1</jackson.version>
     <jedis.version>5.2.0</jedis.version>
     <jinjava.version>2.7.3</jinjava.version>
