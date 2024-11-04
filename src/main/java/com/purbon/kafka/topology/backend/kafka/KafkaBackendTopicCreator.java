@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import org.apache.kafka.clients.admin.Admin;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.DescribeClusterResult;
@@ -29,8 +30,8 @@ public class KafkaBackendTopicCreator {
     admin = AdminClient.create(config.asProperties());
   }
 
-  public void createConfigTopicUnlessPresent() {
-    if (configTopicExists()) {
+  public void createStateTopicUnlessPresent() throws ExecutionException, InterruptedException {
+    if (stateTopicExists()) {
       return;
     }
     LOGGER.info("Creating state topic " + config.getKafkaBackendStateTopic());
@@ -38,10 +39,10 @@ public class KafkaBackendTopicCreator {
     topicConfig.put(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT);
     NewTopic configTopic =
         new NewTopic(config.getKafkaBackendStateTopic(), Math.min(3, getNumBrokers()), (short) 1);
-    admin.createTopics(Collections.singleton(configTopic));
+    admin.createTopics(Collections.singleton(configTopic)).all().get();
   }
 
-  private boolean configTopicExists() {
+  private boolean stateTopicExists() {
     try {
       return admin.listTopics().names().get().stream()
           .anyMatch(topicName -> topicName.equalsIgnoreCase(config.getKafkaBackendStateTopic()));

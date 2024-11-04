@@ -61,7 +61,7 @@ public class KafkaBackend implements Backend, RecordReceivedCallback {
 
     topicCreator = new KafkaBackendTopicCreator(config);
     topicCreator.configure();
-    topicCreator.createConfigTopicUnlessPresent();
+    topicCreator.createStateTopicUnlessPresent();
 
     consumer = new KafkaBackendConsumer(config);
     consumer.configure();

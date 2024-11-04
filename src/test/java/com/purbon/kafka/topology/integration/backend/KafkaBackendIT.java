@@ -1,5 +1,10 @@
 package com.purbon.kafka.topology.integration.backend;
 
+import static com.purbon.kafka.topology.CommandLineInterface.BROKERS_OPTION;
+import static com.purbon.kafka.topology.Constants.JULIE_INSTANCE_ID;
+import static com.purbon.kafka.topology.Constants.JULIE_KAFKA_STATE_CONSUMER_GROUP_ID;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.purbon.kafka.topology.Configuration;
 import com.purbon.kafka.topology.backend.BackendState;
 import com.purbon.kafka.topology.backend.KafkaBackend;
@@ -7,21 +12,15 @@ import com.purbon.kafka.topology.integration.containerutils.ContainerFactory;
 import com.purbon.kafka.topology.integration.containerutils.ContainerTestUtils;
 import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextKafkaContainer;
 import com.purbon.kafka.topology.roles.TopologyAclBinding;
-import org.apache.kafka.common.resource.ResourceType;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
-import static com.purbon.kafka.topology.CommandLineInterface.BROKERS_OPTION;
-import static com.purbon.kafka.topology.Constants.JULIE_INSTANCE_ID;
-import static com.purbon.kafka.topology.Constants.JULIE_KAFKA_STATE_CONSUMER_GROUP_ID;
-import static org.assertj.core.api.Assertions.assertThat;
+import org.apache.kafka.common.resource.ResourceType;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public class KafkaBackendIT {
 
@@ -88,5 +87,4 @@ public class KafkaBackendIT {
     assertThat(newState.getBindings()).contains(binding);
     newBackend.close();
   }
-
 }
