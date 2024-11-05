@@ -21,7 +21,7 @@ import org.apache.kafka.common.resource.ResourceType;
 public final class ContainerTestUtils {
 
   static final String DEFAULT_CP_KAFKA_VERSION = "7.7.1";
-  public static final int NUM_JULIE_INITIAL_ACLS = 8;
+  public static final int NUM_JULIE_INITIAL_ACLS = 11;
 
   private ContainerTestUtils() {}
 
@@ -132,16 +132,28 @@ public final class ContainerTestUtils {
 
   private static void setupJulieAcls(AdminClient admin) {
     List<AclBinding> bindings = new ArrayList<>();
-    bindings.add(getJulieBinding(ResourceType.CLUSTER, "kafka-cluster", AclOperation.ALTER));
-    bindings.add(
-        getJulieBinding(ResourceType.CLUSTER, "kafka-cluster", AclOperation.ALTER_CONFIGS));
-    bindings.add(getJulieBinding(ResourceType.CLUSTER, "kafka-cluster", AclOperation.DESCRIBE));
-    bindings.add(
-        getJulieBinding(ResourceType.CLUSTER, "kafka-cluster", AclOperation.DESCRIBE_CONFIGS));
-    bindings.add(getJulieBinding(ResourceType.TOPIC, "*", AclOperation.CREATE));
-    bindings.add(getJulieBinding(ResourceType.TOPIC, "*", AclOperation.ALTER));
-    bindings.add(getJulieBinding(ResourceType.TOPIC, "*", AclOperation.ALTER_CONFIGS));
-    bindings.add(getJulieBinding(ResourceType.TOPIC, "*", AclOperation.DELETE));
+    /* Generic permissions to let JulieOps manage topics and ACLs. */
+    bindings.addAll(
+        getJulieBindings(
+            ResourceType.CLUSTER,
+            "kafka-cluster",
+            AclOperation.ALTER,
+            AclOperation.ALTER_CONFIGS,
+            AclOperation.DESCRIBE,
+            AclOperation.DESCRIBE_CONFIGS));
+    bindings.addAll(
+        getJulieBindings(
+            ResourceType.TOPIC,
+            "*",
+            AclOperation.CREATE,
+            AclOperation.ALTER,
+            AclOperation.ALTER_CONFIGS,
+            AclOperation.DELETE));
+    /* Specific permissions for storing cluster state in a topic, needed in some tests. */
+    bindings.addAll(
+        getJulieBindings(
+            ResourceType.TOPIC, "__julieops_state", AclOperation.WRITE, AclOperation.READ));
+    bindings.addAll(getJulieBindings(ResourceType.GROUP, "julieops", AclOperation.READ));
     try {
       admin.createAcls(bindings).all().get();
     } catch (Exception e) {
@@ -149,13 +161,20 @@ public final class ContainerTestUtils {
     }
   }
 
-  private static AclBinding getJulieBinding(
-      ResourceType resourceType, String resourceName, AclOperation op) {
-    ResourcePattern resourcePattern =
-        new ResourcePattern(resourceType, resourceName, PatternType.LITERAL);
-    AccessControlEntry accessControlEntry =
-        new AccessControlEntry(
-            "User:" + SaslPlaintextKafkaContainer.JULIE_USERNAME, "*", op, AclPermissionType.ALLOW);
-    return new AclBinding(resourcePattern, accessControlEntry);
+  private static List<AclBinding> getJulieBindings(
+      ResourceType resourceType, String resourceName, AclOperation... ops) {
+    List<AclBinding> bindings = new ArrayList<>();
+    for (AclOperation op : ops) {
+      ResourcePattern resourcePattern =
+          new ResourcePattern(resourceType, resourceName, PatternType.LITERAL);
+      AccessControlEntry accessControlEntry =
+          new AccessControlEntry(
+              "User:" + SaslPlaintextKafkaContainer.JULIE_USERNAME,
+              "*",
+              op,
+              AclPermissionType.ALLOW);
+      bindings.add(new AclBinding(resourcePattern, accessControlEntry));
+    }
+    return bindings;
   }
 }

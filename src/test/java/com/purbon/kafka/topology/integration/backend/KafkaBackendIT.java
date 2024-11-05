@@ -33,6 +33,7 @@ public class KafkaBackendIT {
 
     container = ContainerFactory.fetchSaslKafkaContainer(System.getProperty("cp.version"));
     container.start();
+    ContainerTestUtils.resetAcls(container);
 
     props = new Properties();
     props.put(JULIE_INSTANCE_ID, "1234");
@@ -40,8 +41,8 @@ public class KafkaBackendIT {
     Map<String, Object> saslConfig =
         ContainerTestUtils.getSaslConfig(
             container.getBootstrapServers(),
-            SaslPlaintextKafkaContainer.DEFAULT_SUPER_USERNAME,
-            SaslPlaintextKafkaContainer.DEFAULT_SUPER_PASSWORD);
+            SaslPlaintextKafkaContainer.JULIE_USERNAME,
+            SaslPlaintextKafkaContainer.JULIE_PASSWORD);
     saslConfig.forEach((k, v) -> props.setProperty(k, String.valueOf(v)));
 
     HashMap<String, String> cliOps = new HashMap<>();
