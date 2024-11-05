@@ -68,9 +68,9 @@ public class AccessControlManagerIT {
 
   @Before
   public void before() throws IOException {
-    kafkaAdminClient = ContainerTestUtils.getSaslAdminClient(container);
+    kafkaAdminClient = ContainerTestUtils.getSaslJulieAdminClient(container);
     topologyAdminClient = new TopologyBuilderAdminClient(kafkaAdminClient);
-    topologyAdminClient.clearAcls();
+    ContainerTestUtils.resetAcls(container);
     TestUtils.deleteStateFile();
 
     this.cs = new BackendController();
@@ -118,7 +118,9 @@ public class AccessControlManagerIT {
     plan.run();
 
     assertEquals(6, cs.size());
-    verifyAclsOfSize(8); // Total of 3 acls per consumer + 2 for the producer
+    verifyAclsOfSize(
+        ContainerTestUtils.NUM_JULIE_INITIAL_ACLS
+            + 8); // Total of 3 acls per consumer + 2 for the producer
 
     consumers.remove(1);
     project.setConsumers(consumers);
@@ -128,7 +130,7 @@ public class AccessControlManagerIT {
     plan.run();
 
     assertEquals(3, cs.size());
-    verifyAclsOfSize(5);
+    verifyAclsOfSize(ContainerTestUtils.NUM_JULIE_INITIAL_ACLS + 5);
   }
 
   @Test
@@ -169,7 +171,7 @@ public class AccessControlManagerIT {
     plan.run();
 
     assertEquals(3, cs.size());
-    verifyAclsOfSize(3);
+    verifyAclsOfSize(ContainerTestUtils.NUM_JULIE_INITIAL_ACLS + 3);
   }
 
   @Test
@@ -349,7 +351,7 @@ public class AccessControlManagerIT {
   @Test
   public void testAvoidHandlingInternalAclsForJulie() throws Exception {
     // create a dummy internal ACL for julie
-    String juliePrincipal = "User:Julie";
+    String juliePrincipal = "User:" + SaslPlaintextKafkaContainer.JULIE_USERNAME;
     AclBinding julieBinding =
         new AclBuilder(juliePrincipal)
             .literalResource(ResourceType.TOPIC, "foo")
@@ -357,7 +359,7 @@ public class AccessControlManagerIT {
             .build();
 
     topologyAdminClient.createAcls(Collections.singleton(julieBinding));
-    verifyAclsOfSize(1);
+    verifyAclsOfSize(ContainerTestUtils.NUM_JULIE_INITIAL_ACLS + 1);
 
     Properties props = new Properties();
     props.put(TOPOLOGY_STATE_FROM_CLUSTER, "true");
@@ -380,7 +382,8 @@ public class AccessControlManagerIT {
             "User:User2");
     accessControlManager.updatePlan(topology, plan);
     plan.run();
-    verifyAclsOfSize(7); // should have the acls for julie included
+    verifyAclsOfSize(
+        ContainerTestUtils.NUM_JULIE_INITIAL_ACLS + 7); // should have the acls for julie included
   }
 
   private Topology buildTopologyForConsumers(
@@ -512,7 +515,7 @@ public class AccessControlManagerIT {
 
     plan.run();
 
-    verifyAclsOfSize(7);
+    verifyAclsOfSize(ContainerTestUtils.NUM_JULIE_INITIAL_ACLS + 7);
   }
 
   private void verifyAclsOfSize(int size) throws ExecutionException, InterruptedException {

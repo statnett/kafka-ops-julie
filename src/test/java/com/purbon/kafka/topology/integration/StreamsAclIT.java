@@ -39,6 +39,7 @@ public final class StreamsAclIT {
             .withUser(CONSUMER_USERNAME)
             .withUser(STREAMS_USERNAME);
     container.start();
+    ContainerTestUtils.resetAcls(container);
     ContainerTestUtils.populateAcls(
         container, "/streams-acl-it.yaml", "/integration-tests.properties");
   }

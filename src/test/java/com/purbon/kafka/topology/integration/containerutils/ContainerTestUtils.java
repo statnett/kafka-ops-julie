@@ -10,22 +10,34 @@ import com.purbon.kafka.topology.roles.acls.AclsBindingsBuilder;
 import com.purbon.kafka.topology.utils.TestUtils;
 import com.typesafe.config.ConfigFactory;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.common.acl.*;
+import org.apache.kafka.common.resource.PatternType;
+import org.apache.kafka.common.resource.ResourcePattern;
+import org.apache.kafka.common.resource.ResourceType;
 
 public final class ContainerTestUtils {
 
   static final String DEFAULT_CP_KAFKA_VERSION = "7.7.1";
+  public static final int NUM_JULIE_INITIAL_ACLS = 8;
 
   private ContainerTestUtils() {}
 
-  public static AdminClient getSaslAdminClient(final AlternativeKafkaContainer container) {
-    return getSaslAdminClient(container.getBootstrapServers());
+  public static AdminClient getSaslJulieAdminClient(final AlternativeKafkaContainer container) {
+    return getSaslJulieAdminClient(container.getBootstrapServers());
   }
 
-  public static AdminClient getSaslAdminClient(final String boostrapServers) {
+  public static AdminClient getSaslJulieAdminClient(final String boostrapServers) {
+    return AdminClient.create(
+        getSaslConfig(
+            boostrapServers,
+            SaslPlaintextKafkaContainer.JULIE_USERNAME,
+            SaslPlaintextKafkaContainer.JULIE_PASSWORD));
+  }
+
+  public static AdminClient getSaslSuperUserAdminClient(final String boostrapServers) {
     return AdminClient.create(
         getSaslConfig(
             boostrapServers,
@@ -63,7 +75,7 @@ public final class ContainerTestUtils {
       final String topologyResource,
       final String configResource) {
     TestUtils.deleteStateFile();
-    try (final AdminClient kafkaAdminClient = getSaslAdminClient(container)) {
+    try (final AdminClient kafkaAdminClient = getSaslJulieAdminClient(container)) {
       final JulieOps julieOps =
           getKafkaTopologyBuilder(kafkaAdminClient, topologyResource, configResource);
       try {
@@ -102,5 +114,48 @@ public final class ContainerTestUtils {
     } catch (final Exception e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public static void resetAcls(AlternativeKafkaContainer container) {
+    AdminClient admin = getSaslSuperUserAdminClient(container.getBootstrapServers());
+    clearAllAcls(admin);
+    setupJulieAcls(admin);
+  }
+
+  private static void clearAllAcls(AdminClient admin) {
+    try {
+      admin.deleteAcls(Collections.singleton(AclBindingFilter.ANY)).all().get();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private static void setupJulieAcls(AdminClient admin) {
+    List<AclBinding> bindings = new ArrayList<>();
+    bindings.add(getJulieBinding(ResourceType.CLUSTER, "kafka-cluster", AclOperation.ALTER));
+    bindings.add(
+        getJulieBinding(ResourceType.CLUSTER, "kafka-cluster", AclOperation.ALTER_CONFIGS));
+    bindings.add(getJulieBinding(ResourceType.CLUSTER, "kafka-cluster", AclOperation.DESCRIBE));
+    bindings.add(
+        getJulieBinding(ResourceType.CLUSTER, "kafka-cluster", AclOperation.DESCRIBE_CONFIGS));
+    bindings.add(getJulieBinding(ResourceType.TOPIC, "*", AclOperation.CREATE));
+    bindings.add(getJulieBinding(ResourceType.TOPIC, "*", AclOperation.ALTER));
+    bindings.add(getJulieBinding(ResourceType.TOPIC, "*", AclOperation.ALTER_CONFIGS));
+    bindings.add(getJulieBinding(ResourceType.TOPIC, "*", AclOperation.DELETE));
+    try {
+      admin.createAcls(bindings).all().get();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private static AclBinding getJulieBinding(
+      ResourceType resourceType, String resourceName, AclOperation op) {
+    ResourcePattern resourcePattern =
+        new ResourcePattern(resourceType, resourceName, PatternType.LITERAL);
+    AccessControlEntry accessControlEntry =
+        new AccessControlEntry(
+            "User:" + SaslPlaintextKafkaContainer.JULIE_USERNAME, "*", op, AclPermissionType.ALLOW);
+    return new AclBinding(resourcePattern, accessControlEntry);
   }
 }

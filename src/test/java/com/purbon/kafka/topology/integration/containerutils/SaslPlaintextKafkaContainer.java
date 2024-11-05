@@ -14,6 +14,8 @@ public final class SaslPlaintextKafkaContainer extends AlternativeKafkaContainer
           .withTag(ContainerTestUtils.DEFAULT_CP_KAFKA_VERSION);
   public static final String DEFAULT_SUPER_USERNAME = "kafka";
   public static final String DEFAULT_SUPER_PASSWORD = "kafka";
+  public static final String JULIE_USERNAME = "julie";
+  public static final String JULIE_PASSWORD = "julie-secret";
   private static final String JAAS_CONFIG_FILE = "/tmp/broker_jaas.conf";
   private final Network network;
   private String superUsername = DEFAULT_SUPER_USERNAME;
@@ -48,6 +50,7 @@ public final class SaslPlaintextKafkaContainer extends AlternativeKafkaContainer
     withEnv("KAFKA_SASL_ENABLED_MECHANISMS", "PLAIN");
     withEnv("KAFKA_OPTS", "-Djava.security.auth.login.config=" + JAAS_CONFIG_FILE);
     withSuperUser(superUsername, superPassword);
+    withUser(JULIE_USERNAME, JULIE_PASSWORD);
     withUser("alice", "alice-secret");
     withUser("bob", "bob-secret");
     withAclAuthorizer();

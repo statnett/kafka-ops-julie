@@ -133,12 +133,6 @@ public class TopologyBuilderAdminClient {
     }
   }
 
-  public void clearAcls() throws IOException {
-    Collection<AclBindingFilter> filters = new ArrayList<>();
-    filters.add(AclBindingFilter.ANY);
-    clearAcls(filters);
-  }
-
   public void clearAcls(TopologyAclBinding aclBinding) throws IOException {
     Collection<AclBindingFilter> filters = new ArrayList<>();
 

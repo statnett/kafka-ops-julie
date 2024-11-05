@@ -64,9 +64,9 @@ public class QuotasManagerIT {
 
   @Before
   public void before() throws IOException {
-    kafkaAdminClient = ContainerTestUtils.getSaslAdminClient(container);
+    kafkaAdminClient = ContainerTestUtils.getSaslJulieAdminClient(container);
     topologyAdminClient = new TopologyBuilderAdminClient(kafkaAdminClient);
-    topologyAdminClient.clearAcls();
+    ContainerTestUtils.resetAcls(container);
     TestUtils.deleteStateFile();
 
     Properties props = new Properties();

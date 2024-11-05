@@ -12,7 +12,6 @@ import com.purbon.kafka.topology.integration.containerutils.ContainerFactory;
 import com.purbon.kafka.topology.integration.containerutils.ContainerTestUtils;
 import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextKafkaContainer;
 import com.purbon.kafka.topology.roles.TopologyAclBinding;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +29,7 @@ public class KafkaBackendIT {
   private static SaslPlaintextKafkaContainer container;
 
   @Before
-  public void before() throws IOException {
+  public void before() {
 
     container = ContainerFactory.fetchSaslKafkaContainer(System.getProperty("cp.version"));
     container.start();
