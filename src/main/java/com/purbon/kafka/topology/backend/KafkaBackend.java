@@ -61,7 +61,7 @@ public class KafkaBackend implements Backend, RecordReceivedCallback {
 
     topicCreator = new KafkaBackendTopicCreator(config);
     topicCreator.configure();
-    topicCreator.createStateTopicUnlessPresent();
+    boolean stateTopicCreated = topicCreator.createStateTopicUnlessPresent();
 
     consumer = new KafkaBackendConsumer(config);
     consumer.configure();
@@ -69,9 +69,14 @@ public class KafkaBackend implements Backend, RecordReceivedCallback {
     producer = new KafkaBackendProducer(config);
     producer.configure();
 
-    thread = new Thread(new JulieKafkaConsumerThread(this, consumer), "kafkaJulieConsumer");
-    thread.start();
-    waitForCompletion();
+    if (stateTopicCreated && config.isDryRun()) {
+      /* Dry-run mode with no pre-existing state topic. Just return an empty state. */
+      shouldWaitForLoad.set(false);
+    } else {
+      thread = new Thread(new JulieKafkaConsumerThread(this, consumer), "kafkaJulieConsumer");
+      thread.start();
+      waitForCompletion();
+    }
   }
 
   public synchronized void waitForCompletion() throws InterruptedException {

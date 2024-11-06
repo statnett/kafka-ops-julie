@@ -30,9 +30,13 @@ public class KafkaBackendTopicCreator {
     admin = AdminClient.create(config.asProperties());
   }
 
-  public void createStateTopicUnlessPresent() throws ExecutionException, InterruptedException {
+  public boolean createStateTopicUnlessPresent() throws ExecutionException, InterruptedException {
     if (stateTopicExists()) {
-      return;
+      return false;
+    }
+    if (config.isDryRun()) {
+      LOGGER.info("Dry-run: not creating state topic " + config.getKafkaBackendStateTopic());
+      return true;
     }
     LOGGER.info("Creating state topic " + config.getKafkaBackendStateTopic());
     Map<String, String> topicConfig = new HashMap<>();
@@ -40,6 +44,7 @@ public class KafkaBackendTopicCreator {
     NewTopic configTopic =
         new NewTopic(config.getKafkaBackendStateTopic(), Math.min(3, getNumBrokers()), (short) 1);
     admin.createTopics(Collections.singleton(configTopic)).all().get();
+    return true;
   }
 
   private boolean stateTopicExists() {
