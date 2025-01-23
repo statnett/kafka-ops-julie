@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.5.1](https://github.com/statnett/kafka-ops-julie/compare/v4.5.0...v4.5.1) (2025-01-23)
+
+
+### Bug Fixes
+
+* remove gpg signing of jar files ([#149](https://github.com/statnett/kafka-ops-julie/issues/149)) ([71a6c91](https://github.com/statnett/kafka-ops-julie/commit/71a6c912d7af07dd9f7316a3ab299da8d3297994))
+* rename old changelog.md to avoid character case collisions ([#151](https://github.com/statnett/kafka-ops-julie/issues/151)) ([e118165](https://github.com/statnett/kafka-ops-julie/commit/e1181659dd047dae6fe8311d8fd841bfe988bbb1))
+
 ## [4.5.0](https://github.com/statnett/kafka-ops-julie/compare/v4.4.1...v4.5.0) (2025-01-23)
 
 
