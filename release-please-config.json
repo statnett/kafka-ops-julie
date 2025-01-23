@@ -1,8 +1,7 @@
 {
   "release-type": "maven",
-  "bump-minor-pre-major": true,
-  "bump-patch-for-minor-pre-major": true,
   "packages": {
     ".": {}
-  }
+  },
+  "bootstrap-sha": "66b915fb7a6a2cc61352b1124b36dcf67bfda0bf"
 }
