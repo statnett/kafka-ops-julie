@@ -485,7 +485,7 @@
     <rpm-maven-plugin.version>2.3.0</rpm-maven-plugin.version>
     <spotbugs-maven-plugin.version>4.8.6.6</spotbugs-maven-plugin.version>
     <!-- dependencies -->
-    <assertj.version>3.26.3</assertj.version>
+    <assertj.version>3.27.3</assertj.version>
     <aws.java.sdk.version>2.29.10</aws.java.sdk.version>
     <commons.version>1.9.0</commons.version>
     <confluent-ce.version>7.7.1-ce</confluent-ce.version>
