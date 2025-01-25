@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.5.2](https://github.com/statnett/kafka-ops-julie/compare/v4.5.1...v4.5.2) (2025-01-25)
+
+
+### Bug Fixes
+
+* **deps:** update confluent-ce.version to v7.8.0-ce ([#173](https://github.com/statnett/kafka-ops-julie/issues/173)) ([fcce704](https://github.com/statnett/kafka-ops-julie/commit/fcce7049792cb7ced9eee9bcb63b56e59262cad5))
+* **deps:** update confluent.version to v7.8.0 ([#174](https://github.com/statnett/kafka-ops-julie/issues/174)) ([a99e7f1](https://github.com/statnett/kafka-ops-julie/commit/a99e7f1d7b07b0de472279bb36f62ffbfac9291a))
+* **deps:** update dependency com.fasterxml.jackson:jackson-bom to v2.18.2 ([#162](https://github.com/statnett/kafka-ops-julie/issues/162)) ([5f35340](https://github.com/statnett/kafka-ops-julie/commit/5f35340c94be736db9e0ed1332885a9760403d96))
+* **deps:** update dependency com.hubspot.jinjava:jinjava to v2.7.4 ([#163](https://github.com/statnett/kafka-ops-julie/issues/163)) ([eee1bb9](https://github.com/statnett/kafka-ops-julie/commit/eee1bb929fa463f7f21eadb80347b8062678d224))
+* **deps:** update dependency org.apache.logging.log4j:log4j-bom to v2.24.3 ([#165](https://github.com/statnett/kafka-ops-julie/issues/165)) ([8a7003d](https://github.com/statnett/kafka-ops-julie/commit/8a7003d0987a5fda105235299aa0fc197acfd019))
+* **deps:** update dependency org.projectlombok:lombok to v1.18.36 ([#166](https://github.com/statnett/kafka-ops-julie/issues/166)) ([c8c634b](https://github.com/statnett/kafka-ops-julie/commit/c8c634bcd7135f70a1866a9278f9a494bfe5a29d))
+
 ## [4.5.1](https://github.com/statnett/kafka-ops-julie/compare/v4.5.0...v4.5.1) (2025-01-23)
 
 
