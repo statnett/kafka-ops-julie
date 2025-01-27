@@ -4,7 +4,7 @@
 
   <groupId>com.purbon.kafka</groupId>
   <artifactId>julie-ops</artifactId>
-  <version>4.5.1-SNAPSHOT</version>
+  <version>4.5.3-SNAPSHOT</version>
 
   <name>A Kafka operations manager, julie ops</name>
   <description>
@@ -227,7 +227,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.11.1</version>
+        <version>3.11.2</version>
         <executions>
           <execution>
             <id>attach-javadocs</id>
@@ -328,25 +328,25 @@
     <maven-project-info-reports-plugin.version>3.8.0</maven-project-info-reports-plugin.version>
     <maven-site-plugin.version>3.21.0</maven-site-plugin.version>
     <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
-    <spotbugs-maven-plugin.version>4.8.6.5</spotbugs-maven-plugin.version>
+    <spotbugs-maven-plugin.version>4.8.6.6</spotbugs-maven-plugin.version>
     <!-- dependencies -->
-    <assertj.version>3.26.3</assertj.version>
+    <assertj.version>3.27.3</assertj.version>
     <aws.java.sdk.version>2.29.10</aws.java.sdk.version>
     <commons.version>1.9.0</commons.version>
-    <confluent-ce.version>7.7.1-ce</confluent-ce.version>
-    <confluent.version>7.7.1</confluent.version>
+    <confluent-ce.version>7.8.0-ce</confluent-ce.version>
+    <confluent.version>7.8.0</confluent.version>
     <gcp.java.sdk.version>26.49.0</gcp.java.sdk.version>
-    <jackson.version>2.18.1</jackson.version>
+    <jackson.version>2.18.2</jackson.version>
     <jedis.version>5.2.0</jedis.version>
-    <jinjava.version>2.7.3</jinjava.version>
+    <jinjava.version>2.7.4</jinjava.version>
     <junit.version>4.13.2</junit.version>
     <ksqldb.client.version>7.0.0</ksqldb.client.version>
     <ksqldb.version>0.27.1</ksqldb.version>
-    <log4j.version>2.24.1</log4j.version>
-    <lombok.version>1.18.34</lombok.version>
-    <mockito.version>5.14.2</mockito.version>
+    <log4j.version>2.24.3</log4j.version>
+    <lombok.version>1.18.36</lombok.version>
+    <mockito.version>5.15.2</mockito.version>
     <slf4j.version>2.0.16</slf4j.version>
-    <testcontainers.version>1.20.3</testcontainers.version>
+    <testcontainers.version>1.20.4</testcontainers.version>
     <typesafe.version>1.4.3</typesafe.version>
     <zookeeper.version>3.9.3</zookeeper.version>
   </properties>
@@ -519,7 +519,7 @@
     <dependency>
       <groupId>org.wiremock</groupId>
       <artifactId>wiremock</artifactId>
-      <version>3.9.2</version>
+      <version>3.10.0</version>
       <scope>test</scope>
     </dependency>
 
