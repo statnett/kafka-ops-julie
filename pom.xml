@@ -146,7 +146,6 @@
   </repositories>
 
   <build>
-    <finalName>${project.artifactId}-${project.version}</finalName>
     <plugins>
       <plugin>
         <groupId>com.spotify.fmt</groupId>
