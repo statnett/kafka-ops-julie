@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.6.0](https://github.com/statnett/kafka-ops-julie/compare/v4.5.2...v4.6.0) (2025-01-28)
+
+
+### Features
+
+* include version in final jar ([#181](https://github.com/statnett/kafka-ops-julie/issues/181)) ([c9db3b5](https://github.com/statnett/kafka-ops-julie/commit/c9db3b5db4a01c25e2813abe949852d4eb503447))
+
 ## [4.5.2](https://github.com/statnett/kafka-ops-julie/compare/v4.5.1...v4.5.2) (2025-01-25)
 
 
