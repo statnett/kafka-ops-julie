@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.7.2](https://github.com/statnett/kafka-ops-julie/compare/v4.7.1...v4.7.2) (2025-02-10)
+
+
+### Bug Fixes
+
+* add write permission for packages ([#193](https://github.com/statnett/kafka-ops-julie/issues/193)) ([63cfe80](https://github.com/statnett/kafka-ops-julie/commit/63cfe804d13efe0f68d4ea10b923b42e92a5a05a))
+
 ## [4.7.1](https://github.com/statnett/kafka-ops-julie/compare/v4.7.0...v4.7.1) (2025-02-10)
 
 
