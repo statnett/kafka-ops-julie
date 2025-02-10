@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.7.1](https://github.com/statnett/kafka-ops-julie/compare/v4.7.0...v4.7.1) (2025-02-10)
+
+
+### Bug Fixes
+
+* **deploy:** add actor ([#190](https://github.com/statnett/kafka-ops-julie/issues/190)) ([a8d4d34](https://github.com/statnett/kafka-ops-julie/commit/a8d4d34ebfdc7e1f0cb89a39b040ba6e2e03bf3d))
+
 ## [4.7.0](https://github.com/statnett/kafka-ops-julie/compare/v4.6.0...v4.7.0) (2025-02-10)
 
 
