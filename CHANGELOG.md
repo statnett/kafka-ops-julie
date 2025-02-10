@@ -1,5 +1,18 @@
 # Changelog
 
+## [4.7.0](https://github.com/statnett/kafka-ops-julie/compare/v4.6.0...v4.7.0) (2025-02-10)
+
+
+### Features
+
+* publish to GitHub Packages ([#185](https://github.com/statnett/kafka-ops-julie/issues/185)) ([8371b7d](https://github.com/statnett/kafka-ops-julie/commit/8371b7d129bb36373e57d7aab3a15095d1fc7cf3))
+
+
+### Bug Fixes
+
+* **deps:** update confluent-ce.version to v7.8.1-ce ([#187](https://github.com/statnett/kafka-ops-julie/issues/187)) ([b09cb63](https://github.com/statnett/kafka-ops-julie/commit/b09cb63d76011893cf30f4680d5d8e4fc752dc55))
+* **deps:** update confluent.version to v7.8.1 ([#188](https://github.com/statnett/kafka-ops-julie/issues/188)) ([400b45f](https://github.com/statnett/kafka-ops-julie/commit/400b45f039312a28bd9d3e6e637c05ef9255d89a))
+
 ## [4.6.0](https://github.com/statnett/kafka-ops-julie/compare/v4.5.2...v4.6.0) (2025-01-28)
 
 
