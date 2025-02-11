@@ -252,22 +252,6 @@
     </plugins>
   </build>
 
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>com.github.spotbugs</groupId>
-        <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>${spotbugs-maven-plugin.version}</version>
-
-        <configuration>
-          <xmlOutput>true</xmlOutput>
-          <!-- Optional directory to put spotbugs xdoc xml report -->
-          <xmlOutputDirectory>target/site</xmlOutputDirectory>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
-
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- plugins -->
@@ -275,7 +259,6 @@
     <maven-failsafe-plugin.version>3.5.2</maven-failsafe-plugin.version>
     <maven-project-info-reports-plugin.version>3.8.0</maven-project-info-reports-plugin.version>
     <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
-    <spotbugs-maven-plugin.version>4.8.6.6</spotbugs-maven-plugin.version>
     <!-- dependencies -->
     <assertj.version>3.27.3</assertj.version>
     <aws.java.sdk.version>2.29.10</aws.java.sdk.version>
