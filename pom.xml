@@ -255,25 +255,6 @@
   <reporting>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <version>${maven-pmd-plugin.version}</version>
-        <configuration>
-          <rulesets>
-            <!-- A rule set, that comes bundled with PMD -->
-            <ruleset>/category/java/bestpractices.xml</ruleset>
-            <ruleset>/category/java/design.xml</ruleset>
-            <ruleset>category/java/codestyle.xml</ruleset>
-            <ruleset>category/java/documentation.xml</ruleset>
-            <ruleset>category/java/errorprone.xml</ruleset>
-            <ruleset>category/java/multithreading.xml</ruleset>
-            <ruleset>category/java/performance.xml</ruleset>
-            <ruleset>category/java/security.xml</ruleset>
-          </rulesets>
-        </configuration>
-      </plugin>
-
-      <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
         <version>${spotbugs-maven-plugin.version}</version>
@@ -292,7 +273,6 @@
     <!-- plugins -->
     <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
     <maven-failsafe-plugin.version>3.5.2</maven-failsafe-plugin.version>
-    <maven-pmd-plugin.version>3.26.0</maven-pmd-plugin.version>
     <maven-project-info-reports-plugin.version>3.8.0</maven-project-info-reports-plugin.version>
     <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
     <spotbugs-maven-plugin.version>4.8.6.6</spotbugs-maven-plugin.version>
