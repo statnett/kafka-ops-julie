@@ -1,5 +1,14 @@
 # Changelog
 
+## [4.7.3](https://github.com/statnett/kafka-ops-julie/compare/v4.7.2...v4.7.3) (2025-02-21)
+
+
+### Bug Fixes
+
+* **deps:** update confluent-ce.version to v7.9.0-ce ([#198](https://github.com/statnett/kafka-ops-julie/issues/198)) ([a2b15d0](https://github.com/statnett/kafka-ops-julie/commit/a2b15d0d5a4d00a4c7470752f089c7febd4bfc61))
+* **deps:** update confluent.version to v7.9.0 ([#199](https://github.com/statnett/kafka-ops-julie/issues/199)) ([1061f6b](https://github.com/statnett/kafka-ops-julie/commit/1061f6bee086deaa715b8263c154b16307d66077))
+* **deps:** update dependency io.confluent.ksql:ksqldb-api-client to v7.8.0 ([#176](https://github.com/statnett/kafka-ops-julie/issues/176)) ([710629e](https://github.com/statnett/kafka-ops-julie/commit/710629ef0de53bd67bde853c618d9e95d35fc56b))
+
 ## [4.7.2](https://github.com/statnett/kafka-ops-julie/compare/v4.7.1...v4.7.2) (2025-02-10)
 
 
