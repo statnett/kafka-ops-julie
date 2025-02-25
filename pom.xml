@@ -352,6 +352,18 @@
           <artifactId>slf4j-log4j12</artifactId>
           <groupId>org.slf4j</groupId>
         </exclusion>
+        <exclusion> <!-- from Confluent snapshot repo -->
+          <groupId>io.confluent.cloud</groupId>
+          <artifactId>events-schema</artifactId>
+        </exclusion>
+        <exclusion> <!-- from Confluent snapshot repo -->
+          <groupId>io.confluent.observability</groupId>
+          <artifactId>telemetry-api</artifactId>
+        </exclusion>
+        <exclusion> <!-- from Confluent snapshot repo -->
+          <groupId>io.confluent.observability</groupId>
+          <artifactId>telemetry-client</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
