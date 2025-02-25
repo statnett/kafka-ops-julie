@@ -38,7 +38,6 @@ public class KafkaBackendIT {
 
     props = new Properties();
     props.put(JULIE_INSTANCE_ID, "1234");
-    props.put(JULIE_KAFKA_STATE_CONSUMER_GROUP_ID, "julieops-" + KafkaBackendIT.class.getName());
     props.put(JULIE_KAFKA_STATE_CHUNK_SIZE, 16 /* small to enforce chunking */);
 
     Map<String, Object> saslConfig =
