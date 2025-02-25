@@ -40,7 +40,7 @@ public class KafkaBackendTopicCreator {
     Map<String, String> topicConfig = new HashMap<>();
     topicConfig.put(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT);
     NewTopic configTopic =
-        new NewTopic(config.getKafkaBackendStateTopic(), Math.min(3, getNumBrokers()), (short) 1)
+        new NewTopic(config.getKafkaBackendStateTopic(), 1, (short) Math.min(3, getNumBrokers()))
             .configs(topicConfig);
     try {
       admin.createTopics(Collections.singleton(configTopic)).all().get();
