@@ -20,35 +20,6 @@ public final class ByteArrayChunker {
   private static final int MIN_CHUNK_SIZE = 16;
   private final int chunkSize;
 
-  public static final class Dechunker {
-
-    private int expectedBytes = -1;
-    private ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-    /**
-     * Handles chunks one by one.
-     *
-     * @param chunk
-     * @return a byte array when finished, or <code>null</code> if more chunks are needed.
-     */
-    public byte[] dechunk(final byte[] chunk) {
-      Objects.requireNonNull(chunk);
-      final ByteArrayInputStream bais = new ByteArrayInputStream(chunk);
-      if (expectedBytes < 0) {
-        final int version = bais.read();
-        if (version > VERSION) {
-          throw new RuntimeException("Don't know how to handle chunking version " + version);
-        }
-        expectedBytes = readInt(bais);
-      }
-      baos.write(
-          chunk,
-          chunk.length - bais.available(),
-          Math.min(bais.available(), expectedBytes - baos.size()));
-      return baos.size() == expectedBytes ? baos.toByteArray() : null;
-    }
-  }
-
   public ByteArrayChunker(final int chunkSize) {
     if (chunkSize < MIN_CHUNK_SIZE) {
       throw new IllegalArgumentException("Chunk size must be at least " + MIN_CHUNK_SIZE);
