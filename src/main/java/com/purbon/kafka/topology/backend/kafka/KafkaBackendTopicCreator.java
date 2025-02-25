@@ -5,12 +5,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import org.apache.kafka.clients.admin.Admin;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.DescribeClusterResult;
-import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.common.Node;
+import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.config.TopicConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,8 +27,9 @@ public class KafkaBackendTopicCreator {
     admin = AdminClient.create(config.asProperties());
   }
 
-  public boolean createStateTopicUnlessPresent() throws ExecutionException, InterruptedException {
+  public boolean createStateTopicUnlessPresent() {
     if (stateTopicExists()) {
+      assertExistingTopicIsCompacting();
       return false;
     }
     if (config.isDryRun()) {
@@ -42,9 +40,42 @@ public class KafkaBackendTopicCreator {
     Map<String, String> topicConfig = new HashMap<>();
     topicConfig.put(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT);
     NewTopic configTopic =
-        new NewTopic(config.getKafkaBackendStateTopic(), Math.min(3, getNumBrokers()), (short) 1);
-    admin.createTopics(Collections.singleton(configTopic)).all().get();
+        new NewTopic(config.getKafkaBackendStateTopic(), Math.min(3, getNumBrokers()), (short) 1)
+            .configs(topicConfig);
+    try {
+      admin.createTopics(Collections.singleton(configTopic)).all().get();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
     return true;
+  }
+
+  private void assertExistingTopicIsCompacting() {
+    try {
+      for (Config config :
+          admin
+              .describeConfigs(
+                  Collections.singleton(
+                      new ConfigResource(
+                          ConfigResource.Type.TOPIC, config.getKafkaBackendStateTopic())))
+              .all()
+              .get()
+              .values()) {
+        ConfigEntry configEntry = config.get(TopicConfig.CLEANUP_POLICY_CONFIG);
+        if (configEntry != null
+            && configEntry.value() != null
+            && configEntry.value().contains(TopicConfig.CLEANUP_POLICY_COMPACT)) {
+          return;
+        }
+      }
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+    throw new RuntimeException(
+        "Topic "
+            + config.getKafkaBackendStateTopic()
+            + " must have cleanup policy "
+            + TopicConfig.CLEANUP_POLICY_COMPACT);
   }
 
   private boolean stateTopicExists() {

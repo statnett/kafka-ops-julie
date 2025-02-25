@@ -52,7 +52,6 @@ public class KafkaBackend implements Backend, RecordReceivedCallback {
     }
   }
 
-  @SneakyThrows
   @Override
   public void configure(Configuration config) {
     instanceId = config.getJulieInstanceId();
@@ -79,9 +78,13 @@ public class KafkaBackend implements Backend, RecordReceivedCallback {
     }
   }
 
-  public synchronized void waitForCompletion() throws InterruptedException {
+  public synchronized void waitForCompletion() {
     while (!isCompleted) {
-      wait(30000);
+      try {
+        wait(30000);
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
     }
   }
 
