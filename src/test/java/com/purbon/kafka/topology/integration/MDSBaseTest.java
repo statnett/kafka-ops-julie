@@ -1,16 +1,10 @@
 package com.purbon.kafka.topology.integration;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.io.IOException;
 
 public class MDSBaseTest {
 
-  private static final Logger LOGGER = LogManager.getLogger(MDSBaseTest.class);
-
-  public void beforeEach() throws IOException, InterruptedException {
-  }
+  public void beforeEach() throws IOException, InterruptedException {}
 
   protected String getKafkaClusterID() {
     /* NOTE: On 2025-02-25 the lookup in ZooKeeper was replaced by this string constant
