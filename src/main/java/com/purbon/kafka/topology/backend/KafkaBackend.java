@@ -5,7 +5,6 @@ import com.purbon.kafka.topology.backend.kafka.ByteArrayChunker;
 import com.purbon.kafka.topology.backend.kafka.KafkaBackendConsumer;
 import com.purbon.kafka.topology.backend.kafka.KafkaBackendProducer;
 import com.purbon.kafka.topology.backend.kafka.KafkaBackendTopicCreator;
-import lombok.SneakyThrows;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
