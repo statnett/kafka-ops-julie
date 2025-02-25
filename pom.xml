@@ -271,7 +271,6 @@
     <slf4j.version>2.0.16</slf4j.version>
     <testcontainers.version>1.20.5</testcontainers.version>
     <typesafe.version>1.4.3</typesafe.version>
-    <zookeeper.version>3.9.3</zookeeper.version>
   </properties>
 
   <dependencies>
@@ -311,26 +310,6 @@
       <groupId>io.confluent</groupId>
       <artifactId>kafka-protobuf-provider</artifactId>
       <version>${confluent.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.zookeeper</groupId>
-      <artifactId>zookeeper</artifactId>
-      <version>${zookeeper.version}</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>ch.qos.logback</groupId>
-          <artifactId>logback-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>ch.qos.logback</groupId>
-          <artifactId>logback-classic</artifactId>
-        </exclusion>
-        <exclusion>
-          <artifactId>logback-core</artifactId>
-          <groupId>ch.qos.logback</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.kafka</groupId>

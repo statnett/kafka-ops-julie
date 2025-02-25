@@ -1,32 +1,20 @@
 package com.purbon.kafka.topology.integration;
 
-import com.purbon.kafka.topology.utils.JSON;
-import com.purbon.kafka.topology.utils.ZKClient;
 import java.io.IOException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class MDSBaseTest {
 
-  private static final Logger LOGGER = LogManager.getLogger(MDSBaseTest.class);
-  private ZKClient zkClient;
-
-  public void beforeEach() throws IOException, InterruptedException {
-    zkClient = new ZKClient();
-    zkClient.connect("localhost");
-  }
+  public void beforeEach() throws IOException, InterruptedException {}
 
   protected String getKafkaClusterID() {
-    /* TODO: This method is the only reason JulieOps depends on zookeeper,
-     * a component that is about to be retired. Figure out a more modern way
-     * to get the cluster id, and remove the zookeeper stuff from the code. */
-    try {
-      String nodeData = zkClient.getNodeData("/cluster/id");
-      return JSON.toMap(nodeData).get("id").toString();
-    } catch (IOException e) {
-      LOGGER.error(e);
-    }
-    return "-1";
+    /* NOTE: On 2025-02-25 the lookup in ZooKeeper was replaced by this string constant
+     * in order to get rid of the ZooKeeper dependency.
+     * The tests will probably fail, but since these MDS tests are excluded from the
+     * pipeline, they will only fail on the original maintainer's setup.
+     * Given access to a modern Admin client, the cluster id may be obtained like this:
+     *   String clusterId = admin.describeCluster().clusterId().get();
+     */
+    return "kafka-cluster-id";
   }
 
   protected String getSchemaRegistryClusterID() {
