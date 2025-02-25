@@ -38,6 +38,8 @@ public class KafkaBackendIT {
 
     props = new Properties();
     props.put(JULIE_INSTANCE_ID, "1234");
+    props.put(JULIE_KAFKA_STATE_CONSUMER_GROUP_ID, "julieops-" + KafkaBackendIT.class.getName());
+    props.put(JULIE_KAFKA_STATE_CHUNK_SIZE, 16 /* small to enforce chunking */);
 
     Map<String, Object> saslConfig =
         ContainerTestUtils.getSaslConfig(
@@ -119,7 +121,6 @@ public class KafkaBackendIT {
     KafkaBackend backend = new KafkaBackend();
     HashMap<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, container.getBootstrapServers());
-    props.put(JULIE_KAFKA_STATE_CONSUMER_GROUP_ID, "julieops-" + KafkaBackendIT.class.getName());
     Configuration config = new Configuration(cliOps, props);
     backend.configure(config);
     BackendState state = backend.load();

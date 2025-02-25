@@ -661,6 +661,10 @@ public class Configuration {
     return getString(JULIE_KAFKA_STATE_CONSUMER_GROUP_ID);
   }
 
+  public Integer getKafkaBackendChunkSize() {
+    return config.getInt(JULIE_KAFKA_STATE_CHUNK_SIZE);
+  }
+
   public Integer getKafkaBackendConsumerRetries() {
     return config.getInt(JULIE_KAFKA_STATE_CONSUMER_RETRIES);
   }

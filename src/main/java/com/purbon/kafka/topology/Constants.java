@@ -177,6 +177,7 @@ public final class Constants {
   public static final String JULIE_ROLES = "julie.roles";
 
   public static final String JULIE_KAFKA_STATE_TOPIC = "julie.kafka.state.topic";
+  public static final String JULIE_KAFKA_STATE_CHUNK_SIZE = "julie.kafka.state.chunk.size";
   public static final String JULIE_KAFKA_STATE_CONSUMER_GROUP_ID =
       "julie.kafka.state.consumer.group.id";
   public static final String JULIE_KAFKA_STATE_CONSUMER_RETRIES =
