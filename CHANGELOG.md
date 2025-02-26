@@ -1,5 +1,23 @@
 # Changelog
 
+## [4.8.0](https://github.com/statnett/kafka-ops-julie/compare/v4.7.3...v4.8.0) (2025-02-26)
+
+
+### Features
+
+* add chunking to Kafka-based state backend ([#208](https://github.com/statnett/kafka-ops-julie/issues/208)) ([d74b8ce](https://github.com/statnett/kafka-ops-julie/commit/d74b8ce3561380fd149c266815750c05f09b90e9))
+* ditch the zookeeper dependency ([#205](https://github.com/statnett/kafka-ops-julie/issues/205)) ([4c25f7a](https://github.com/statnett/kafka-ops-julie/commit/4c25f7af7d661a062aa3c5f729307e369058207a))
+
+
+### Bug Fixes
+
+* add transform to fix log4j shading confusion ([#212](https://github.com/statnett/kafka-ops-julie/issues/212)) ([025cb8b](https://github.com/statnett/kafka-ops-julie/commit/025cb8bce76a422602d7bb6b6bf2d8136194f281))
+* correct order of partitions/replicas for NewTopic ([#211](https://github.com/statnett/kafka-ops-julie/issues/211)) ([d1806b4](https://github.com/statnett/kafka-ops-julie/commit/d1806b415b2a34f071b5f1df23e4076582772e2d))
+* **deps:** update dependency org.slf4j:slf4j-api to v2.0.17 ([#210](https://github.com/statnett/kafka-ops-julie/issues/210)) ([f240d96](https://github.com/statnett/kafka-ops-julie/commit/f240d9640feab36201321589b24eb6582d814884))
+* ensure Kafka state topic is compact ([#209](https://github.com/statnett/kafka-ops-julie/issues/209)) ([12b05ab](https://github.com/statnett/kafka-ops-julie/commit/12b05ab79f18826c2f01c5e401bba382c1dbee36))
+* exclude dependencies pulled from Confluent snapshot repo ([#206](https://github.com/statnett/kafka-ops-julie/issues/206)) ([8761e53](https://github.com/statnett/kafka-ops-julie/commit/8761e535c160a9d25151bd86df16ab7596e1f5c1))
+* exclude overlapping dependencies ([#213](https://github.com/statnett/kafka-ops-julie/issues/213)) ([efb43f2](https://github.com/statnett/kafka-ops-julie/commit/efb43f2956d8d7fa89b723e9cf1c42be7a594a88))
+
 ## [4.7.3](https://github.com/statnett/kafka-ops-julie/compare/v4.7.2...v4.7.3) (2025-02-21)
 
 
