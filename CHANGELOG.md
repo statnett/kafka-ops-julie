@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.8.1](https://github.com/statnett/kafka-ops-julie/compare/v4.8.0...v4.8.1) (2025-02-26)
+
+
+### Bug Fixes
+
+* exclude logger implementation to get logs again ([#215](https://github.com/statnett/kafka-ops-julie/issues/215)) ([aba3f41](https://github.com/statnett/kafka-ops-julie/commit/aba3f4133ea0ae761c9d04712ca5b4596c9c6c54))
+
 ## [4.8.0](https://github.com/statnett/kafka-ops-julie/compare/v4.7.3...v4.8.0) (2025-02-26)
 
 
