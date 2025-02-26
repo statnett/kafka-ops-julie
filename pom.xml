@@ -212,6 +212,13 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
         <version>3.6.0</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-transform-maven-shade-plugin-extensions</artifactId>
+            <version>0.2.0</version>
+          </dependency>
+        </dependencies>
         <executions>
           <execution>
             <phase>package</phase>
@@ -237,6 +244,7 @@
                     <Multi-Release>true</Multi-Release>
                   </manifestEntries>
                 </transformer>
+                <transformer implementation="org.apache.logging.log4j.maven.plugins.shade.transformer.Log4j2PluginCacheFileTransformer"/>
               </transformers>
             </configuration>
           </execution>
