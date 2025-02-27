@@ -11,7 +11,6 @@ import com.purbon.kafka.topology.roles.TopologyAclBinding;
 import com.robothy.s3.rest.LocalS3;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
