@@ -1,6 +1,7 @@
 package com.purbon.kafka.topology.integration.backend;
 
 import static com.purbon.kafka.topology.CommandLineInterface.BROKERS_OPTION;
+import static com.purbon.kafka.topology.CommandLineInterface.DRY_RUN_OPTION;
 import static com.purbon.kafka.topology.Constants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,7 +26,7 @@ public class KafkaBackendIT {
 
   Configuration config;
   Properties props;
-  HashMap<String, String> cliOps;
+  Map<String, String> cliOps;
 
   private static SaslPlaintextKafkaContainer container;
 
@@ -105,6 +106,20 @@ public class KafkaBackendIT {
       Assert.assertTrue(
           "Unexpected exception", e.getMessage().contains(TopicConfig.CLEANUP_POLICY_COMPACT));
     }
+  }
+
+  @Test
+  public void shouldWorkOnNonExistingStateTopicInDryRun() {
+    String nonExistingTopic = "__non_existing";
+    Properties overriddenProps = new Properties();
+    props.forEach((k, v) -> overriddenProps.setProperty((String) k, String.valueOf(v)));
+    overriddenProps.setProperty(JULIE_KAFKA_STATE_TOPIC, nonExistingTopic);
+    Map<String, String> overriddenCliOps = new HashMap<>(cliOps);
+    overriddenCliOps.put(DRY_RUN_OPTION, "true");
+    KafkaBackend backend = new KafkaBackend();
+    backend.configure(new Configuration(overriddenCliOps, overriddenProps));
+    backend.save(new BackendState());
+    backend.load();
   }
 
   private void saveBindings(Collection<TopologyAclBinding> bindings) {

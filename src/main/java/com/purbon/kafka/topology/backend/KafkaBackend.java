@@ -16,16 +16,19 @@ public class KafkaBackend implements Backend {
   private KafkaBackendTopicCreator topicCreator;
   private KafkaBackendConsumer consumer;
   private KafkaBackendProducer producer;
+  private boolean isDryRun = false;
+  private boolean topicWasJustCreated = false;
 
   public KafkaBackend() {}
 
   @Override
   public void configure(Configuration config) {
+    isDryRun = config.isDryRun();
     chunker = new ByteArrayChunker(config.getKafkaBackendChunkSize());
 
     topicCreator = new KafkaBackendTopicCreator(config);
     topicCreator.configure();
-    boolean stateTopicCreated = topicCreator.createStateTopicUnlessPresent();
+    topicWasJustCreated = topicCreator.createStateTopicUnlessPresent();
 
     consumer = new KafkaBackendConsumer(config, chunker);
     consumer.configure();
@@ -41,6 +44,9 @@ public class KafkaBackend implements Backend {
 
   @Override
   public BackendState load() {
+    if (isDryRun && topicWasJustCreated) {
+      return new BackendState();
+    }
     return consumer.load();
   }
 
