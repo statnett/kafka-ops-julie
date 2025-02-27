@@ -401,6 +401,10 @@
           <groupId>com.google.code.findbugs</groupId>
           <artifactId>annotations</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.module</groupId>
+          <artifactId>jackson-module-afterburner</artifactId>
+        </exclusion>
         <exclusion> <!-- from Confluent snapshot repo -->
           <groupId>io.confluent.cloud</groupId>
           <artifactId>events-schema</artifactId>
