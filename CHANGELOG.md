@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.8.3](https://github.com/statnett/kafka-ops-julie/compare/v4.8.2...v4.8.3) (2025-02-27)
+
+
+### Bug Fixes
+
+* allow dry-run with non-existing state topic ([#221](https://github.com/statnett/kafka-ops-julie/issues/221)) ([4f7e6f5](https://github.com/statnett/kafka-ops-julie/commit/4f7e6f53979ddf5cae5595a520153ac3b3c607ba))
+
 ## [4.8.2](https://github.com/statnett/kafka-ops-julie/compare/v4.8.1...v4.8.2) (2025-02-27)
 
 
