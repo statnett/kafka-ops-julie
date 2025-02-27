@@ -513,16 +513,10 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>io.findify</groupId>
-      <artifactId>s3mock_2.13</artifactId>
-      <version>0.2.6</version>
+      <groupId>io.github.robothy</groupId>
+      <artifactId>local-s3-rest</artifactId>
+      <version>1.20</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.xml.bind</groupId>
-          <artifactId>jaxb-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.wiremock</groupId>

@@ -1,23 +1,16 @@
 package com.purbon.kafka.topology.integration.backend;
 
 import static com.purbon.kafka.topology.CommandLineInterface.BROKERS_OPTION;
-import static com.purbon.kafka.topology.Constants.JULIE_S3_BUCKET;
-import static com.purbon.kafka.topology.Constants.JULIE_S3_ENDPOINT;
-import static com.purbon.kafka.topology.Constants.JULIE_S3_REGION;
+import static com.purbon.kafka.topology.Constants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.AnonymousAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.Region;
 import com.purbon.kafka.topology.Configuration;
 import com.purbon.kafka.topology.backend.BackendState;
 import com.purbon.kafka.topology.backend.S3Backend;
 import com.purbon.kafka.topology.roles.TopologyAclBinding;
-import io.findify.s3mock.S3Mock;
+import com.robothy.s3.rest.LocalS3;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
@@ -28,10 +21,14 @@ import org.apache.kafka.common.resource.ResourceType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 
 public class S3BackendIT {
 
-  private S3Mock api;
+  private LocalS3 api;
   private Map<String, String> cliOps;
 
   private static final String TEST_BUCKET = "testbucket";
@@ -45,19 +42,17 @@ public class S3BackendIT {
     long time = System.currentTimeMillis();
     String tmpDir = System.getProperty("java.io.tmpdir");
     Path s3Path = Paths.get(tmpDir, "s3-" + time);
-    api = S3Mock.create(8001, s3Path.toFile().getAbsolutePath());
+    api = LocalS3.builder().port(8001).build();
+    // api = S3Mock.create(8001, s3Path.toFile().getAbsolutePath());
     api.start();
 
-    AnonymousAWSCredentials credentials = new AnonymousAWSCredentials();
-    AwsClientBuilder.EndpointConfiguration endpointConfiguration =
-        new AwsClientBuilder.EndpointConfiguration(
-            TEST_ENDPOINT, Region.US_Standard.getFirstRegionId());
-    AmazonS3 client =
-        AmazonS3ClientBuilder.standard()
-            .withEndpointConfiguration(endpointConfiguration)
-            .withCredentials(new AWSStaticCredentialsProvider(credentials))
+    S3Client client =
+        S3Client.builder()
+            .region(Region.US_WEST_2)
+            .endpointOverride(URI.create(TEST_ENDPOINT))
+            .credentialsProvider(AnonymousCredentialsProvider.create())
             .build();
-    client.createBucket(TEST_BUCKET);
+    client.createBucket(CreateBucketRequest.builder().bucket(TEST_BUCKET).build());
   }
 
   @After
