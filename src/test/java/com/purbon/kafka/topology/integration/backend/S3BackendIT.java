@@ -41,8 +41,8 @@ public class S3BackendIT {
 
     long time = System.currentTimeMillis();
     String tmpDir = System.getProperty("java.io.tmpdir");
-    Path s3Path = Paths.get(tmpDir, "s3-" + time);
-    api = LocalS3.builder().port(8001).build();
+    String s3Path = Paths.get(tmpDir, "s3-" + time).toString();
+    api = LocalS3.builder().port(8001).dataPath(s3Path).build();
     api.start();
 
     S3Client client =
