@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.8.2](https://github.com/statnett/kafka-ops-julie/compare/v4.8.1...v4.8.2) (2025-02-27)
+
+
+### Bug Fixes
+
+* exclude jackson-module-afterburner ([#218](https://github.com/statnett/kafka-ops-julie/issues/218)) ([a05fc54](https://github.com/statnett/kafka-ops-julie/commit/a05fc5490382a2f72608bff7ce35ba6ef3f226fb))
+
 ## [4.8.1](https://github.com/statnett/kafka-ops-julie/compare/v4.8.0...v4.8.1) (2025-02-26)
 
 
