@@ -62,6 +62,10 @@ public class KafkaBackendIT {
   @Test
   public void testExpectedFlow() throws InterruptedException {
 
+    KafkaBackend backend = new KafkaBackend();
+    backend.configure(config);
+    backend.load(); /* Just to check that initial load from empty topic does not fail. */
+
     TopologyAclBinding binding1 =
         TopologyAclBinding.build(
             ResourceType.TOPIC.name(), "foo", "*", "Write", "User:foo", "LITERAL");

@@ -64,6 +64,9 @@ public class KafkaBackendConsumer {
       }
       consumer.commitAsync();
     }
+    if (map.isEmpty()) {
+      return new BackendState();
+    }
     byte[] bytes = chunker.dechunk(new ArrayList<>(map.values()));
     final String json = new String(bytes, StandardCharsets.UTF_8);
     try {
