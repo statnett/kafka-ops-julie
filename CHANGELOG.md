@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.8.4](https://github.com/statnett/kafka-ops-julie/compare/v4.8.3...v4.8.4) (2025-02-27)
+
+
+### Bug Fixes
+
+* allow totally empty state topic ([#225](https://github.com/statnett/kafka-ops-julie/issues/225)) ([4c93378](https://github.com/statnett/kafka-ops-julie/commit/4c93378f70eab3de341cf9a070d538a16a0f4fdf))
+
 ## [4.8.3](https://github.com/statnett/kafka-ops-julie/compare/v4.8.2...v4.8.3) (2025-02-27)
 
 
