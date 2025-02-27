@@ -12,12 +12,8 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class KafkaBackendProducer {
-
-  private static final Logger LOGGER = LogManager.getLogger(KafkaBackendProducer.class);
 
   private String instanceId;
   private Configuration config;

@@ -5,12 +5,8 @@ import com.purbon.kafka.topology.backend.kafka.ByteArrayChunker;
 import com.purbon.kafka.topology.backend.kafka.KafkaBackendConsumer;
 import com.purbon.kafka.topology.backend.kafka.KafkaBackendProducer;
 import com.purbon.kafka.topology.backend.kafka.KafkaBackendTopicCreator;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class KafkaBackend implements Backend {
-
-  private static final Logger LOGGER = LogManager.getLogger(KafkaBackend.class);
 
   private ByteArrayChunker chunker;
   private KafkaBackendTopicCreator topicCreator;
