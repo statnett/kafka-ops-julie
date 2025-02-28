@@ -20,7 +20,7 @@ import org.apache.kafka.common.resource.ResourceType;
 
 public final class ContainerTestUtils {
 
-  static final String DEFAULT_CP_KAFKA_VERSION = "7.7.1";
+  static final String DEFAULT_CP_KAFKA_VERSION = "7.9.0";
   public static final int NUM_JULIE_INITIAL_ACLS = 11;
 
   private ContainerTestUtils() {}
