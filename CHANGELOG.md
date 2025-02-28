@@ -1,5 +1,16 @@
 # Changelog
 
+## [5.0.0](https://github.com/statnett/kafka-ops-julie/compare/v4.8.5...v5.0.0) (2025-02-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* build for Java 21 instead of 11 ([#232](https://github.com/statnett/kafka-ops-julie/issues/232))
+
+### Features
+
+* build for Java 21 instead of 11 ([#232](https://github.com/statnett/kafka-ops-julie/issues/232)) ([88b3057](https://github.com/statnett/kafka-ops-julie/commit/88b3057af4007cf265d90e3bc00384a9fb0101e4))
+
 ## [4.8.5](https://github.com/statnett/kafka-ops-julie/compare/v4.8.4...v4.8.5) (2025-02-28)
 
 
