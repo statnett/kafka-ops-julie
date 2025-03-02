@@ -150,7 +150,7 @@ public class RBACPRoviderRbacIT extends MDSBaseTest {
     // this method is call twice, once for consumers and one for producers
     verify(cs, times(1)).addBindings(anyList());
     verify(cs, times(1)).flushAndClose();
-    verifyConsumerAcls(consumers, topicA.toString());
+    verifyConsumerAcls(consumers);
   }
 
   @Test
@@ -174,7 +174,7 @@ public class RBACPRoviderRbacIT extends MDSBaseTest {
     // this method is call twice, once for consumers and one for consumers
     verify(cs, times(1)).addBindings(anyList());
     verify(cs, times(1)).flushAndClose();
-    verifyProducerAcls(producers, topicA.toString(), 2);
+    verifyProducerAcls(producers, 2);
   }
 
   @Test
@@ -200,7 +200,7 @@ public class RBACPRoviderRbacIT extends MDSBaseTest {
     // this method is call twice, once for consumers and one for consumers
     verify(cs, times(1)).addBindings(anyList());
     verify(cs, times(1)).flushAndClose();
-    verifyProducerAcls(producers, topicA.toString(), 2);
+    verifyProducerAcls(producers, 2);
   }
 
   @Test
@@ -788,11 +788,7 @@ public class RBACPRoviderRbacIT extends MDSBaseTest {
     assertTrue(roles.contains(RESOURCE_OWNER));
   }
 
-  private void verifyProducerAcls(List<Producer> producers, String topic) {
-    verifyProducerAcls(producers, topic, 1);
-  }
-
-  private void verifyProducerAcls(List<Producer> producers, String topic, int resourcesCount) {
+  private void verifyProducerAcls(List<Producer> producers, int resourcesCount) {
     producers.forEach(
         producer -> {
           List<String> roles = apiClient.lookupRoles(producer.getPrincipal());
@@ -805,7 +801,7 @@ public class RBACPRoviderRbacIT extends MDSBaseTest {
         });
   }
 
-  private void verifyConsumerAcls(List<Consumer> consumers, String topic) {
+  private void verifyConsumerAcls(List<Consumer> consumers) {
     consumers.forEach(
         consumer -> {
           List<String> roles = apiClient.lookupRoles(consumer.getPrincipal());
