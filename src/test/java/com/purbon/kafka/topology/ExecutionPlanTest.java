@@ -112,7 +112,6 @@ public class ExecutionPlanTest {
     Topology topology = buildTopologyForTest();
     Topic topicFoo = topology.getProjects().get(0).getTopics().get(0);
     Topic topicBar = topology.getProjects().get(0).getTopics().get(1);
-    Set<String> listOfTopics = new HashSet<>();
 
     CreateTopicAction addTopicAction1 =
         new CreateTopicAction(adminClient, topicFoo, topicFoo.toString());
@@ -135,7 +134,6 @@ public class ExecutionPlanTest {
     Topology topology = buildTopologyForTest();
     Topic topicFoo = topology.getProjects().get(0).getTopics().get(0);
     Topic topicBar = topology.getProjects().get(0).getTopics().get(1);
-    Set<String> listOfTopics = new HashSet<>();
 
     CreateTopicAction addTopicAction1 =
         new CreateTopicAction(adminClient, topicFoo, topicFoo.toString());

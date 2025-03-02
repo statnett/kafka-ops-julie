@@ -1,7 +1,6 @@
 package com.purbon.kafka.topology.utils;
 
 import java.util.Optional;
-import java.util.function.Function;
 
 public class Either<L, R> {
   private final L left;
@@ -34,30 +33,6 @@ public class Either<L, R> {
 
   public boolean isRight() {
     return right != null;
-  }
-
-  public <T> Optional<T> mapLeft(Function<? super L, T> mapper) {
-    if (isLeft()) {
-      return Optional.of(mapper.apply(left));
-    }
-    return Optional.empty();
-  }
-
-  public <T> Optional<T> mapRight(Function<? super R, T> mapper) {
-    if (isRight()) {
-      return Optional.of(mapper.apply(right));
-    }
-    return Optional.empty();
-  }
-
-  public static <T, R> Function<T, Either> lift(CheckedFunction<T, R> function) {
-    return t -> {
-      try {
-        return Either.Left(function.apply(t));
-      } catch (Exception ex) {
-        return Either.Right(ex);
-      }
-    };
   }
 
   public String toString() {

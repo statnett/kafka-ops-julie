@@ -80,7 +80,7 @@ public class RBACPRoviderRbacIT extends MDSBaseTest {
   private AccessControlManager optimizedAclsAccessControlManager;
 
   @Before
-  public void before() throws IOException, InterruptedException {
+  public void before() throws IOException {
     super.beforeEach();
     TestUtils.deleteStateFile();
 

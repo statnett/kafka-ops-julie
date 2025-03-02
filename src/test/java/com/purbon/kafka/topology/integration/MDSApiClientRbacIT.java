@@ -26,7 +26,7 @@ public class MDSApiClientRbacIT extends MDSBaseTest {
   private MDSApiClient apiClient;
 
   @Before
-  public void before() throws IOException, InterruptedException {
+  public void before() throws IOException {
     super.beforeEach();
     String mdsServer = "http://localhost:8090";
     apiClient = new MDSApiClient(mdsServer);
