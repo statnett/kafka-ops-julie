@@ -87,15 +87,8 @@ public class JulieOpsTest {
   public void verifyProblematicParametersTest() throws Exception {
     String file = "fileThatDoesNotExist.yaml";
     Configuration builderConfig = new Configuration(cliOps, props);
-
-    JulieOps builder =
-        JulieOps.build(
-            file,
-            builderConfig,
-            topologyAdminClient,
-            accessControlProvider,
-            bindingsBuilderProvider);
-
+    JulieOps.build(
+        file, builderConfig, topologyAdminClient, accessControlProvider, bindingsBuilderProvider);
     JulieOps.verifyRequiredParameters(file, cliOps);
   }
 
@@ -104,14 +97,12 @@ public class JulieOpsTest {
     String fileOrDirPath = TestUtils.getResourceFilename("/descriptor.yaml");
 
     Configuration builderConfig = new Configuration(cliOps, props);
-    JulieOps builder =
-        JulieOps.build(
-            fileOrDirPath,
-            builderConfig,
-            topologyAdminClient,
-            accessControlProvider,
-            bindingsBuilderProvider);
-
+    JulieOps.build(
+        fileOrDirPath,
+        builderConfig,
+        topologyAdminClient,
+        accessControlProvider,
+        bindingsBuilderProvider);
     JulieOps.verifyRequiredParameters(fileOrDirPath, cliOps);
   }
 
@@ -123,14 +114,12 @@ public class JulieOpsTest {
     cliOps.put(CLIENT_CONFIG_OPTION, clientConfigFile);
 
     Configuration builderConfig = new Configuration(cliOps, props);
-    JulieOps builder =
-        JulieOps.build(
-            fileOrDirPath,
-            builderConfig,
-            topologyAdminClient,
-            accessControlProvider,
-            bindingsBuilderProvider);
-
+    JulieOps.build(
+        fileOrDirPath,
+        builderConfig,
+        topologyAdminClient,
+        accessControlProvider,
+        bindingsBuilderProvider);
     JulieOps.verifyRequiredParameters(fileOrDirPath, cliOps);
   }
 

@@ -1,6 +1,5 @@
 package com.purbon.kafka.topology.integration;
 
-
 public class MDSBaseTest {
 
   public void beforeEach() {}
