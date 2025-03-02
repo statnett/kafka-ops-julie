@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.0.1](https://github.com/statnett/kafka-ops-julie/compare/v5.0.0...v5.0.1) (2025-03-02)
+
+
+### Bug Fixes
+
+* **deps:** update dependency com.fasterxml.jackson:jackson-bom to v2.18.3 ([#236](https://github.com/statnett/kafka-ops-julie/issues/236)) ([cd3f4d1](https://github.com/statnett/kafka-ops-julie/commit/cd3f4d191ee7fb87d4c14ac3e4da86556116bc39))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.30.31 ([#237](https://github.com/statnett/kafka-ops-julie/issues/237)) ([1e1b9fe](https://github.com/statnett/kafka-ops-julie/commit/1e1b9fe37598fb460e7826ecab7129b15e57135f))
+* remove unused code/files ([#239](https://github.com/statnett/kafka-ops-julie/issues/239)) ([4d4ae1e](https://github.com/statnett/kafka-ops-julie/commit/4d4ae1ea55720f484113afb77b16ebbbd43cb5f7))
+
 ## [5.0.0](https://github.com/statnett/kafka-ops-julie/compare/v4.8.5...v5.0.0) (2025-02-28)
 
 
