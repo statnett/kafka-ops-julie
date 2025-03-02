@@ -60,7 +60,7 @@ public class KafkaBackendIT {
   }
 
   @Test
-  public void testExpectedFlow() throws InterruptedException {
+  public void testExpectedFlow() {
 
     KafkaBackend backend = new KafkaBackend();
     backend.configure(config);

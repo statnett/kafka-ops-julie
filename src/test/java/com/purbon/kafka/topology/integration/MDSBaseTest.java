@@ -1,10 +1,9 @@
 package com.purbon.kafka.topology.integration;
 
-import java.io.IOException;
 
 public class MDSBaseTest {
 
-  public void beforeEach() throws IOException, InterruptedException {}
+  public void beforeEach() {}
 
   protected String getKafkaClusterID() {
     /* NOTE: On 2025-02-25 the lookup in ZooKeeper was replaced by this string constant
