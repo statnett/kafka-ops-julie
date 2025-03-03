@@ -354,6 +354,10 @@
       <version>${ksqldb.client.version}</version>
       <exclusions>
         <exclusion>
+          <groupId>io.confluent</groupId>
+          <artifactId>broker-plugins</artifactId>
+        </exclusion>
+        <exclusion>
           <artifactId>slf4j-log4j12</artifactId>
           <groupId>org.slf4j</groupId>
         </exclusion>
