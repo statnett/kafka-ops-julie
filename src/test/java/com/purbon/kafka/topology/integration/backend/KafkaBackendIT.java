@@ -1,11 +1,17 @@
 package com.purbon.kafka.topology.integration.backend;
 
+import static com.purbon.kafka.topology.CommandLineInterface.BROKERS_OPTION;
+import static com.purbon.kafka.topology.CommandLineInterface.DRY_RUN_OPTION;
+import static com.purbon.kafka.topology.Constants.*;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.purbon.kafka.topology.Configuration;
 import com.purbon.kafka.topology.backend.BackendState;
 import com.purbon.kafka.topology.backend.KafkaBackend;
 import com.purbon.kafka.topology.integration.containerutils.ContainerTestUtils;
 import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextEmbeddedKafka;
 import com.purbon.kafka.topology.roles.TopologyAclBinding;
+import java.util.*;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.config.TopicConfig;
@@ -14,13 +20,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.*;
-
-import static com.purbon.kafka.topology.CommandLineInterface.BROKERS_OPTION;
-import static com.purbon.kafka.topology.CommandLineInterface.DRY_RUN_OPTION;
-import static com.purbon.kafka.topology.Constants.*;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class KafkaBackendIT {
 
@@ -89,8 +88,7 @@ public class KafkaBackendIT {
   @Test
   public void shouldFailOnNonCompactingStateTopic() {
     String wrongTopic = "__state_with_wrong_cleanup_policy";
-    AdminClient admin =
-        ContainerTestUtils.getSaslSuperUserAdminClient(kafka.getBootstrapServers());
+    AdminClient admin = ContainerTestUtils.getSaslSuperUserAdminClient(kafka.getBootstrapServers());
     Map<String, String> topicConfig = new HashMap<>();
     topicConfig.put(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_DELETE);
     NewTopic configTopic = new NewTopic(wrongTopic, 1, (short) 1);
