@@ -18,6 +18,7 @@ public class SchemaRegistryContainer extends GenericContainer<SchemaRegistryCont
   public SchemaRegistryContainer(
       final DockerImageName dockerImageName, SaslPlaintextEmbeddedKafka kafka) {
     super(dockerImageName);
+    withAccessToHost(true);
     withExposedPorts(SR_PORT);
     withEnv("SCHEMA_REGISTRY_HOST_NAME", "schema-registry");
     withEnv("SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL", "SASL_PLAINTEXT");
