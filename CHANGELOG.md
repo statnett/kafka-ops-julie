@@ -1,5 +1,25 @@
 # Changelog
 
+## [5.1.0](https://github.com/statnett/kafka-ops-julie/compare/v5.0.1...v5.1.0) (2025-03-03)
+
+
+### Features
+
+* use Apache instead of Confluent, where possible ([#250](https://github.com/statnett/kafka-ops-julie/issues/250)) ([5c348b1](https://github.com/statnett/kafka-ops-julie/commit/5c348b17edb2b83129dc5373b7c3e300c9426de1))
+
+
+### Bug Fixes
+
+* exclude troublesome dependency io.confluent:broker-plugins ([#248](https://github.com/statnett/kafka-ops-julie/issues/248)) ([2305e0b](https://github.com/statnett/kafka-ops-julie/commit/2305e0b4d1074e75e497fcc41f559249e96321a9))
+
+
+### Documentation
+
+* remove heavily outdated CONTRIBUTING.md ([#245](https://github.com/statnett/kafka-ops-julie/issues/245)) ([394f7f4](https://github.com/statnett/kafka-ops-julie/commit/394f7f4ddd0120bf515ada4f58ee15961b24e4e4))
+* remove no longer applicable RELEASE.md ([#241](https://github.com/statnett/kafka-ops-julie/issues/241)) ([0ec79d1](https://github.com/statnett/kafka-ops-julie/commit/0ec79d1487fc737804379263e76eb5dbec750f99))
+* remove non-informative file troubleshooting.md ([#242](https://github.com/statnett/kafka-ops-julie/issues/242)) ([730f4a8](https://github.com/statnett/kafka-ops-julie/commit/730f4a8cd5f7594f385a0f9b6110b74ba463ec40))
+* remove redundant CODE_OF_CONDUCT.md ([#244](https://github.com/statnett/kafka-ops-julie/issues/244)) ([422d235](https://github.com/statnett/kafka-ops-julie/commit/422d2358d6ca70d90ac1631730363e15d6fa6a9c))
+
 ## [5.0.1](https://github.com/statnett/kafka-ops-julie/compare/v5.0.0...v5.0.1) (2025-03-02)
 
 
