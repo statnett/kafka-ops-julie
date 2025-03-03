@@ -3,7 +3,7 @@ package com.purbon.kafka.topology.integration.containerutils;
 import org.testcontainers.containers.BindMode;
 
 public class SslKsqlContainer extends KsqlContainer {
-  public SslKsqlContainer(AlternativeKafkaContainer kafka, String truststore, String keystore) {
+  public SslKsqlContainer(SaslPlaintextEmbeddedKafka kafka, String truststore, String keystore) {
     super(kafka);
     this.withEnv("KSQL_LISTENERS", "https://0.0.0.0:8088")
         .withEnv("KSQL_SSL_TRUSTSTORE_LOCATION", "/etc/ksql/secrets/truststore.jks")

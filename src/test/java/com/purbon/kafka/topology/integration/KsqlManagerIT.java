@@ -1,7 +1,12 @@
 package com.purbon.kafka.topology.integration;
 
-import static com.purbon.kafka.topology.CommandLineInterface.*;
-import static com.purbon.kafka.topology.Constants.*;
+import static com.purbon.kafka.topology.CommandLineInterface.BROKERS_OPTION;
+import static com.purbon.kafka.topology.Constants.ALLOW_DELETE_KSQL_ARTEFACTS;
+import static com.purbon.kafka.topology.Constants.ALLOW_DELETE_TOPICS;
+import static com.purbon.kafka.topology.Constants.JULIE_VERIFY_STATE_SYNC;
+import static com.purbon.kafka.topology.Constants.PLATFORM_SERVER_KSQL_URL;
+import static com.purbon.kafka.topology.Constants.TOPOLOGY_STATE_FROM_CLUSTER;
+import static com.purbon.kafka.topology.Constants.TOPOLOGY_TOPIC_STATE_FROM_CLUSTER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.purbon.kafka.topology.BackendController;
@@ -10,9 +15,8 @@ import com.purbon.kafka.topology.ExecutionPlan;
 import com.purbon.kafka.topology.KSqlArtefactManager;
 import com.purbon.kafka.topology.api.ksql.KsqlApiClient;
 import com.purbon.kafka.topology.api.ksql.KsqlClientConfig;
-import com.purbon.kafka.topology.integration.containerutils.ContainerFactory;
 import com.purbon.kafka.topology.integration.containerutils.KsqlContainer;
-import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextKafkaContainer;
+import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextEmbeddedKafka;
 import com.purbon.kafka.topology.model.Topology;
 import com.purbon.kafka.topology.serdes.TopologySerdes;
 import com.purbon.kafka.topology.utils.TestUtils;
@@ -29,7 +33,7 @@ import org.junit.Test;
 
 public class KsqlManagerIT {
 
-  static SaslPlaintextKafkaContainer container;
+  static SaslPlaintextEmbeddedKafka kafka;
   static KsqlContainer ksqlContainer;
   private TopologySerdes parser;
   private KsqlApiClient client;
@@ -38,14 +42,14 @@ public class KsqlManagerIT {
   @After
   public void after() {
     ksqlContainer.stop();
-    container.stop();
+    kafka.stop();
   }
 
   @Before
   public void configure() throws IOException {
-    container = ContainerFactory.fetchSaslKafkaContainer(System.getProperty("cp.version"));
-    container.start();
-    ksqlContainer = new KsqlContainer(container);
+    kafka = new SaslPlaintextEmbeddedKafka();
+    kafka.start();
+    ksqlContainer = new KsqlContainer(kafka);
     ksqlContainer.start();
 
     Files.deleteIfExists(Paths.get(".cluster-state"));

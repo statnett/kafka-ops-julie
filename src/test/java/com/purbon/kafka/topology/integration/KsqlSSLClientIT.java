@@ -6,9 +6,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.purbon.kafka.topology.api.ksql.KsqlApiClient;
 import com.purbon.kafka.topology.api.ksql.KsqlClientConfig;
-import com.purbon.kafka.topology.integration.containerutils.ContainerFactory;
 import com.purbon.kafka.topology.integration.containerutils.KsqlContainer;
-import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextKafkaContainer;
+import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextEmbeddedKafka;
 import com.purbon.kafka.topology.integration.containerutils.SslKsqlContainer;
 import java.io.IOException;
 import java.util.List;
@@ -20,20 +19,20 @@ public class KsqlSSLClientIT {
 
   private static final String KSQLDB_TRUSTSTORE_JKS = "/ksql-ssl/truststore/ksqldb.truststore.jks";
   private static final String KSQLDB_KEYSTORE_JKS = "/ksql-ssl/keystore/ksqldb.keystore.jks";
-  private static SaslPlaintextKafkaContainer container;
+  private static SaslPlaintextEmbeddedKafka kafka;
   private static KsqlContainer sslKsqlContainer;
 
   @After
   public void after() {
     sslKsqlContainer.stop();
-    container.stop();
+    kafka.stop();
   }
 
   @Before
   public void configure() {
-    container = ContainerFactory.fetchSaslKafkaContainer(System.getProperty("cp.version"));
-    container.start();
-    sslKsqlContainer = new SslKsqlContainer(container, KSQLDB_TRUSTSTORE_JKS, KSQLDB_KEYSTORE_JKS);
+    kafka = new SaslPlaintextEmbeddedKafka();
+    kafka.start();
+    sslKsqlContainer = new SslKsqlContainer(kafka, KSQLDB_TRUSTSTORE_JKS, KSQLDB_KEYSTORE_JKS);
     try {
       sslKsqlContainer.start();
     } catch (Exception e) {

@@ -32,7 +32,7 @@ public final class TestConsumer implements Closeable {
   }
 
   public static TestConsumer create(
-      final AlternativeKafkaContainer container,
+      final SaslPlaintextEmbeddedKafka container,
       final String usernameAndPassword,
       final String consumerGroup) {
     return create(container.getBootstrapServers(), usernameAndPassword, consumerGroup);

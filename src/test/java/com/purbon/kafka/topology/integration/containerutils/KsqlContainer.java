@@ -11,24 +11,22 @@ public class KsqlContainer extends GenericContainer<KsqlContainer> {
 
   public static final int KSQL_PORT = 8088;
 
-  public KsqlContainer(AlternativeKafkaContainer kafka) {
+  public KsqlContainer(SaslPlaintextEmbeddedKafka kafka) {
     this(DEFAULT_IMAGE, kafka);
   }
 
-  public KsqlContainer(final DockerImageName dockerImageName, AlternativeKafkaContainer kafka) {
+  public KsqlContainer(final DockerImageName dockerImageName, SaslPlaintextEmbeddedKafka kafka) {
     super(dockerImageName);
-    String kafkaHost = kafka.getNetworkAliases().get(1);
     withExposedPorts(KSQL_PORT);
     waitingFor(Wait.forLogMessage(".+ INFO Server up and running .+", 1));
     // withEnv("KSQL_KSQL_SERVICE_ID", "confluent_ksql_streams_01");
     withEnv("KSQL_SECURITY_PROTOCOL", "SASL_PLAINTEXT");
-    withEnv("KSQL_BOOTSTRAP_SERVERS", "SASL_PLAINTEXT://" + kafkaHost + ":" + 9091);
+    withEnv("KSQL_BOOTSTRAP_SERVERS", kafka.getBootstrapServers());
     withEnv("KSQL_SASL_JAAS_CONFIG", saslConfig());
     withEnv("KSQL_SASL_MECHANISM", "PLAIN");
     withEnv("KSQL_LISTENERS", "http://0.0.0.0:8088");
     withEnv("KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE", "true");
     withEnv("KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE", "true");
-    withNetwork(kafka.getNetwork());
   }
 
   private String saslConfig() {

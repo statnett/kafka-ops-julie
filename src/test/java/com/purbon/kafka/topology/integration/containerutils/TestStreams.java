@@ -23,7 +23,7 @@ public final class TestStreams implements Closeable {
   }
 
   public static TestStreams create(
-      final AlternativeKafkaContainer container,
+      final SaslPlaintextEmbeddedKafka container,
       final String usernameAndPassword,
       final String applicationId,
       Topology topology) {

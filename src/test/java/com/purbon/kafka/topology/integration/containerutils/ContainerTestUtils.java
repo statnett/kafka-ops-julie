@@ -10,10 +10,18 @@ import com.purbon.kafka.topology.roles.acls.AclsBindingsBuilder;
 import com.purbon.kafka.topology.utils.TestUtils;
 import com.typesafe.config.ConfigFactory;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.common.acl.*;
+import org.apache.kafka.common.acl.AccessControlEntry;
+import org.apache.kafka.common.acl.AclBinding;
+import org.apache.kafka.common.acl.AclBindingFilter;
+import org.apache.kafka.common.acl.AclOperation;
+import org.apache.kafka.common.acl.AclPermissionType;
 import org.apache.kafka.common.resource.PatternType;
 import org.apache.kafka.common.resource.ResourcePattern;
 import org.apache.kafka.common.resource.ResourceType;
@@ -24,20 +32,20 @@ public final class ContainerTestUtils {
   public static final String DEFAULT_SUPER_PASSWORD = "kafka";
   public static final String JULIE_USERNAME = "julie";
   public static final String JULIE_PASSWORD = "julie-secret";
+  public static final String UNKNOWN_USERNAME = "unknown-user";
   public static final String NO_ACCESS_USERNAME = "no-access-user";
   public static final String PRODUCER_USERNAME = "producer";
   public static final String CONSUMER_USERNAME = "consumer";
   public static final String OTHER_PRODUCER_USERNAME = "other-producer";
   public static final String OTHER_CONSUMER_USERNAME = "other-consumer";
   public static final String STREAMS_USERNAME = "streamsapp";
+  public static final String USER_1 = "user1";
+  public static final String USER_2 = "user2";
+  public static final String USER_3 = "user3";
   public static final int NUM_JULIE_INITIAL_ACLS = 11;
   static final String DEFAULT_CP_KAFKA_VERSION = "7.9.0";
 
   private ContainerTestUtils() {}
-
-  public static AdminClient getSaslJulieAdminClient(final AlternativeKafkaContainer container) {
-    return getSaslJulieAdminClient(container.getBootstrapServers());
-  }
 
   public static AdminClient getSaslJulieAdminClient(final SaslPlaintextEmbeddedKafka kafka) {
     return getSaslJulieAdminClient(kafka.getBootstrapServers());
@@ -78,7 +86,7 @@ public final class ContainerTestUtils {
   }
 
   public static void populateAcls(
-      final SaslPlaintextKafkaContainer container,
+      final SaslPlaintextEmbeddedKafka container,
       final String topologyResource,
       final String configResource) {
     TestUtils.deleteStateFile();
@@ -121,10 +129,6 @@ public final class ContainerTestUtils {
     } catch (final Exception e) {
       throw new RuntimeException(e);
     }
-  }
-
-  public static void resetAcls(AlternativeKafkaContainer container) {
-    resetAcls(container.getBootstrapServers());
   }
 
   public static void resetAcls(SaslPlaintextEmbeddedKafka kafka) {

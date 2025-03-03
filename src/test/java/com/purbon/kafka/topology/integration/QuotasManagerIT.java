@@ -1,18 +1,32 @@
 package com.purbon.kafka.topology.integration;
 
 import static com.purbon.kafka.topology.CommandLineInterface.BROKERS_OPTION;
-import static com.purbon.kafka.topology.Constants.*;
-import static org.junit.Assert.*;
+import static com.purbon.kafka.topology.Constants.ALLOW_DELETE_BINDINGS;
+import static com.purbon.kafka.topology.Constants.ALLOW_DELETE_QUOTAS;
+import static com.purbon.kafka.topology.Constants.ALLOW_DELETE_TOPICS;
+import static com.purbon.kafka.topology.Constants.CCLOUD_ENV_CONFIG;
+import static com.purbon.kafka.topology.Constants.TOPOLOGY_TOPIC_STATE_FROM_CLUSTER;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import com.purbon.kafka.topology.*;
+import com.purbon.kafka.topology.AccessControlManager;
+import com.purbon.kafka.topology.BackendController;
+import com.purbon.kafka.topology.Configuration;
+import com.purbon.kafka.topology.ExecutionPlan;
 import com.purbon.kafka.topology.actions.Action;
 import com.purbon.kafka.topology.actions.quotas.CreateQuotasAction;
 import com.purbon.kafka.topology.actions.quotas.DeleteQuotasAction;
 import com.purbon.kafka.topology.api.adminclient.TopologyBuilderAdminClient;
-import com.purbon.kafka.topology.integration.containerutils.*;
-import com.purbon.kafka.topology.model.*;
+import com.purbon.kafka.topology.integration.containerutils.ContainerTestUtils;
+import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextEmbeddedKafka;
 import com.purbon.kafka.topology.model.Impl.ProjectImpl;
 import com.purbon.kafka.topology.model.Impl.TopologyImpl;
+import com.purbon.kafka.topology.model.Platform;
+import com.purbon.kafka.topology.model.Project;
+import com.purbon.kafka.topology.model.Topic;
+import com.purbon.kafka.topology.model.Topology;
+import com.purbon.kafka.topology.model.User;
 import com.purbon.kafka.topology.model.users.Consumer;
 import com.purbon.kafka.topology.model.users.Producer;
 import com.purbon.kafka.topology.model.users.Quota;
@@ -22,17 +36,26 @@ import com.purbon.kafka.topology.roles.SimpleAclsProvider;
 import com.purbon.kafka.topology.roles.acls.AclsBindingsBuilder;
 import com.purbon.kafka.topology.utils.TestUtils;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.common.quota.ClientQuotaEntity;
 import org.apache.kafka.common.quota.ClientQuotaFilter;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class QuotasManagerIT {
 
-  private static SaslPlaintextKafkaContainer container;
+  private static SaslPlaintextEmbeddedKafka kafka;
   private static AdminClient kafkaAdminClient;
 
   private TopologyBuilderAdminClient topologyAdminClient;
@@ -49,24 +72,20 @@ public class QuotasManagerIT {
 
   @BeforeClass
   public static void setup() {
-    container =
-        ContainerFactory.fetchSaslKafkaContainer(System.getProperty("cp.version"))
-            .withUser("user1")
-            .withUser("user2")
-            .withUser("user3");
-    container.start();
+    kafka = new SaslPlaintextEmbeddedKafka();
+    kafka.start();
   }
 
   @AfterClass
   public static void teardown() {
-    container.stop();
+    kafka.stop();
   }
 
   @Before
   public void before() throws IOException {
-    kafkaAdminClient = ContainerTestUtils.getSaslJulieAdminClient(container);
+    kafkaAdminClient = ContainerTestUtils.getSaslJulieAdminClient(kafka);
     topologyAdminClient = new TopologyBuilderAdminClient(kafkaAdminClient);
-    ContainerTestUtils.resetAcls(container);
+    ContainerTestUtils.resetAcls(kafka);
     TestUtils.deleteStateFile();
 
     Properties props = new Properties();
@@ -92,15 +111,15 @@ public class QuotasManagerIT {
 
   private Topology woldMSpecPattern() {
     List<Producer> producers = new ArrayList<>();
-    Producer producer = new Producer("User:user1");
+    Producer producer = new Producer("User:" + ContainerTestUtils.USER_1);
     producers.add(producer);
-    Producer producer2 = new Producer("User:user2");
+    Producer producer2 = new Producer("User:" + ContainerTestUtils.USER_2);
     producers.add(producer2);
 
     List<Consumer> consumers = new ArrayList<>();
-    Consumer consumer = new Consumer("User:user1");
+    Consumer consumer = new Consumer("User:" + ContainerTestUtils.USER_1);
     consumers.add(consumer);
-    Consumer consumer2 = new Consumer("User:user2");
+    Consumer consumer2 = new Consumer("User:" + ContainerTestUtils.USER_2);
     consumers.add(consumer2);
 
     Project project = new ProjectImpl("project");
@@ -120,15 +139,15 @@ public class QuotasManagerIT {
 
   private Topology topologyWithQuotas() {
     List<Producer> producers = new ArrayList<>();
-    Producer producer = new Producer("User:user1");
+    Producer producer = new Producer("User:" + ContainerTestUtils.USER_1);
     producers.add(producer);
-    Producer producer2 = new Producer("User:user2");
+    Producer producer2 = new Producer("User:" + ContainerTestUtils.USER_2);
     producers.add(producer2);
 
     List<Consumer> consumers = new ArrayList<>();
-    Consumer consumer = new Consumer("User:user1");
+    Consumer consumer = new Consumer("User:" + ContainerTestUtils.USER_1);
     consumers.add(consumer);
-    Consumer consumer2 = new Consumer("User:user2");
+    Consumer consumer2 = new Consumer("User:" + ContainerTestUtils.USER_2);
     consumers.add(consumer2);
 
     Project project = new ProjectImpl("project");
@@ -141,7 +160,7 @@ public class QuotasManagerIT {
     Platform platform = new Platform();
     Kafka kafka = new Kafka();
     Quota quota = new Quota();
-    quota.setPrincipal("User:user1");
+    quota.setPrincipal("User:" + ContainerTestUtils.USER_1);
     quota.setConsumer_byte_rate(Optional.of(1024d));
     quota.setProducer_byte_rate(Optional.of(1024d));
     quota.setRequest_percentage(Optional.of(80d));
@@ -159,15 +178,15 @@ public class QuotasManagerIT {
 
   private Topology topologyWithoutQuotas() {
     List<Producer> producers = new ArrayList<>();
-    Producer producer = new Producer("User:user1");
+    Producer producer = new Producer("User:" + ContainerTestUtils.USER_1);
     producers.add(producer);
-    Producer producer2 = new Producer("User:user2");
+    Producer producer2 = new Producer("User:" + ContainerTestUtils.USER_2);
     producers.add(producer2);
 
     List<Consumer> consumers = new ArrayList<>();
-    Consumer consumer = new Consumer("User:user1");
+    Consumer consumer = new Consumer("User:" + ContainerTestUtils.USER_1);
     consumers.add(consumer);
-    Consumer consumer2 = new Consumer("User:user2");
+    Consumer consumer2 = new Consumer("User:" + ContainerTestUtils.USER_2);
     consumers.add(consumer2);
 
     Project project = new ProjectImpl("project");

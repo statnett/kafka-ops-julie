@@ -1,10 +1,12 @@
 package com.purbon.kafka.topology.integration;
 
-import static com.purbon.kafka.topology.CommandLineInterface.*;
+import static com.purbon.kafka.topology.CommandLineInterface.BROKERS_OPTION;
+import static com.purbon.kafka.topology.CommandLineInterface.CLIENT_CONFIG_OPTION;
+import static com.purbon.kafka.topology.CommandLineInterface.DRY_RUN_OPTION;
+import static com.purbon.kafka.topology.CommandLineInterface.QUIET_OPTION;
 
 import com.purbon.kafka.topology.JulieOps;
-import com.purbon.kafka.topology.integration.containerutils.ContainerFactory;
-import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextKafkaContainer;
+import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextEmbeddedKafka;
 import com.purbon.kafka.topology.utils.TestUtils;
 import java.io.IOException;
 import java.util.HashMap;
@@ -15,17 +17,17 @@ import org.junit.Test;
 
 public class JulieOpsIT {
 
-  private static SaslPlaintextKafkaContainer container;
+  private static SaslPlaintextEmbeddedKafka kafka;
 
   @BeforeClass
   public static void setup() {
-    container = ContainerFactory.fetchSaslKafkaContainer(System.getProperty("cp.version"));
-    container.start();
+    kafka = new SaslPlaintextEmbeddedKafka();
+    kafka.start();
   }
 
   @AfterClass
   public static void teardown() {
-    container.stop();
+    kafka.stop();
   }
 
   @Test(expected = IOException.class)
@@ -35,7 +37,7 @@ public class JulieOpsIT {
     String clientConfigFile = TestUtils.getResourceFilename("/wrong-client-config.properties");
 
     Map<String, String> config = new HashMap<>();
-    config.put(BROKERS_OPTION, container.getBootstrapServers());
+    config.put(BROKERS_OPTION, kafka.getBootstrapServers());
     config.put(DRY_RUN_OPTION, "false");
     config.put(QUIET_OPTION, "true");
     config.put(CLIENT_CONFIG_OPTION, clientConfigFile);
@@ -50,7 +52,7 @@ public class JulieOpsIT {
     String clientConfigFile = TestUtils.getResourceFilename("/client-config.properties");
 
     Map<String, String> config = new HashMap<>();
-    config.put(BROKERS_OPTION, container.getBootstrapServers());
+    config.put(BROKERS_OPTION, kafka.getBootstrapServers());
     config.put(DRY_RUN_OPTION, "false");
     config.put(QUIET_OPTION, "true");
     config.put(CLIENT_CONFIG_OPTION, clientConfigFile);

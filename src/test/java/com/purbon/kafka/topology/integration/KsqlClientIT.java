@@ -6,9 +6,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.purbon.kafka.topology.api.ksql.KsqlApiClient;
 import com.purbon.kafka.topology.api.ksql.KsqlClientConfig;
-import com.purbon.kafka.topology.integration.containerutils.ContainerFactory;
 import com.purbon.kafka.topology.integration.containerutils.KsqlContainer;
-import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextKafkaContainer;
+import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextEmbeddedKafka;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -18,20 +17,20 @@ import org.junit.Test;
 
 public class KsqlClientIT {
 
-  static SaslPlaintextKafkaContainer container;
+  static SaslPlaintextEmbeddedKafka kafka;
   static KsqlContainer ksqlContainer;
 
   @After
   public void after() {
     ksqlContainer.stop();
-    container.stop();
+    kafka.stop();
   }
 
   @Before
   public void configure() {
-    container = ContainerFactory.fetchSaslKafkaContainer(System.getProperty("cp.version"));
-    container.start();
-    ksqlContainer = new KsqlContainer(container);
+    kafka = new SaslPlaintextEmbeddedKafka();
+    kafka.start();
+    ksqlContainer = new KsqlContainer(kafka);
     ksqlContainer.start();
   }
 
