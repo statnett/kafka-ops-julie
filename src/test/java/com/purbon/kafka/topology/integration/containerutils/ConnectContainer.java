@@ -25,9 +25,10 @@ public class ConnectContainer extends GenericContainer<ConnectContainer> {
       String keystore) {
     super(dockerImageName);
 
+    withAccessToHost(true);
     withExposedPorts(CONNECT_PORT, CONNECT_SSL_PORT);
 
-    withEnv("CONNECT_BOOTSTRAP_SERVERS", kafka.getBootstrapServers());
+    withEnv("CONNECT_BOOTSTRAP_SERVERS", kafka.getBootstrapServersForTestContainers());
     withEnv("CONNECT_REST_PORT", String.valueOf(CONNECT_SSL_PORT));
     withEnv("CONNECT_GROUP_ID", "kc");
     withEnv("CONNECT_CONFIG_STORAGE_TOPIC", "docker-kafka-connect-cp-configs");

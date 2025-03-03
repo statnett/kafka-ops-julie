@@ -272,7 +272,7 @@ public class QuotasManagerIT {
     plan.run();
 
     List<Quota> quotas = new ArrayList<>();
-    Quota quota = new Quota("user1", Optional.empty(), Optional.of(20.0));
+    Quota quota = new Quota(ContainerTestUtils.USER_1, Optional.empty(), Optional.of(20.0));
     quotas.add(quota);
 
     topologyAdminClient.assignQuotasPrincipal(quotas);
@@ -288,7 +288,7 @@ public class QuotasManagerIT {
     plan.run();
 
     List<Quota> quotas = new ArrayList<>();
-    Quota quota = new Quota("user3", Optional.empty(), Optional.of(20.0));
+    Quota quota = new Quota(ContainerTestUtils.USER_3, Optional.empty(), Optional.of(20.0));
     quotas.add(quota);
 
     topologyAdminClient.assignQuotasPrincipal(quotas);
@@ -296,7 +296,7 @@ public class QuotasManagerIT {
     assertTrue(verifyQuotasOnlyUser(quotas).stream().allMatch(f -> f.equals(true)));
 
     // Remove quota
-    topologyAdminClient.removeQuotasPrincipal(List.of(new User("user3")));
+    topologyAdminClient.removeQuotasPrincipal(List.of(new User(ContainerTestUtils.USER_3)));
     assertTrue(verifyQuotasOnlyUser(quotas).stream().allMatch(f -> f.equals(false)));
   }
 
@@ -309,14 +309,14 @@ public class QuotasManagerIT {
     plan.run();
 
     List<Quota> quotas = new ArrayList<>();
-    Quota quota = new Quota("user1", Optional.empty(), Optional.of(20.0));
+    Quota quota = new Quota(ContainerTestUtils.USER_1, Optional.empty(), Optional.of(20.0));
     quotas.add(quota);
     topologyAdminClient.assignQuotasPrincipal(quotas);
     // Verify Quotas
     assertTrue(verifyQuotasOnlyUser(quotas).stream().allMatch(f -> f.equals(true)));
 
     // change value
-    Quota quotaUpdate = new Quota("user1", Optional.of(150.0), Optional.of(250.0));
+    Quota quotaUpdate = new Quota(ContainerTestUtils.USER_1, Optional.of(150.0), Optional.of(250.0));
     quotas.clear();
     quotas.add(quotaUpdate);
     topologyAdminClient.assignQuotasPrincipal(quotas);
@@ -332,15 +332,15 @@ public class QuotasManagerIT {
     plan.run();
 
     List<Quota> quotas = new ArrayList<>();
-    Quota quota = new Quota("user1", Optional.empty(), Optional.of(20.0));
+    Quota quota = new Quota(ContainerTestUtils.USER_1, Optional.empty(), Optional.of(20.0));
     quotas.add(quota);
-    Quota quota2 = new Quota("user2", Optional.of(300.0), Optional.of(100.0), Optional.of(50.0));
+    Quota quota2 = new Quota(ContainerTestUtils.USER_2, Optional.of(300.0), Optional.of(100.0), Optional.of(50.0));
     quotas.add(quota2);
     topologyAdminClient.assignQuotasPrincipal(quotas);
     // Verify Quotas
     assertTrue(verifyQuotasOnlyUser(quotas).stream().allMatch(f -> f.equals(true)));
 
-    topologyAdminClient.removeQuotasPrincipal(List.of(new User("user2")));
+    topologyAdminClient.removeQuotasPrincipal(List.of(new User(ContainerTestUtils.USER_2)));
     assertTrue(verifyQuotasOnlyUser(List.of(quota)).stream().allMatch(f -> f.equals(true)));
 
     assertTrue(verifyQuotasOnlyUser(List.of(quota2)).stream().allMatch(f -> f.equals(false)));

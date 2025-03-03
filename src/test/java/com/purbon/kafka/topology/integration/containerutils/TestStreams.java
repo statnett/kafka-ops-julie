@@ -23,11 +23,11 @@ public final class TestStreams implements Closeable {
   }
 
   public static TestStreams create(
-      final SaslPlaintextEmbeddedKafka container,
+      final SaslPlaintextEmbeddedKafka kafka,
       final String usernameAndPassword,
       final String applicationId,
       Topology topology) {
-    return create(container.getBootstrapServers(), usernameAndPassword, applicationId, topology);
+    return create(kafka.getBootstrapServers(), usernameAndPassword, applicationId, topology);
   }
 
   private static TestStreams create(
