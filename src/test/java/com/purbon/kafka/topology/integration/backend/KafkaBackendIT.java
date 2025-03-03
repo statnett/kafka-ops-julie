@@ -34,7 +34,7 @@ public class KafkaBackendIT {
 
     kafka = new SaslPlaintextEmbeddedKafka();
     kafka.start();
-    ContainerTestUtils.resetAcls(kafka.getBootstrapServers());
+    ContainerTestUtils.resetAcls(kafka);
 
     props = new Properties();
     props.put(JULIE_INSTANCE_ID, "1234");

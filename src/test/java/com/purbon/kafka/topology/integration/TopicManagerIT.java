@@ -47,7 +47,7 @@ public class TopicManagerIT {
   public static void setup() {
     kafka = new SaslPlaintextEmbeddedKafka();
     kafka.start();
-    ContainerTestUtils.resetAcls(kafka.getBootstrapServers());
+    ContainerTestUtils.resetAcls(kafka);
   }
 
   @AfterClass
@@ -59,7 +59,7 @@ public class TopicManagerIT {
   public void before() throws IOException {
     Files.deleteIfExists(Paths.get(".cluster-state"));
 
-    kafkaAdminClient = ContainerTestUtils.getSaslJulieAdminClient(kafka.getBootstrapServers());
+    kafkaAdminClient = ContainerTestUtils.getSaslJulieAdminClient(kafka);
     TopologyBuilderAdminClient adminClient = new TopologyBuilderAdminClient(kafkaAdminClient);
 
     final SchemaRegistryClient schemaRegistryClient = new MockSchemaRegistryClient();
