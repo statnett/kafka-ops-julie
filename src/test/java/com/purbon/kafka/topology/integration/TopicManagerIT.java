@@ -1,20 +1,15 @@
 package com.purbon.kafka.topology.integration;
 
-import static com.purbon.kafka.topology.CommandLineInterface.*;
+import static com.purbon.kafka.topology.CommandLineInterface.BROKERS_OPTION;
 import static com.purbon.kafka.topology.Constants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import com.purbon.kafka.topology.BackendController;
-import com.purbon.kafka.topology.Configuration;
-import com.purbon.kafka.topology.ExecutionPlan;
-import com.purbon.kafka.topology.TestTopologyBuilder;
-import com.purbon.kafka.topology.TopicManager;
+import com.purbon.kafka.topology.*;
 import com.purbon.kafka.topology.api.adminclient.TopologyBuilderAdminClient;
 import com.purbon.kafka.topology.exceptions.RemoteValidationException;
-import com.purbon.kafka.topology.integration.containerutils.ContainerFactory;
 import com.purbon.kafka.topology.integration.containerutils.ContainerTestUtils;
-import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextKafkaContainer;
+import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextEmbeddedKafka;
 import com.purbon.kafka.topology.model.Impl.ProjectImpl;
 import com.purbon.kafka.topology.model.Impl.TopologyImpl;
 import com.purbon.kafka.topology.model.Project;
@@ -26,15 +21,7 @@ import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -42,18 +29,13 @@ import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.config.ConfigResource.Type;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
 public class TopicManagerIT {
 
-  private static SaslPlaintextKafkaContainer container;
+  private static SaslPlaintextEmbeddedKafka kafka;
   private TopicManager topicManager;
   private AdminClient kafkaAdminClient;
 
@@ -63,21 +45,21 @@ public class TopicManagerIT {
 
   @BeforeClass
   public static void setup() {
-    container = ContainerFactory.fetchSaslKafkaContainer(System.getProperty("cp.version"));
-    container.start();
-    ContainerTestUtils.resetAcls(container);
+    kafka = new SaslPlaintextEmbeddedKafka();
+    kafka.start();
+    ContainerTestUtils.resetAcls(kafka.getBootstrapServers());
   }
 
   @AfterClass
   public static void teardown() {
-    container.stop();
+    kafka.stop();
   }
 
   @Before
   public void before() throws IOException {
     Files.deleteIfExists(Paths.get(".cluster-state"));
 
-    kafkaAdminClient = ContainerTestUtils.getSaslJulieAdminClient(container);
+    kafkaAdminClient = ContainerTestUtils.getSaslJulieAdminClient(kafka.getBootstrapServers());
     TopologyBuilderAdminClient adminClient = new TopologyBuilderAdminClient(kafkaAdminClient);
 
     final SchemaRegistryClient schemaRegistryClient = new MockSchemaRegistryClient();
