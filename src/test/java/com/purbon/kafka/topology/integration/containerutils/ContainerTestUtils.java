@@ -117,7 +117,11 @@ public final class ContainerTestUtils {
   }
 
   public static void resetAcls(AlternativeKafkaContainer container) {
-    AdminClient admin = getSaslSuperUserAdminClient(container.getBootstrapServers());
+    resetAcls(container.getBootstrapServers());
+  }
+
+  public static void resetAcls(String bootstrapServers) {
+    AdminClient admin = getSaslSuperUserAdminClient(bootstrapServers);
     clearAllAcls(admin);
     setupJulieAcls(admin);
   }

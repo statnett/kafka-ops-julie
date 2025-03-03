@@ -277,6 +277,7 @@
     <jedis.version>5.2.0</jedis.version>
     <jinjava.version>2.7.4</jinjava.version>
     <junit.version>4.13.2</junit.version>
+    <k3a.embedded.version>0.5.8+3.9.0</k3a.embedded.version>
     <ksqldb.client.version>7.9.0</ksqldb.client.version>
     <ksqldb.version>0.27.1</ksqldb.version>
     <log4j.version>2.24.3</log4j.version>
@@ -522,6 +523,12 @@
       <groupId>org.wiremock</groupId>
       <artifactId>wiremock</artifactId>
       <version>3.12.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>no.shhsoft</groupId>
+      <artifactId>k3a-embedded</artifactId>
+      <version>${k3a.embedded.version}</version>
       <scope>test</scope>
     </dependency>
 

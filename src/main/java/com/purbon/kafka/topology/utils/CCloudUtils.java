@@ -54,13 +54,13 @@ public class CCloudUtils {
             + principal.getPrincipalType().name()
             + ":"
             + numericServiceAccountId);
-      return TopologyAclBinding.build(
-          binding.getResourceType(),
-          binding.getResourceName(),
-          binding.getHost(),
-          binding.getOperation(),
-          principal.toMappedPrincipalString(numericServiceAccountId),
-          binding.getPattern());
+    return TopologyAclBinding.build(
+        binding.getResourceType(),
+        binding.getResourceName(),
+        binding.getHost(),
+        binding.getOperation(),
+        principal.toMappedPrincipalString(numericServiceAccountId),
+        binding.getPattern());
   }
 
   public Map<String, Long> initializeLookupTable(CCloudApi cli) throws IOException {
