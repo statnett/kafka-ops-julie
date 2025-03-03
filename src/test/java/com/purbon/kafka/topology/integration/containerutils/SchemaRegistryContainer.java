@@ -21,7 +21,9 @@ public class SchemaRegistryContainer extends GenericContainer<SchemaRegistryCont
     withExposedPorts(SR_PORT);
     withEnv("SCHEMA_REGISTRY_HOST_NAME", "schema-registry");
     withEnv("SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL", "SASL_PLAINTEXT");
-    withEnv("SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS", kafka.getBootstrapServers());
+    withEnv(
+        "SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS",
+        kafka.getBootstrapServersForTestContainers());
     withEnv("SCHEMA_REGISTRY_KAFKASTORE_SASL_JAAS_CONFIG", saslConfig());
     withEnv("SCHEMA_REGISTRY_KAFKASTORE_SASL_MECHANISM", "PLAIN");
   }

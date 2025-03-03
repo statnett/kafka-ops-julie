@@ -32,7 +32,6 @@ public final class ContainerTestUtils {
   public static final String DEFAULT_SUPER_PASSWORD = "kafka";
   public static final String JULIE_USERNAME = "julie";
   public static final String JULIE_PASSWORD = "julie-secret";
-  public static final String UNKNOWN_USERNAME = "unknown-user";
   public static final String NO_ACCESS_USERNAME = "no-access-user";
   public static final String PRODUCER_USERNAME = "producer";
   public static final String CONSUMER_USERNAME = "consumer";

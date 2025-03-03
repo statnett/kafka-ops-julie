@@ -17,6 +17,7 @@ public final class AclProducerAndConsumerIT {
 
   private static final String TOPIC = "producer-and-consumer-test-topic";
   private static final String OTHER_TOPIC = "other-" + TOPIC;
+  private static final String UNKNOWN_USERNAME = "unknown-user";
   private static final String CONSUMER_GROUP = "producer-and-consumer-test-consumer-group";
   private static SaslPlaintextEmbeddedKafka kafka;
 
@@ -36,8 +37,7 @@ public final class AclProducerAndConsumerIT {
 
   @Test(expected = SaslAuthenticationException.class)
   public void shouldNotProduceWhenUnknownUser() {
-    try (final TestProducer producer =
-        TestProducer.create(kafka, ContainerTestUtils.UNKNOWN_USERNAME)) {
+    try (final TestProducer producer = TestProducer.create(kafka, UNKNOWN_USERNAME)) {
       producer.produce(TOPIC, "foo");
     }
   }
@@ -45,7 +45,7 @@ public final class AclProducerAndConsumerIT {
   @Test(expected = SaslAuthenticationException.class)
   public void shouldNotConsumeWhenUnknownUser() {
     try (final TestConsumer consumer =
-        TestConsumer.create(kafka, ContainerTestUtils.UNKNOWN_USERNAME, CONSUMER_GROUP)) {
+        TestConsumer.create(kafka, UNKNOWN_USERNAME, CONSUMER_GROUP)) {
       consumer.consumeForAWhile(TOPIC, null);
     }
   }

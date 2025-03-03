@@ -21,7 +21,7 @@ public class KsqlContainer extends GenericContainer<KsqlContainer> {
     waitingFor(Wait.forLogMessage(".+ INFO Server up and running .+", 1));
     // withEnv("KSQL_KSQL_SERVICE_ID", "confluent_ksql_streams_01");
     withEnv("KSQL_SECURITY_PROTOCOL", "SASL_PLAINTEXT");
-    withEnv("KSQL_BOOTSTRAP_SERVERS", kafka.getBootstrapServers());
+    withEnv("KSQL_BOOTSTRAP_SERVERS", kafka.getBootstrapServersForTestContainers());
     withEnv("KSQL_SASL_JAAS_CONFIG", saslConfig());
     withEnv("KSQL_SASL_MECHANISM", "PLAIN");
     withEnv("KSQL_LISTENERS", "http://0.0.0.0:8088");
