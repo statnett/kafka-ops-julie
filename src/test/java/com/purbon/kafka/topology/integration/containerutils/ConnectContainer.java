@@ -65,8 +65,6 @@ public class ConnectContainer extends GenericContainer<ConnectContainer> {
         .withClasspathResourceMapping(
             keystore, "/etc/kafka-connect/secrets/server.keystore", BindMode.READ_ONLY);
 
-    withNetworkAliases("connect");
-
     waitingFor((new HttpWaitStrategy()).forPath("/").forPort(CONNECT_PORT));
   }
 
