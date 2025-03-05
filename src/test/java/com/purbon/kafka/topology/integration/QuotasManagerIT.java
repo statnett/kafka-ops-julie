@@ -316,7 +316,8 @@ public class QuotasManagerIT {
     assertTrue(verifyQuotasOnlyUser(quotas).stream().allMatch(f -> f.equals(true)));
 
     // change value
-    Quota quotaUpdate = new Quota(ContainerTestUtils.USER_1, Optional.of(150.0), Optional.of(250.0));
+    Quota quotaUpdate =
+        new Quota(ContainerTestUtils.USER_1, Optional.of(150.0), Optional.of(250.0));
     quotas.clear();
     quotas.add(quotaUpdate);
     topologyAdminClient.assignQuotasPrincipal(quotas);
@@ -334,7 +335,9 @@ public class QuotasManagerIT {
     List<Quota> quotas = new ArrayList<>();
     Quota quota = new Quota(ContainerTestUtils.USER_1, Optional.empty(), Optional.of(20.0));
     quotas.add(quota);
-    Quota quota2 = new Quota(ContainerTestUtils.USER_2, Optional.of(300.0), Optional.of(100.0), Optional.of(50.0));
+    Quota quota2 =
+        new Quota(
+            ContainerTestUtils.USER_2, Optional.of(300.0), Optional.of(100.0), Optional.of(50.0));
     quotas.add(quota2);
     topologyAdminClient.assignQuotasPrincipal(quotas);
     // Verify Quotas
