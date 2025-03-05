@@ -30,6 +30,14 @@ public final class TestStreams implements Closeable {
     return create(container.getBootstrapServers(), usernameAndPassword, applicationId, topology);
   }
 
+  public static TestStreams create(
+      final SaslPlaintextEmbeddedKafka kafka,
+      final String usernameAndPassword,
+      final String applicationId,
+      Topology topology) {
+    return create(kafka.getBootstrapServers(), usernameAndPassword, applicationId, topology);
+  }
+
   private static TestStreams create(
       final String bootstrapServers,
       final String usernameAndPassword,

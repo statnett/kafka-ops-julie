@@ -24,6 +24,11 @@ public final class TestProducer implements Closeable {
     return create(container.getBootstrapServers(), usernameAndPassword);
   }
 
+  public static TestProducer create(
+      final SaslPlaintextEmbeddedKafka kafka, final String usernameAndPassword) {
+    return create(kafka.getBootstrapServers(), usernameAndPassword);
+  }
+
   private static TestProducer create(
       final String bootstrapServers, final String usernameAndPassword) {
     final Map<String, Object> config =

@@ -4,12 +4,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-import com.purbon.kafka.topology.integration.containerutils.ContainerFactory;
-import com.purbon.kafka.topology.integration.containerutils.ContainerTestUtils;
-import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextKafkaContainer;
-import com.purbon.kafka.topology.integration.containerutils.TestConsumer;
-import com.purbon.kafka.topology.integration.containerutils.TestProducer;
-import com.purbon.kafka.topology.integration.containerutils.TestStreams;
+import com.purbon.kafka.topology.integration.containerutils.*;
 import java.util.Set;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.KStream;
@@ -26,30 +21,25 @@ public final class StreamsAclIT {
   public static final String STREAMS_APP_ID = "streams-appid";
   private static final String CONSUMER_GROUP = "streams-consumer-test-consumer-group";
 
-  private static SaslPlaintextKafkaContainer container;
+  private static SaslPlaintextEmbeddedKafka kafka;
 
   @BeforeClass
   public static void beforeClass() {
-    container =
-        ContainerFactory.fetchSaslKafkaContainer(System.getProperty("cp.version"))
-            .withUser(ContainerTestUtils.PRODUCER_USERNAME)
-            .withUser(ContainerTestUtils.CONSUMER_USERNAME)
-            .withUser(ContainerTestUtils.STREAMS_USERNAME);
-    container.start();
-    ContainerTestUtils.resetAcls(container);
-    ContainerTestUtils.populateAcls(
-        container, "/streams-acl-it.yaml", "/integration-tests.properties");
+    kafka = new SaslPlaintextEmbeddedKafka();
+    kafka.start();
+    ContainerTestUtils.resetAcls(kafka);
+    ContainerTestUtils.populateAcls(kafka, "/streams-acl-it.yaml", "/integration-tests.properties");
   }
 
   @AfterClass
   public static void afterClass() {
-    container.stop();
+    kafka.stop();
   }
 
   @Test
   public void shouldNotProduceWithoutPermission() {
     try (final TestProducer producer =
-        TestProducer.create(container, ContainerTestUtils.PRODUCER_USERNAME)) {
+        TestProducer.create(kafka, ContainerTestUtils.PRODUCER_USERNAME)) {
       producer.produceSomeStrings(TOPIC_A);
     }
     final StreamsBuilder builder = new StreamsBuilder();
@@ -58,7 +48,7 @@ public final class StreamsAclIT {
 
     final TestStreams streams =
         TestStreams.create(
-            container, ContainerTestUtils.STREAMS_USERNAME, STREAMS_APP_ID, builder.build());
+            kafka, ContainerTestUtils.STREAMS_USERNAME, STREAMS_APP_ID, builder.build());
 
     streams.start();
 
@@ -73,7 +63,7 @@ public final class StreamsAclIT {
   public void testSimpleStream() {
     Set<String> values;
     try (final TestProducer producer =
-        TestProducer.create(container, ContainerTestUtils.PRODUCER_USERNAME)) {
+        TestProducer.create(kafka, ContainerTestUtils.PRODUCER_USERNAME)) {
       values = producer.produceSomeStrings(TOPIC_A);
     }
 
@@ -83,11 +73,11 @@ public final class StreamsAclIT {
 
     final TestStreams streams =
         TestStreams.create(
-            container, ContainerTestUtils.STREAMS_USERNAME, STREAMS_APP_ID, builder.build());
+            kafka, ContainerTestUtils.STREAMS_USERNAME, STREAMS_APP_ID, builder.build());
     streams.start();
 
     try (final TestConsumer consumer =
-        TestConsumer.create(container, ContainerTestUtils.CONSUMER_USERNAME, CONSUMER_GROUP)) {
+        TestConsumer.create(kafka, ContainerTestUtils.CONSUMER_USERNAME, CONSUMER_GROUP)) {
       consumer.consumeForAWhile(
           TOPIC_B,
           (key, value) -> {
@@ -104,7 +94,7 @@ public final class StreamsAclIT {
   public void testStreamWithInternalTopics() {
     final Set<String> values;
     try (final TestProducer producer =
-        TestProducer.create(container, ContainerTestUtils.PRODUCER_USERNAME)) {
+        TestProducer.create(kafka, ContainerTestUtils.PRODUCER_USERNAME)) {
       values = producer.produceSomeStrings(TOPIC_A);
     }
 
@@ -121,11 +111,11 @@ public final class StreamsAclIT {
 
     final TestStreams streams =
         TestStreams.create(
-            container, ContainerTestUtils.STREAMS_USERNAME, STREAMS_APP_ID, builder.build());
+            kafka, ContainerTestUtils.STREAMS_USERNAME, STREAMS_APP_ID, builder.build());
     streams.start();
 
     try (final TestConsumer consumer =
-        TestConsumer.create(container, ContainerTestUtils.CONSUMER_USERNAME, CONSUMER_GROUP)) {
+        TestConsumer.create(kafka, ContainerTestUtils.CONSUMER_USERNAME, CONSUMER_GROUP)) {
       consumer.consumeForAWhile(
           TOPIC_B,
           (key, value) -> {
