@@ -10,8 +10,7 @@ import com.purbon.kafka.topology.ExecutionPlan;
 import com.purbon.kafka.topology.KafkaConnectArtefactManager;
 import com.purbon.kafka.topology.api.connect.KConnectApiClient;
 import com.purbon.kafka.topology.integration.containerutils.ConnectContainer;
-import com.purbon.kafka.topology.integration.containerutils.ContainerFactory;
-import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextKafkaContainer;
+import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextEmbeddedKafka;
 import com.purbon.kafka.topology.model.PlanMap;
 import com.purbon.kafka.topology.model.Topology;
 import com.purbon.kafka.topology.serdes.TopologySerdes;
@@ -29,7 +28,7 @@ import org.junit.Test;
 
 public class ConnectorManagerIT {
 
-  static SaslPlaintextKafkaContainer container;
+  static SaslPlaintextEmbeddedKafka kafka;
   static ConnectContainer connectContainer;
 
   private KConnectApiClient client;
@@ -43,14 +42,14 @@ public class ConnectorManagerIT {
   @After
   public void after() {
     connectContainer.stop();
-    container.stop();
+    kafka.stop();
   }
 
   @Before
   public void configure() throws IOException {
-    container = ContainerFactory.fetchSaslKafkaContainer(System.getProperty("cp.version"));
-    container.start();
-    connectContainer = new ConnectContainer(container, TRUSTSTORE_JKS, KEYSTORE_JKS);
+    kafka = new SaslPlaintextEmbeddedKafka();
+    kafka.start();
+    connectContainer = new ConnectContainer(kafka, TRUSTSTORE_JKS, KEYSTORE_JKS);
     connectContainer.start();
 
     Files.deleteIfExists(Paths.get(".cluster-state"));

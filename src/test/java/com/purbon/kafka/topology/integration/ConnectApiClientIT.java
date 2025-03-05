@@ -8,8 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.purbon.kafka.topology.Configuration;
 import com.purbon.kafka.topology.api.connect.KConnectApiClient;
 import com.purbon.kafka.topology.integration.containerutils.ConnectContainer;
-import com.purbon.kafka.topology.integration.containerutils.ContainerFactory;
-import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextKafkaContainer;
+import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextEmbeddedKafka;
 import com.purbon.kafka.topology.model.Artefact;
 import com.purbon.kafka.topology.model.artefact.KafkaConnectArtefact;
 import java.io.IOException;
@@ -24,7 +23,7 @@ import org.junit.Test;
 
 public class ConnectApiClientIT {
 
-  static SaslPlaintextKafkaContainer container;
+  static SaslPlaintextEmbeddedKafka kafka;
   static ConnectContainer connectContainer;
 
   KConnectApiClient client;
@@ -43,16 +42,16 @@ public class ConnectApiClientIT {
 
   @BeforeClass
   public static void setup() {
-    container = ContainerFactory.fetchSaslKafkaContainer(System.getProperty("cp.version"));
-    container.start();
-    connectContainer = new ConnectContainer(container, TRUSTSTORE_JKS, KEYSTORE_JKS);
+    kafka = new SaslPlaintextEmbeddedKafka();
+    kafka.start();
+    connectContainer = new ConnectContainer(kafka, TRUSTSTORE_JKS, KEYSTORE_JKS);
     connectContainer.start();
   }
 
   @AfterClass
   public static void after() {
     connectContainer.stop();
-    container.stop();
+    kafka.stop();
   }
 
   @Before

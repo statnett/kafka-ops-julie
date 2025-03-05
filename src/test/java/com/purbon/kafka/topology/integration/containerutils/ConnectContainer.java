@@ -14,21 +14,20 @@ public class ConnectContainer extends GenericContainer<ConnectContainer> {
   private static int CONNECT_PORT = 8083;
   private static int CONNECT_SSL_PORT = 8084;
 
-  public ConnectContainer(AlternativeKafkaContainer kafka, String truststore, String keystore) {
+  public ConnectContainer(SaslPlaintextEmbeddedKafka kafka, String truststore, String keystore) {
     this(DEFAULT_IMAGE, kafka, truststore, keystore);
   }
 
   public ConnectContainer(
       final DockerImageName dockerImageName,
-      AlternativeKafkaContainer kafka,
+      SaslPlaintextEmbeddedKafka kafka,
       String truststore,
       String keystore) {
     super(dockerImageName);
 
-    String kafkaHost = kafka.getNetworkAliases().get(1);
     withExposedPorts(CONNECT_PORT, CONNECT_SSL_PORT);
 
-    withEnv("CONNECT_BOOTSTRAP_SERVERS", "SASL_PLAINTEXT://" + kafkaHost + ":" + 9091);
+    withEnv("CONNECT_BOOTSTRAP_SERVERS", kafka.getBootstrapServersForTestContainers());
     withEnv("CONNECT_REST_PORT", String.valueOf(CONNECT_SSL_PORT));
     withEnv("CONNECT_GROUP_ID", "kc");
     withEnv("CONNECT_CONFIG_STORAGE_TOPIC", "docker-kafka-connect-cp-configs");
@@ -66,7 +65,6 @@ public class ConnectContainer extends GenericContainer<ConnectContainer> {
             keystore, "/etc/kafka-connect/secrets/server.keystore", BindMode.READ_ONLY);
 
     withNetworkAliases("connect");
-    withNetwork(kafka.getNetwork());
 
     waitingFor((new HttpWaitStrategy()).forPath("/").forPort(CONNECT_PORT));
   }
