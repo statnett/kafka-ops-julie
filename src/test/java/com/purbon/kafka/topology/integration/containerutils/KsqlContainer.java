@@ -25,7 +25,7 @@ public class KsqlContainer extends GenericContainer<KsqlContainer> {
     withEnv("KSQL_BOOTSTRAP_SERVERS", "SASL_PLAINTEXT://" + kafkaHost + ":" + 9091);
     withEnv("KSQL_SASL_JAAS_CONFIG", saslConfig());
     withEnv("KSQL_SASL_MECHANISM", "PLAIN");
-    withEnv("KSQL_LISTENERS", "http://0.0.0.0:8088");
+    withEnv("KSQL_LISTENERS", "http://0.0.0.0:" + KSQL_PORT);
     withEnv("KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE", "true");
     withEnv("KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE", "true");
     withNetwork(kafka.getNetwork());
@@ -34,9 +34,9 @@ public class KsqlContainer extends GenericContainer<KsqlContainer> {
   private String saslConfig() {
     StringBuilder sb = new StringBuilder();
     sb.append("org.apache.kafka.common.security.plain.PlainLoginModule required username=\"");
-    sb.append("kafka");
+    sb.append(ContainerTestUtils.DEFAULT_SUPER_USERNAME);
     sb.append("\" password=\"");
-    sb.append("kafka");
+    sb.append(ContainerTestUtils.DEFAULT_SUPER_PASSWORD);
     sb.append("\";");
     return sb.toString();
   }

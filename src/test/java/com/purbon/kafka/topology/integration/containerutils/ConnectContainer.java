@@ -74,9 +74,9 @@ public class ConnectContainer extends GenericContainer<ConnectContainer> {
   private String saslConfig() {
     StringBuilder sb = new StringBuilder();
     sb.append("org.apache.kafka.common.security.plain.PlainLoginModule required username=\"");
-    sb.append("kafka");
+    sb.append(ContainerTestUtils.DEFAULT_SUPER_USERNAME);
     sb.append("\" password=\"");
-    sb.append("kafka");
+    sb.append(ContainerTestUtils.DEFAULT_SUPER_PASSWORD);
     sb.append("\";");
     return sb.toString();
   }
