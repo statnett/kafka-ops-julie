@@ -38,13 +38,6 @@ public final class TestConsumer implements Closeable {
     return create(container.getBootstrapServers(), usernameAndPassword, consumerGroup);
   }
 
-  public static TestConsumer create(
-      final SaslPlaintextEmbeddedKafka kafka,
-      final String usernameAndPassword,
-      final String consumerGroup) {
-    return create(kafka.getBootstrapServers(), usernameAndPassword, consumerGroup);
-  }
-
   private static TestConsumer create(
       final String bootstrapServers, final String usernameAndPassword, final String consumerGroup) {
     final Map<String, Object> config =

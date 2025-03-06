@@ -81,20 +81,8 @@ public final class ContainerTestUtils {
       final SaslPlaintextKafkaContainer container,
       final String topologyResource,
       final String configResource) {
-    populateAcls(container.getBootstrapServers(), topologyResource, configResource);
-  }
-
-  public static void populateAcls(
-      final SaslPlaintextEmbeddedKafka kafka,
-      final String topologyResource,
-      final String configResource) {
-    populateAcls(kafka.getBootstrapServers(), topologyResource, configResource);
-  }
-
-  private static void populateAcls(
-      final String bootstrapServers, final String topologyResource, final String configResource) {
     TestUtils.deleteStateFile();
-    try (final AdminClient kafkaAdminClient = getSaslJulieAdminClient(bootstrapServers)) {
+    try (final AdminClient kafkaAdminClient = getSaslJulieAdminClient(container)) {
       final JulieOps julieOps =
           getKafkaTopologyBuilder(kafkaAdminClient, topologyResource, configResource);
       try {
