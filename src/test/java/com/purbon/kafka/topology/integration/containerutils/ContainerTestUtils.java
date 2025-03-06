@@ -39,10 +39,6 @@ public final class ContainerTestUtils {
     return getSaslJulieAdminClient(container.getBootstrapServers());
   }
 
-  public static AdminClient getSaslJulieAdminClient(final SaslPlaintextEmbeddedKafka kafka) {
-    return getSaslJulieAdminClient(kafka.getBootstrapServers());
-  }
-
   public static AdminClient getSaslJulieAdminClient(final String boostrapServers) {
     return AdminClient.create(getSaslConfig(boostrapServers, JULIE_USERNAME, JULIE_PASSWORD));
   }
@@ -124,15 +120,7 @@ public final class ContainerTestUtils {
   }
 
   public static void resetAcls(AlternativeKafkaContainer container) {
-    resetAcls(container.getBootstrapServers());
-  }
-
-  public static void resetAcls(SaslPlaintextEmbeddedKafka kafka) {
-    resetAcls(kafka.getBootstrapServers());
-  }
-
-  private static void resetAcls(String bootstrapServers) {
-    AdminClient admin = getSaslSuperUserAdminClient(bootstrapServers);
+    AdminClient admin = getSaslSuperUserAdminClient(container.getBootstrapServers());
     clearAllAcls(admin);
     setupJulieAcls(admin);
   }
