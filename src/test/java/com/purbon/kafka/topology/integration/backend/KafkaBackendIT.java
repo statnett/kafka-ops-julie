@@ -8,8 +8,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.purbon.kafka.topology.Configuration;
 import com.purbon.kafka.topology.backend.BackendState;
 import com.purbon.kafka.topology.backend.KafkaBackend;
+import com.purbon.kafka.topology.integration.containerutils.ContainerFactory;
 import com.purbon.kafka.topology.integration.containerutils.ContainerTestUtils;
-import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextEmbeddedKafka;
+import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextKafkaContainer;
 import com.purbon.kafka.topology.roles.TopologyAclBinding;
 import java.util.*;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -27,14 +28,14 @@ public class KafkaBackendIT {
   Properties props;
   Map<String, String> cliOps;
 
-  private static SaslPlaintextEmbeddedKafka kafka;
+  private static SaslPlaintextKafkaContainer container;
 
   @Before
   public void before() {
 
-    kafka = new SaslPlaintextEmbeddedKafka();
-    kafka.start();
-    ContainerTestUtils.resetAcls(kafka);
+    container = ContainerFactory.fetchSaslKafkaContainer(System.getProperty("cp.version"));
+    container.start();
+    ContainerTestUtils.resetAcls(container);
 
     props = new Properties();
     props.put(JULIE_INSTANCE_ID, "1234");
@@ -42,20 +43,20 @@ public class KafkaBackendIT {
 
     Map<String, Object> saslConfig =
         ContainerTestUtils.getSaslConfig(
-            kafka.getBootstrapServers(),
+            container.getBootstrapServers(),
             ContainerTestUtils.JULIE_USERNAME,
             ContainerTestUtils.JULIE_PASSWORD);
     saslConfig.forEach((k, v) -> props.setProperty(k, String.valueOf(v)));
 
     cliOps = new HashMap<>();
-    cliOps.put(BROKERS_OPTION, kafka.getBootstrapServers());
+    cliOps.put(BROKERS_OPTION, container.getBootstrapServers());
 
     config = new Configuration(cliOps, props);
   }
 
   @After
   public void after() {
-    kafka.stop();
+    container.stop();
   }
 
   @Test
@@ -88,7 +89,8 @@ public class KafkaBackendIT {
   @Test
   public void shouldFailOnNonCompactingStateTopic() {
     String wrongTopic = "__state_with_wrong_cleanup_policy";
-    AdminClient admin = ContainerTestUtils.getSaslSuperUserAdminClient(kafka.getBootstrapServers());
+    AdminClient admin =
+        ContainerTestUtils.getSaslSuperUserAdminClient(container.getBootstrapServers());
     Map<String, String> topicConfig = new HashMap<>();
     topicConfig.put(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_DELETE);
     NewTopic configTopic = new NewTopic(wrongTopic, 1, (short) 1);
@@ -136,7 +138,7 @@ public class KafkaBackendIT {
   private void loadAndVerifyBindings(Collection<TopologyAclBinding> expectedBindings) {
     KafkaBackend backend = new KafkaBackend();
     HashMap<String, String> cliOps = new HashMap<>();
-    cliOps.put(BROKERS_OPTION, kafka.getBootstrapServers());
+    cliOps.put(BROKERS_OPTION, container.getBootstrapServers());
     Configuration config = new Configuration(cliOps, props);
     backend.configure(config);
     BackendState state = backend.load();

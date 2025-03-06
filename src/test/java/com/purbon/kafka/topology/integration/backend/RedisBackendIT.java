@@ -11,8 +11,9 @@ import com.purbon.kafka.topology.TopicManager;
 import com.purbon.kafka.topology.api.adminclient.TopologyBuilderAdminClient;
 import com.purbon.kafka.topology.backend.BackendState;
 import com.purbon.kafka.topology.backend.RedisBackend;
+import com.purbon.kafka.topology.integration.containerutils.ContainerFactory;
 import com.purbon.kafka.topology.integration.containerutils.ContainerTestUtils;
-import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextEmbeddedKafka;
+import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextKafkaContainer;
 import com.purbon.kafka.topology.model.Impl.ProjectImpl;
 import com.purbon.kafka.topology.model.Impl.TopologyImpl;
 import com.purbon.kafka.topology.model.Project;
@@ -42,7 +43,7 @@ public class RedisBackendIT {
   public GenericContainer redis =
       new GenericContainer<>(DockerImageName.parse("redis:7.2.4")).withExposedPorts(6379);
 
-  private static SaslPlaintextEmbeddedKafka kafka;
+  private static SaslPlaintextKafkaContainer container;
   private TopicManager topicManager;
   private AdminClient kafkaAdminClient;
 
@@ -55,21 +56,21 @@ public class RedisBackendIT {
   @BeforeClass
   public static void setup() {
     bucket = "bucket";
-    kafka = new SaslPlaintextEmbeddedKafka();
-    kafka.start();
-    ContainerTestUtils.resetAcls(kafka);
+    container = ContainerFactory.fetchSaslKafkaContainer(System.getProperty("cp.version"));
+    container.start();
+    ContainerTestUtils.resetAcls(container);
   }
 
   @AfterClass
   public static void teardown() {
-    kafka.stop();
+    container.stop();
   }
 
   @Before
   public void before() throws IOException {
     Files.deleteIfExists(Paths.get(".cluster-state"));
 
-    kafkaAdminClient = ContainerTestUtils.getSaslJulieAdminClient(kafka);
+    kafkaAdminClient = ContainerTestUtils.getSaslJulieAdminClient(container);
     TopologyBuilderAdminClient adminClient = new TopologyBuilderAdminClient(kafkaAdminClient);
 
     final SchemaRegistryClient schemaRegistryClient = new MockSchemaRegistryClient();
