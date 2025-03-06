@@ -276,6 +276,7 @@
     <jedis.version>5.2.0</jedis.version>
     <jinjava.version>2.7.4</jinjava.version>
     <junit.version>4.13.2</junit.version>
+    <k3a.embedded.version>0.5.9+3.9.0</k3a.embedded.version>
     <kafka.version>3.9.0</kafka.version>
     <ksqldb.client.version>7.9.0</ksqldb.client.version>
     <ksqldb.version>0.27.1</ksqldb.version>
@@ -527,6 +528,18 @@
       <artifactId>wiremock</artifactId>
       <version>3.12.1</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>no.shhsoft</groupId>
+      <artifactId>k3a-embedded</artifactId>
+      <version>${k3a.embedded.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.module</groupId>
+          <artifactId>jackson-module-scala_2.13</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
   </dependencies>

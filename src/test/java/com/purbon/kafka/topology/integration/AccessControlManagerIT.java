@@ -1,27 +1,28 @@
 package com.purbon.kafka.topology.integration;
 
-import static com.purbon.kafka.topology.CommandLineInterface.*;
+import static com.purbon.kafka.topology.CommandLineInterface.BROKERS_OPTION;
 import static com.purbon.kafka.topology.Constants.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
-import com.purbon.kafka.topology.AccessControlManager;
-import com.purbon.kafka.topology.BackendController;
-import com.purbon.kafka.topology.Configuration;
-import com.purbon.kafka.topology.ExecutionPlan;
-import com.purbon.kafka.topology.TestTopologyBuilder;
+import com.purbon.kafka.topology.*;
 import com.purbon.kafka.topology.api.adminclient.AclBuilder;
 import com.purbon.kafka.topology.api.adminclient.TopologyBuilderAdminClient;
-import com.purbon.kafka.topology.integration.containerutils.ContainerFactory;
 import com.purbon.kafka.topology.integration.containerutils.ContainerTestUtils;
-import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextKafkaContainer;
-import com.purbon.kafka.topology.model.*;
+import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextEmbeddedKafka;
 import com.purbon.kafka.topology.model.Impl.ProjectImpl;
 import com.purbon.kafka.topology.model.Impl.TopologyImpl;
+import com.purbon.kafka.topology.model.Platform;
+import com.purbon.kafka.topology.model.Project;
+import com.purbon.kafka.topology.model.Topic;
+import com.purbon.kafka.topology.model.Topology;
 import com.purbon.kafka.topology.model.users.*;
-import com.purbon.kafka.topology.model.users.platform.*;
+import com.purbon.kafka.topology.model.users.platform.ControlCenter;
+import com.purbon.kafka.topology.model.users.platform.ControlCenterInstance;
+import com.purbon.kafka.topology.model.users.platform.SchemaRegistry;
+import com.purbon.kafka.topology.model.users.platform.SchemaRegistryInstance;
 import com.purbon.kafka.topology.roles.SimpleAclsProvider;
 import com.purbon.kafka.topology.roles.TopologyAclBinding;
 import com.purbon.kafka.topology.roles.acls.AclsBindingsBuilder;
@@ -42,7 +43,7 @@ import org.mockito.junit.MockitoRule;
 
 public class AccessControlManagerIT {
 
-  private static SaslPlaintextKafkaContainer container;
+  private static SaslPlaintextEmbeddedKafka kafka;
   private static AdminClient kafkaAdminClient;
   private TopologyBuilderAdminClient topologyAdminClient;
   private AccessControlManager accessControlManager;
@@ -57,20 +58,20 @@ public class AccessControlManagerIT {
 
   @BeforeClass
   public static void setup() {
-    container = ContainerFactory.fetchSaslKafkaContainer(System.getProperty("cp.version"));
-    container.start();
+    kafka = new SaslPlaintextEmbeddedKafka();
+    kafka.start();
   }
 
   @AfterClass
   public static void teardown() {
-    container.stop();
+    kafka.stop();
   }
 
   @Before
   public void before() throws IOException {
-    kafkaAdminClient = ContainerTestUtils.getSaslJulieAdminClient(container);
+    kafkaAdminClient = ContainerTestUtils.getSaslJulieAdminClient(kafka);
     topologyAdminClient = new TopologyBuilderAdminClient(kafkaAdminClient);
-    ContainerTestUtils.resetAcls(container);
+    ContainerTestUtils.resetAcls(kafka);
     TestUtils.deleteStateFile();
 
     this.cs = new BackendController();
