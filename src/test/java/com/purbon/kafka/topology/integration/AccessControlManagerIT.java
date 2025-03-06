@@ -351,7 +351,7 @@ public class AccessControlManagerIT {
   @Test
   public void testAvoidHandlingInternalAclsForJulie() throws Exception {
     // create a dummy internal ACL for julie
-    String juliePrincipal = "User:" + SaslPlaintextKafkaContainer.JULIE_USERNAME;
+    String juliePrincipal = "User:" + ContainerTestUtils.JULIE_USERNAME;
     AclBinding julieBinding =
         new AclBuilder(juliePrincipal)
             .literalResource(ResourceType.TOPIC, "foo")

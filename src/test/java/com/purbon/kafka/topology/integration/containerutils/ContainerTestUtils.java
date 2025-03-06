@@ -20,8 +20,18 @@ import org.apache.kafka.common.resource.ResourceType;
 
 public final class ContainerTestUtils {
 
-  static final String DEFAULT_CP_KAFKA_VERSION = "7.9.0";
+  public static final String DEFAULT_SUPER_USERNAME = "kafka";
+  public static final String DEFAULT_SUPER_PASSWORD = "kafka";
+  public static final String JULIE_USERNAME = "julie";
+  public static final String JULIE_PASSWORD = "julie-secret";
+  public static final String NO_ACCESS_USERNAME = "no-access-user";
+  public static final String PRODUCER_USERNAME = "producer";
+  public static final String CONSUMER_USERNAME = "consumer";
+  public static final String OTHER_PRODUCER_USERNAME = "other-producer";
+  public static final String OTHER_CONSUMER_USERNAME = "other-consumer";
+  public static final String STREAMS_USERNAME = "streamsapp";
   public static final int NUM_JULIE_INITIAL_ACLS = 11;
+  static final String DEFAULT_CP_KAFKA_VERSION = "7.9.0";
 
   private ContainerTestUtils() {}
 
@@ -30,19 +40,12 @@ public final class ContainerTestUtils {
   }
 
   public static AdminClient getSaslJulieAdminClient(final String boostrapServers) {
-    return AdminClient.create(
-        getSaslConfig(
-            boostrapServers,
-            SaslPlaintextKafkaContainer.JULIE_USERNAME,
-            SaslPlaintextKafkaContainer.JULIE_PASSWORD));
+    return AdminClient.create(getSaslConfig(boostrapServers, JULIE_USERNAME, JULIE_PASSWORD));
   }
 
   public static AdminClient getSaslSuperUserAdminClient(final String boostrapServers) {
     return AdminClient.create(
-        getSaslConfig(
-            boostrapServers,
-            SaslPlaintextKafkaContainer.DEFAULT_SUPER_USERNAME,
-            SaslPlaintextKafkaContainer.DEFAULT_SUPER_PASSWORD));
+        getSaslConfig(boostrapServers, DEFAULT_SUPER_USERNAME, DEFAULT_SUPER_PASSWORD));
   }
 
   public static Map<String, Object> getSaslConfig(
@@ -168,11 +171,7 @@ public final class ContainerTestUtils {
       ResourcePattern resourcePattern =
           new ResourcePattern(resourceType, resourceName, PatternType.LITERAL);
       AccessControlEntry accessControlEntry =
-          new AccessControlEntry(
-              "User:" + SaslPlaintextKafkaContainer.JULIE_USERNAME,
-              "*",
-              op,
-              AclPermissionType.ALLOW);
+          new AccessControlEntry("User:" + JULIE_USERNAME, "*", op, AclPermissionType.ALLOW);
       bindings.add(new AclBinding(resourcePattern, accessControlEntry));
     }
     return bindings;

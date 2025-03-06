@@ -44,8 +44,8 @@ public class KafkaBackendIT {
     Map<String, Object> saslConfig =
         ContainerTestUtils.getSaslConfig(
             container.getBootstrapServers(),
-            SaslPlaintextKafkaContainer.JULIE_USERNAME,
-            SaslPlaintextKafkaContainer.JULIE_PASSWORD);
+            ContainerTestUtils.JULIE_USERNAME,
+            ContainerTestUtils.JULIE_PASSWORD);
     saslConfig.forEach((k, v) -> props.setProperty(k, String.valueOf(v)));
 
     cliOps = new HashMap<>();

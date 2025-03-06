@@ -12,14 +12,10 @@ public final class SaslPlaintextKafkaContainer extends AlternativeKafkaContainer
   private static final DockerImageName DEFAULT_IMAGE =
       DockerImageName.parse("confluentinc/cp-kafka")
           .withTag(ContainerTestUtils.DEFAULT_CP_KAFKA_VERSION);
-  public static final String DEFAULT_SUPER_USERNAME = "kafka";
-  public static final String DEFAULT_SUPER_PASSWORD = "kafka";
-  public static final String JULIE_USERNAME = "julie";
-  public static final String JULIE_PASSWORD = "julie-secret";
   private static final String JAAS_CONFIG_FILE = "/tmp/broker_jaas.conf";
   private final Network network;
-  private String superUsername = DEFAULT_SUPER_USERNAME;
-  private String superPassword = DEFAULT_SUPER_PASSWORD;
+  private String superUsername = ContainerTestUtils.DEFAULT_SUPER_USERNAME;
+  private String superPassword = ContainerTestUtils.DEFAULT_SUPER_PASSWORD;
   private final Map<String, String> usernamesAndPasswords = new HashMap<>();
 
   public SaslPlaintextKafkaContainer() {
@@ -50,7 +46,7 @@ public final class SaslPlaintextKafkaContainer extends AlternativeKafkaContainer
     withEnv("KAFKA_SASL_ENABLED_MECHANISMS", "PLAIN");
     withEnv("KAFKA_OPTS", "-Djava.security.auth.login.config=" + JAAS_CONFIG_FILE);
     withSuperUser(superUsername, superPassword);
-    withUser(JULIE_USERNAME, JULIE_PASSWORD);
+    withUser(ContainerTestUtils.JULIE_USERNAME, ContainerTestUtils.JULIE_PASSWORD);
     withUser("alice", "alice-secret");
     withUser("bob", "bob-secret");
     withAclAuthorizer();
