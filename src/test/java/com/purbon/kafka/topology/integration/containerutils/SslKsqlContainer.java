@@ -5,7 +5,8 @@ import org.testcontainers.containers.BindMode;
 public class SslKsqlContainer extends KsqlContainer {
   public SslKsqlContainer(AlternativeKafkaContainer kafka, String truststore, String keystore) {
     super(kafka);
-    this.withEnv("KSQL_SSL_TRUSTSTORE_LOCATION", "/etc/ksql/secrets/truststore.jks")
+    this.withEnv("KSQL_LISTENERS", "https://0.0.0.0:" + KSQL_PORT)
+        .withEnv("KSQL_SSL_TRUSTSTORE_LOCATION", "/etc/ksql/secrets/truststore.jks")
         .withEnv("KSQL_SSL_TRUSTSTORE_PASSWORD", "ksqldb")
         .withEnv("KSQL_SSL_KEYSTORE_LOCATION", "/etc/ksql/secrets/keystore.jks")
         .withEnv("KSQL_SSL_KEYSTORE_PASSWORD", "ksqldb")
