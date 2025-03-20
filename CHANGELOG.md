@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.5](https://github.com/statnett/kafka-ops-julie/compare/v5.1.4...v5.1.5) (2025-03-20)
+
+
+### Bug Fixes
+
+* **kafka-backend:** delay flushing until all messages are sent ([#285](https://github.com/statnett/kafka-ops-julie/issues/285)) ([6f773bb](https://github.com/statnett/kafka-ops-julie/commit/6f773bb3d75e5866d3814281ed343cea1fe0d552))
+
 ## [5.1.4](https://github.com/statnett/kafka-ops-julie/compare/v5.1.3...v5.1.4) (2025-03-20)
 
 
