@@ -62,7 +62,7 @@ public class KafkaBackendConsumer {
           map.put(record.key(), record.value());
         }
       }
-      consumer.commitAsync();
+      consumer.commitSync();
     }
     if (map.isEmpty()) {
       return new BackendState();
