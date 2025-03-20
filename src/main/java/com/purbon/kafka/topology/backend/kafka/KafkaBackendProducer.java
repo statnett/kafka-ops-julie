@@ -49,9 +49,9 @@ public class KafkaBackendProducer {
               throw new RuntimeException(exception);
             }
           });
-      producer.flush();
       ++key;
     }
+    producer.flush();
   }
 
   private List<byte[]> chunkify(BackendState backendState) {
