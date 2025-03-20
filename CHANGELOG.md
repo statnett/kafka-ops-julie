@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.1.4](https://github.com/statnett/kafka-ops-julie/compare/v5.1.3...v5.1.4) (2025-03-20)
+
+
+### Bug Fixes
+
+* change commitAsync to commitSync ([#283](https://github.com/statnett/kafka-ops-julie/issues/283)) ([635cb64](https://github.com/statnett/kafka-ops-julie/commit/635cb6458bf9fa0059e25c101259469bdc4678ad))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.31.3 ([#280](https://github.com/statnett/kafka-ops-julie/issues/280)) ([4fe8f95](https://github.com/statnett/kafka-ops-julie/commit/4fe8f9566d77be1fa92cb3917772f0024eec8590))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.31.4 ([#282](https://github.com/statnett/kafka-ops-julie/issues/282)) ([0f632cd](https://github.com/statnett/kafka-ops-julie/commit/0f632cd1d359c1648b7bd596c39ece07a97a3c84))
+
 ## [5.1.3](https://github.com/statnett/kafka-ops-julie/compare/v5.1.2...v5.1.3) (2025-03-18)
 
 
