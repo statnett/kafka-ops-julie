@@ -37,11 +37,6 @@ public class KafkaBackendConsumer {
         ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class);
     consumerProperties.put(GROUP_ID_CONFIG, config.getKafkaBackendConsumerGroupId());
     consumer = new KafkaConsumer<>(consumerProperties);
-
-    var topicPartition = new TopicPartition(config.getKafkaBackendStateTopic(), 0);
-    var topicPartitions = Collections.singletonList(topicPartition);
-    consumer.assign(topicPartitions);
-    consumer.seekToBeginning(topicPartitions);
   }
 
   public void stop() {
@@ -52,6 +47,10 @@ public class KafkaBackendConsumer {
 
   public BackendState load() {
     Map<String, byte[]> map = new TreeMap<>(Comparator.comparing((String x) -> x));
+    TopicPartition topicPartition = new TopicPartition(config.getKafkaBackendStateTopic(), 0);
+    Collection<TopicPartition> topicPartitions = Collections.singletonList(topicPartition);
+    consumer.assign(topicPartitions);
+    consumer.seekToBeginning(topicPartitions);
     for (; ; ) {
       ConsumerRecords<String, byte[]> records = consumer.poll(Duration.ofMillis(5000));
       if (records.isEmpty()) {
