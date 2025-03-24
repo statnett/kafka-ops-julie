@@ -48,8 +48,6 @@ public class KafkaBackendConsumer {
     consumer.close();
   }
 
-  public void start() {}
-
   public BackendState load() {
     Map<String, byte[]> map = new TreeMap<>(Comparator.comparing((String x) -> x));
     for (; ; ) {
