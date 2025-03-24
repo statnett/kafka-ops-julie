@@ -48,19 +48,21 @@ public class KafkaBackendConsumer {
     TopicPartition topicPartition = new TopicPartition(config.getKafkaBackendStateTopic(), 0);
     Collection<TopicPartition> topicPartitions = Collections.singletonList(topicPartition);
     consumer.assign(topicPartitions);
+    consumer.seekToEnd(topicPartitions);
+    long lastOffset = consumer.position(topicPartition);
     consumer.seekToBeginning(topicPartitions);
     for (; ; ) {
       ConsumerRecords<String, byte[]> records = consumer.poll(Duration.ofMillis(5000));
-      if (records.isEmpty()) {
-        break;
-      }
       for (ConsumerRecord<String, byte[]> record : records) {
         if (record.key().startsWith(instanceId + "-")) {
           map.put(record.key(), record.value());
         }
       }
-      consumer.commitSync();
+      if (consumer.position(topicPartition) >= lastOffset) {
+        break;
+      }
     }
+    consumer.commitSync();
     if (map.isEmpty()) {
       return new BackendState();
     }
