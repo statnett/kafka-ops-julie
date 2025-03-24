@@ -1,5 +1,15 @@
 # Changelog
 
+## [5.1.6](https://github.com/statnett/kafka-ops-julie/compare/v5.1.5...v5.1.6) (2025-03-24)
+
+
+### Bug Fixes
+
+* avoid array overflow ([#291](https://github.com/statnett/kafka-ops-julie/issues/291)) ([4c31600](https://github.com/statnett/kafka-ops-julie/commit/4c31600692e1d24bd8265de2c1219087d886bd8e))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.31.5 ([#288](https://github.com/statnett/kafka-ops-julie/issues/288)) ([4fed8fd](https://github.com/statnett/kafka-ops-julie/commit/4fed8fda87c1956c9db79c0355a0bf5c1dd97149))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.31.6 ([#290](https://github.com/statnett/kafka-ops-julie/issues/290)) ([8c73c3d](https://github.com/statnett/kafka-ops-julie/commit/8c73c3dfe0c3686f9dfca6182b6b38344e5d9d97))
+* make sure to read to the end of the state topic stream ([#294](https://github.com/statnett/kafka-ops-julie/issues/294)) ([f6f1926](https://github.com/statnett/kafka-ops-julie/commit/f6f19269fdd8d20730751a1a0a7299b3c4cad466))
+
 ## [5.1.5](https://github.com/statnett/kafka-ops-julie/compare/v5.1.4...v5.1.5) (2025-03-20)
 
 
