@@ -64,7 +64,9 @@ public final class ByteArrayChunker {
         bytes = new byte[numBytes];
         firstRound = false;
       }
-      bytesWritten += Math.max(bais.read(bytes, bytesWritten, bais.available()), 0);
+      final int spaceLeft = bytes.length - bytesWritten;
+      bytesWritten +=
+          Math.max(bais.read(bytes, bytesWritten, Math.min(spaceLeft, bais.available())), 0);
       if (bytesWritten == numBytes) {
         break;
       }
