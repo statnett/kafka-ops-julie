@@ -273,7 +273,7 @@
     <confluent.version>7.9.0</confluent.version>
     <gcp.java.sdk.version>26.49.0</gcp.java.sdk.version>
     <jackson.version>2.19.0</jackson.version>
-    <jedis.version>5.2.0</jedis.version>
+    <jedis.version>6.0.0</jedis.version>
     <jinjava.version>2.7.4</jinjava.version>
     <junit.version>4.13.2</junit.version>
     <kafka.version>3.9.0</kafka.version>
