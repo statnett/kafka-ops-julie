@@ -1,5 +1,19 @@
 # Changelog
 
+## [5.1.9](https://github.com/statnett/kafka-ops-julie/compare/v5.1.8...v5.1.9) (2025-05-10)
+
+
+### Bug Fixes
+
+* **deps:** update confluent.version to v7.9.1 ([#333](https://github.com/statnett/kafka-ops-julie/issues/333)) ([ddf724f](https://github.com/statnett/kafka-ops-julie/commit/ddf724ff88b3ce79f369925dbb05d5ebf1859047))
+* **deps:** update dependency io.confluent.ksql:ksqldb-api-client to v7.9.1 ([#334](https://github.com/statnett/kafka-ops-julie/issues/334)) ([51d0869](https://github.com/statnett/kafka-ops-julie/commit/51d08696d2efefcaea3592b8a73eddd053cfa347))
+* **deps:** update dependency redis.clients:jedis to v6 ([#328](https://github.com/statnett/kafka-ops-julie/issues/328)) ([7d0f55a](https://github.com/statnett/kafka-ops-julie/commit/7d0f55afaf5d73f14732e79c50bd0d32f9262e57))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.31.30 ([#325](https://github.com/statnett/kafka-ops-julie/issues/325)) ([278360e](https://github.com/statnett/kafka-ops-julie/commit/278360efce8e3880e4bee0d3033aad3ba4aa0e70))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.31.32 ([#327](https://github.com/statnett/kafka-ops-julie/issues/327)) ([99f352b](https://github.com/statnett/kafka-ops-julie/commit/99f352bd6422878c86e400a552aac5e3b0f33288))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.31.37 ([#329](https://github.com/statnett/kafka-ops-julie/issues/329)) ([d6fde35](https://github.com/statnett/kafka-ops-julie/commit/d6fde35220b6c7e471bc3082f77d7ca9f39a5e70))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.31.40 ([#332](https://github.com/statnett/kafka-ops-julie/issues/332)) ([da139af](https://github.com/statnett/kafka-ops-julie/commit/da139af4254cb98e4eee54487959180d67ca6492))
+* **deps:** update kafka.version to v4 (major) ([#331](https://github.com/statnett/kafka-ops-julie/issues/331)) ([bd89099](https://github.com/statnett/kafka-ops-julie/commit/bd89099d3e35c3785283993e593b76eb4dc2b2d1))
+
 ## [5.1.8](https://github.com/statnett/kafka-ops-julie/compare/v5.1.7...v5.1.8) (2025-04-25)
 
 
