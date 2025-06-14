@@ -277,7 +277,7 @@
     <jinjava.version>2.8.0</jinjava.version>
     <junit.version>4.13.2</junit.version>
     <kafka.version>4.0.0</kafka.version>
-    <ksqldb.client.version>7.9.1</ksqldb.client.version>
+    <ksqldb.client.version>7.9.2</ksqldb.client.version>
     <ksqldb.version>0.27.1</ksqldb.version>
     <log4j.version>2.24.3</log4j.version>
     <lombok.version>1.18.38</lombok.version>
