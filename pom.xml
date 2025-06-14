@@ -272,7 +272,7 @@
     <commons.version>1.9.0</commons.version>
     <confluent.version>7.9.1</confluent.version>
     <gcp.java.sdk.version>26.49.0</gcp.java.sdk.version>
-    <jackson.version>2.19.0</jackson.version>
+    <jackson.version>2.19.1</jackson.version>
     <jedis.version>6.0.0</jedis.version>
     <jinjava.version>2.8.0</jinjava.version>
     <junit.version>4.13.2</junit.version>
