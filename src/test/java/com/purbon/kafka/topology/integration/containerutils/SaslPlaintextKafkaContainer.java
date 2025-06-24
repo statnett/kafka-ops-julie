@@ -25,7 +25,7 @@ public final class SaslPlaintextKafkaContainer extends AlternativeKafkaContainer
   public SaslPlaintextKafkaContainer(final DockerImageName dockerImageName) {
     super(dockerImageName);
     /* Note difference between 0.0.0.0 and localhost: The former will be replaced by the container IP. */
-    withExposedPorts(KAFKA_PORT - 1, KAFKA_PORT);
+    withExposedPorts(KAFKA_PORT - 1, KAFKA_PORT, KAFKA_CONTROLLER_PORT);
     withEnv(
         "KAFKA_LISTENERS",
         "SASL_PLAINTEXT://0.0.0.0:"
@@ -36,20 +36,27 @@ public final class SaslPlaintextKafkaContainer extends AlternativeKafkaContainer
             + ","
             + INTERNAL_LISTENER_NAME
             + "://127.0.0.1:"
-            + KAFKA_INTERNAL_PORT);
+            + KAFKA_INTERNAL_PORT
+            + ","
+            + CONTROLLER_LISTENER_NAME
+            + "://127.0.0.1:"
+            + KAFKA_CONTROLLER_PORT);
     withEnv(
         "KAFKA_LISTENER_SECURITY_PROTOCOL_MAP",
         "OTHER:SASL_PLAINTEXT, SASL_PLAINTEXT:SASL_PLAINTEXT,"
             + INTERNAL_LISTENER_NAME
+            + ":SASL_PLAINTEXT,"
+            + CONTROLLER_LISTENER_NAME
             + ":SASL_PLAINTEXT");
     withEnv("KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL", "PLAIN");
     withEnv("KAFKA_SASL_ENABLED_MECHANISMS", "PLAIN");
+    withEnv("KAFKA_SASL_MECHANISM_CONTROLLER_PROTOCOL", "PLAIN");
     withEnv("KAFKA_OPTS", "-Djava.security.auth.login.config=" + JAAS_CONFIG_FILE);
     withSuperUser(superUsername, superPassword);
     withUser(ContainerTestUtils.JULIE_USERNAME, ContainerTestUtils.JULIE_PASSWORD);
     withUser("alice", "alice-secret");
     withUser("bob", "bob-secret");
-    withAclAuthorizer();
+    withAuthorizer();
     withNetworkAliases("kafka");
     network = Network.newNetwork();
     withNetwork(network);
@@ -78,22 +85,16 @@ public final class SaslPlaintextKafkaContainer extends AlternativeKafkaContainer
     return this;
   }
 
-  public SaslPlaintextKafkaContainer withAclAuthorizer() {
-    final DockerImageName imageName = DockerImageName.parse(getDockerImageName());
-    final boolean old =
-        imageName.getUnversionedPart().contains("confluentinc/")
-            && imageName.getVersionPart().compareTo("6") <= 0;
+  public SaslPlaintextKafkaContainer withAuthorizer() {
     withEnv(
-        "KAFKA_AUTHORIZER_CLASS_NAME",
-        old
-            ? "kafka.security.auth.SimpleAclAuthorizer"
-            : "kafka.security.authorizer.AclAuthorizer");
+        "KAFKA_AUTHORIZER_CLASS_NAME", "org.apache.kafka.metadata.authorizer.StandardAuthorizer");
     return this;
   }
 
   @Override
   protected void beforeStartupPreparations() {
     withEnv("KAFKA_LISTENER_NAME_SASL_PLAINTEXT_PLAIN_SASL_JAAS_CONFIG", createJaasLoginLine());
+    withEnv("KAFKA_LISTENER_NAME_CONTROLLER_PLAIN_SASL_JAAS_CONFIG", createJaasLoginLine());
     uploadJaasConfig();
   }
 

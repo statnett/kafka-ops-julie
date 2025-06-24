@@ -31,7 +31,7 @@ public final class ContainerTestUtils {
   public static final String OTHER_CONSUMER_USERNAME = "other-consumer";
   public static final String STREAMS_USERNAME = "streamsapp";
   public static final int NUM_JULIE_INITIAL_ACLS = 11;
-  static final String DEFAULT_CP_KAFKA_VERSION = "7.9.0";
+  static final String DEFAULT_CP_KAFKA_VERSION = "8.0.0";
 
   private ContainerTestUtils() {}
 
