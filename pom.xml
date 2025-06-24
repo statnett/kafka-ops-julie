@@ -476,10 +476,6 @@
           <groupId>javax.annotation</groupId>
           <artifactId>javax.annotation-api</artifactId>
         </exclusion>
-        <exclusion>
-          <groupId>io.opentelemetry</groupId>
-          <artifactId>opentelemetry-context</artifactId>
-        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
