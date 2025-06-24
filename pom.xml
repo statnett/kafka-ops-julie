@@ -270,14 +270,14 @@
     <assertj.version>3.27.3</assertj.version>
     <aws.java.sdk.version>2.31.68</aws.java.sdk.version>
     <commons.version>1.9.0</commons.version>
-    <confluent.version>7.9.2</confluent.version>
+    <confluent.version>8.0.0</confluent.version>
     <gcp.java.sdk.version>26.49.0</gcp.java.sdk.version>
     <jackson.version>2.19.1</jackson.version>
     <jedis.version>6.0.0</jedis.version>
     <jinjava.version>2.8.0</jinjava.version>
     <junit.version>4.13.2</junit.version>
     <kafka.version>4.0.0</kafka.version>
-    <ksqldb.client.version>7.9.2</ksqldb.client.version>
+    <ksqldb.client.version>8.0.0</ksqldb.client.version>
     <ksqldb.version>0.27.1</ksqldb.version>
     <log4j.version>2.25.0</log4j.version>
     <lombok.version>1.18.38</lombok.version>
