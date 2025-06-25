@@ -272,7 +272,12 @@ public class TopologyBuilderAdminClient {
                                 Optional.empty()))
                         .build())
             .collect(Collectors.toList());
-    this.adminClient.alterClientQuotas(lstQuotasRemove);
+    try {
+      this.adminClient.alterClientQuotas(lstQuotasRemove).all().get();
+    } catch (ExecutionException | InterruptedException e) {
+      LOGGER.error(e);
+      throw new RuntimeException(e);
+    }
   }
 
   public Map<ClientQuotaEntity, Map<String, Double>> describeClientQuotas()
