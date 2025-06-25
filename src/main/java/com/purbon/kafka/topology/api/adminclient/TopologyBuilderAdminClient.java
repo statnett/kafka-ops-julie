@@ -251,8 +251,12 @@ public class TopologyBuilderAdminClient {
         quotas.stream()
             .map(f -> new QuotasClientBindingsBuilder(f).build())
             .collect(Collectors.toList());
-
-    this.adminClient.alterClientQuotas(lstQuotasAlteration).all();
+    try {
+      this.adminClient.alterClientQuotas(lstQuotasAlteration).all().get();
+    } catch (ExecutionException | InterruptedException e) {
+      LOGGER.error(e);
+      throw new RuntimeException(e);
+    }
   }
 
   public void removeQuotasPrincipal(Collection<User> users) {

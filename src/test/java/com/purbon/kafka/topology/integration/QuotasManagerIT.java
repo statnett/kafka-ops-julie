@@ -29,7 +29,10 @@ import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.common.quota.ClientQuotaEntity;
 import org.apache.kafka.common.quota.ClientQuotaFilter;
 import org.junit.*;
+import org.junit.runner.OrderWith;
+import org.junit.runner.manipulation.Alphanumeric;
 
+@OrderWith(Alphanumeric.class)
 public class QuotasManagerIT {
 
   private static SaslPlaintextKafkaContainer container;
