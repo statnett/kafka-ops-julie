@@ -1,5 +1,16 @@
 # Changelog
 
+## [5.1.11](https://github.com/statnett/kafka-ops-julie/compare/v5.1.10...v5.1.11) (2025-06-25)
+
+
+### Bug Fixes
+
+* **deps:** update dependency software.amazon.awssdk:bom to v2.31.65 ([#360](https://github.com/statnett/kafka-ops-julie/issues/360)) ([09fefd9](https://github.com/statnett/kafka-ops-julie/commit/09fefd99da5d392c85d69208f8bd16352b38c775))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.31.68 ([#363](https://github.com/statnett/kafka-ops-julie/issues/363)) ([a7d6874](https://github.com/statnett/kafka-ops-julie/commit/a7d68745b7f1840ced50bf0f62fea63458928e19))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.31.70 ([#364](https://github.com/statnett/kafka-ops-julie/issues/364)) ([0a61569](https://github.com/statnett/kafka-ops-julie/commit/0a61569946d2db6cd63280699e37e71f7d9157aa))
+* upgrade Confluent Platform to version 8 ([#365](https://github.com/statnett/kafka-ops-julie/issues/365)) ([696b89e](https://github.com/statnett/kafka-ops-julie/commit/696b89e465ffc622304a3d6b8d17a2bbaad61c01))
+* use CP v8 with KRaft, not ZK, for testcontainers ([#366](https://github.com/statnett/kafka-ops-julie/issues/366)) ([eabc351](https://github.com/statnett/kafka-ops-julie/commit/eabc351a9e81213db8494416ada2bd5bd25365b9))
+
 ## [5.1.10](https://github.com/statnett/kafka-ops-julie/compare/v5.1.9...v5.1.10) (2025-06-17)
 
 
