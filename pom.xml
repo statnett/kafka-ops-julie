@@ -269,7 +269,7 @@
     <!-- dependencies -->
     <assertj.version>3.27.3</assertj.version>
     <aws.java.sdk.version>2.32.12</aws.java.sdk.version>
-    <commons.version>1.9.0</commons.version>
+    <commons.version>1.10.0</commons.version>
     <confluent.version>8.0.0</confluent.version>
     <gcp.java.sdk.version>26.64.0</gcp.java.sdk.version>
     <jackson.version>2.19.2</jackson.version>
