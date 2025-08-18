@@ -268,7 +268,7 @@
     <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
     <!-- dependencies -->
     <assertj.version>3.27.4</assertj.version>
-    <aws.java.sdk.version>2.32.24</aws.java.sdk.version>
+    <aws.java.sdk.version>2.32.25</aws.java.sdk.version>
     <commons.version>1.10.0</commons.version>
     <confluent.version>8.0.0</confluent.version>
     <gcp.java.sdk.version>26.66.0</gcp.java.sdk.version>
