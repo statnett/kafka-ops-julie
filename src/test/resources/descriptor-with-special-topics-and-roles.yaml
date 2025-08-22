@@ -1,0 +1,29 @@
+---
+context: "contextOrg"
+source: "source"
+projects:
+  - name: "foo"
+    mirrorMaker:
+      - principal: "User:banana"
+        group: "test-group"
+        statusTopic: "test-cluster-status"
+        offsetTopic: "test-cluster-offsets"
+        configTopic: "test-cluster-configs"
+        targetPrefix: "target-prefix."
+        offsetSyncTopic: "mm2-offset-syncs.test-mm.internal"
+        checkpointsTopic: "test-mm.checkpoints.internal"
+    denyTopic:
+      - principal: "User:banana"
+        group: "test-group"
+    app2:
+      - principal: "User:banana"
+        group: "test-group"
+special_topics:
+  - name: "i-am-special"
+    consumers:
+      - principal: "User:banana"
+    producers:
+      - principal: "User:banana"
+    config:
+      replication.factor: "1"
+      num.partitions: "1"

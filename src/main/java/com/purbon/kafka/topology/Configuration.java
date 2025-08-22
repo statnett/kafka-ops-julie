@@ -595,9 +595,15 @@ public class Configuration {
 
   public JulieRoles getJulieRoles() throws IOException {
     JulieRolesSerdes serdes = new JulieRolesSerdes();
+    List<JulieRoles> roles = new ArrayList<>();
     try {
-      String path = getString(JULIE_ROLES);
-      return serdes.deserialise(Paths.get(path).toFile());
+      String[] paths = getString(JULIE_ROLES).split(",");
+      for (String path : paths) {
+        if (!path.isBlank()) {
+          roles.add(serdes.deserialise(Paths.get(path.trim()).toFile()));
+        }
+      }
+      return roles.stream().reduce(new JulieRoles(), JulieRoles::merge);
     } catch (ConfigException.Missing | ConfigException.WrongType ex) {
       LOGGER.debug(ex);
       return new JulieRoles();

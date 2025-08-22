@@ -20,6 +20,7 @@ public class TopologyAclBinding implements Comparable<TopologyAclBinding> {
   private String operation;
   private String principal;
   private String pattern;
+  private String permissionType;
 
   /**
    * Topology ACL binding wrapper class constructor
@@ -37,13 +38,15 @@ public class TopologyAclBinding implements Comparable<TopologyAclBinding> {
       String host,
       String operation,
       String principal,
-      String pattern) {
+      String pattern,
+      String permissionType) {
     this.resourceType = resourceType;
     this.resourceName = resourceName;
     this.host = host;
     this.operation = operation;
     this.principal = principal;
     this.pattern = pattern;
+    this.permissionType = permissionType;
     this.aclBindingOptional = Optional.empty();
   }
 
@@ -64,15 +67,16 @@ public class TopologyAclBinding implements Comparable<TopologyAclBinding> {
       String host,
       String operation,
       String principal,
-      String pattern) {
+      String pattern,
+      String permissionType) {
 
     ResourceType resourceType = ResourceType.valueOf(resourceTypeString);
     return new TopologyAclBinding(
-        resourceType.name(), resourceName, host, operation, principal, pattern);
+        resourceType.name(), resourceName, host, operation, principal, pattern, permissionType);
   }
 
   public TopologyAclBinding() {
-    this(ResourceType.ANY.name(), "", "", "", "", "");
+    this(ResourceType.ANY.name(), "", "", "", "", "", "");
   }
 
   public TopologyAclBinding(AclBinding binding) {
@@ -88,16 +92,17 @@ public class TopologyAclBinding implements Comparable<TopologyAclBinding> {
     this.operation = entry.operation().name();
     this.pattern = pattern.patternType().name();
     this.host = entry.host();
+    this.permissionType = entry.permissionType().name();
   }
 
   public TopologyAclBinding(KafkaAclResponse kafkaAclResponse) {
     this.resourceName = kafkaAclResponse.getResource_name();
     this.resourceType = kafkaAclResponse.getResource_type();
     this.host = kafkaAclResponse.getHost();
-    this.operation = kafkaAclResponse.getOperation();
     this.principal = kafkaAclResponse.getPrincipal();
     this.pattern = kafkaAclResponse.getPattern_type();
     this.operation = kafkaAclResponse.getOperation();
+    this.permissionType = kafkaAclResponse.getPermission();
   }
 
   public Optional<AclBinding> asAclBinding() {
@@ -118,6 +123,10 @@ public class TopologyAclBinding implements Comparable<TopologyAclBinding> {
 
   public String getOperation() {
     return operation;
+  }
+
+  public String getPermissionType() {
+    return permissionType;
   }
 
   public String getHost() {
@@ -144,6 +153,10 @@ public class TopologyAclBinding implements Comparable<TopologyAclBinding> {
     this.pattern = pattern;
   }
 
+  public void setPermissionType(String permissionType) {
+    this.permissionType = permissionType;
+  }
+
   @Override
   public String toString() {
     return "\'"
@@ -163,6 +176,8 @@ public class TopologyAclBinding implements Comparable<TopologyAclBinding> {
         + '\''
         + ", '"
         + pattern
+        + '\''
+        + permissionType
         + '\'';
   }
 
@@ -184,13 +199,20 @@ public class TopologyAclBinding implements Comparable<TopologyAclBinding> {
         && getHost().equals(binding.getHost())
         && getOperation().equals(binding.getOperation())
         && getPrincipal().equals(binding.getPrincipal())
-        && getPattern().equals(binding.getPattern());
+        && getPattern().equals(binding.getPattern())
+        && getPermissionType().equals(binding.permissionType);
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(
-        resourceType, getResourceName(), getHost(), getOperation(), getPrincipal(), getPattern());
+        resourceType,
+        getResourceName(),
+        getHost(),
+        getOperation(),
+        getPrincipal(),
+        getPattern(),
+        getPermissionType());
   }
 
   private RequestScope scope;

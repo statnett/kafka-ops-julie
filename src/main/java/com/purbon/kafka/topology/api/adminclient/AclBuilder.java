@@ -40,6 +40,11 @@ public class AclBuilder {
     return this;
   }
 
+  public AclBuilder addEntry(String host, AclOperation op, AclPermissionType permissionType) {
+    entry = new AccessControlEntry(principal, host, op, permissionType);
+    return this;
+  }
+
   public AclBinding build() {
     return new AclBinding(resourcePattern, entry);
   }

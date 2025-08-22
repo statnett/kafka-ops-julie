@@ -15,6 +15,7 @@ import com.purbon.kafka.topology.roles.TopologyAclBinding;
 import java.util.*;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.common.acl.AclPermissionType;
 import org.apache.kafka.common.config.TopicConfig;
 import org.apache.kafka.common.resource.ResourceType;
 import org.junit.After;
@@ -68,10 +69,22 @@ public class KafkaBackendIT {
 
     TopologyAclBinding binding1 =
         TopologyAclBinding.build(
-            ResourceType.TOPIC.name(), "foo", "*", "Write", "User:foo", "LITERAL");
+            ResourceType.TOPIC.name(),
+            "foo",
+            "*",
+            "Write",
+            "User:foo",
+            "LITERAL",
+            AclPermissionType.ALLOW.name());
     TopologyAclBinding binding2 =
         TopologyAclBinding.build(
-            ResourceType.TOPIC.name(), "bar", "*", "Read", "User:bar", "LITERAL");
+            ResourceType.TOPIC.name(),
+            "bar",
+            "*",
+            "Read",
+            "User:bar",
+            "LITERAL",
+            AclPermissionType.ALLOW.name());
     Collection<TopologyAclBinding> bindings1 = Collections.singleton(binding1);
     Collection<TopologyAclBinding> bindings2 = Arrays.asList(binding1, binding2);
     Collection<TopologyAclBinding> bindings3 = Collections.singleton(binding2);

@@ -29,7 +29,7 @@ public class TopologyObjectBuilderTest {
     var map = TopologyObjectBuilder.build(fileOrDirPath);
     assertThat(map).hasSize(1);
     for (var entry : map.entrySet()) {
-      assertThat(entry.getValue().getProjects()).hasSize(4);
+      assertThat(entry.getValue().getProjects()).hasSize(5);
     }
   }
 

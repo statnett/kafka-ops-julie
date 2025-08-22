@@ -23,6 +23,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import lombok.SneakyThrows;
+import org.apache.kafka.common.acl.AclPermissionType;
 import org.apache.kafka.common.resource.ResourceType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -132,7 +133,14 @@ public class MDSApiClient extends JulieHttpClient {
       RequestScope scope,
       String patternType) {
     TopologyAclBinding binding =
-        new TopologyAclBinding(resourceType, resourceName, "*", role, principal, patternType);
+        new TopologyAclBinding(
+            resourceType,
+            resourceName,
+            "*",
+            role,
+            principal,
+            patternType,
+            AclPermissionType.ALLOW.name());
     binding.setScope(scope);
     return binding;
   }
@@ -196,7 +204,13 @@ public class MDSApiClient extends JulieHttpClient {
 
     TopologyAclBinding binding =
         new TopologyAclBinding(
-            resourceType.name(), resourceName, "*", role, principal, patternType);
+            resourceType.name(),
+            resourceName,
+            "*",
+            role,
+            principal,
+            patternType,
+            AclPermissionType.ALLOW.name());
 
     binding.setScope(scope);
     return binding;

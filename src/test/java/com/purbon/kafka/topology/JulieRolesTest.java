@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -82,7 +83,7 @@ public class JulieRolesTest {
                         acl.getOperation(),
                         acl.getPermissionType());
                   })
-              .collect(Collectors.toList());
+              .toList();
       var names = acls.stream().map(JulieRoleAcl::getResourceName).collect(Collectors.toList());
       assertThat(names).contains("test.subject", "con");
     }
@@ -103,6 +104,59 @@ public class JulieRolesTest {
     TopologySerdes topologySerdes = new TopologySerdes();
 
     Topology topology = topologySerdes.deserialise(TestUtils.getResourceFile("/descriptor.yaml"));
+    roles.validateTopology(topology);
+  }
+
+  @Test
+  public void testTopologyMerge() throws IOException {
+    JulieRoles roles1 = parser.deserialise(TestUtils.getResourceFile("/roles.yaml"));
+    JulieRoles roles2 = parser.deserialise(TestUtils.getResourceFile("/roles2.yaml"));
+
+    JulieRoles roles = roles1.merge(roles2);
+
+    assert roles.get("app") != null;
+    assert roles.get("app2") != null;
+    assert roles.get("other") != null;
+  }
+
+  @Test
+  public void testMirrorMakerRole() throws IOException {
+    JulieRoles roles = parser.deserialise(TestUtils.getResourceFile("/roles-mirrormaker.yaml"));
+    TopologySerdes topologySerdes = new TopologySerdes();
+
+    Topology topology =
+        topologySerdes.deserialise(TestUtils.getResourceFile("/descriptor-mirrormaker.yaml"));
+    roles.validateTopology(topology);
+
+    var expected =
+        new String[] {
+          "test-cluster-status",
+          "test-cluster-offsets",
+          "test-cluster-configs",
+          "target-prefix.",
+          "mm2-offset-syncs.test-mm.internal",
+          "test-mm.checkpoints.internal"
+        };
+
+    var mirrorMaker = topology.getProjects().get(0).getOthers().get("mirrorMaker").get(0);
+    var topics = mirrorMaker.asMap().values();
+
+    for (String t : expected) {
+      Assert.assertTrue(topics.contains(t));
+    }
+  }
+
+  @Test
+  public void testRoleAndSpecialTopicsValidationSucceeds() throws IOException {
+    JulieRoles roles1 = parser.deserialise(TestUtils.getResourceFile("/roles-mirrormaker.yaml"));
+    JulieRoles roles2 = parser.deserialise(TestUtils.getResourceFile("/roles2.yaml"));
+    JulieRoles roles = roles1.merge(roles2);
+
+    TopologySerdes topologySerdes = new TopologySerdes();
+
+    Topology topology =
+        topologySerdes.deserialise(
+            TestUtils.getResourceFile("/descriptor-with-special-topics-and-roles.yaml"));
     roles.validateTopology(topology);
   }
 }

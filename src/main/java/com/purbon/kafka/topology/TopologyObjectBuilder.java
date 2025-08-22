@@ -2,6 +2,7 @@ package com.purbon.kafka.topology;
 
 import com.purbon.kafka.topology.model.PlanMap;
 import com.purbon.kafka.topology.model.Project;
+import com.purbon.kafka.topology.model.Topic;
 import com.purbon.kafka.topology.model.Topology;
 import com.purbon.kafka.topology.serdes.PlanMapSerdes;
 import com.purbon.kafka.topology.serdes.TopologySerdes;
@@ -73,6 +74,21 @@ public final class TopologyObjectBuilder {
             mainTopology.addOther(other, value);
           }
         }
+
+        var existingSpecial = mainTopology.getSpecialTopics().stream().map(Topic::getName).toList();
+        for (Topic specialTopic : topology.getSpecialTopics()) {
+          if (existingSpecial.contains(specialTopic.getName())) {
+            throw new IOException(
+                "Trying to add special_topic with name "
+                    + specialTopic.getName()
+                    + " in a topology (context: "
+                    + mainTopology.getContext()
+                    + "). Each special topic should only be"
+                    + " defined once.");
+          }
+          mainTopology.addSpecialTopic(specialTopic);
+        }
+
         collection.put(context, mainTopology);
       }
     }

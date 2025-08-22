@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 import org.apache.kafka.common.acl.AclOperation;
+import org.apache.kafka.common.acl.AclPermissionType;
 import org.apache.kafka.common.resource.PatternType;
 import org.apache.kafka.common.resource.ResourceType;
 import org.junit.After;
@@ -64,7 +65,8 @@ public class FileBackendTest {
             "*",
             AclOperation.CREATE.name(),
             "User:foo",
-            PatternType.LITERAL.name());
+            PatternType.LITERAL.name(),
+            AclPermissionType.ALLOW.name());
 
     RequestScope scope = new RequestScope();
     ClusterIDs clusterIDs = new ClusterIDs();
@@ -105,7 +107,13 @@ public class FileBackendTest {
   private void verifyStoreAndLoadWithPrincipal(final String principal) throws IOException {
     TopologyAclBinding binding =
         TopologyAclBinding.build(
-            ResourceType.CLUSTER.name(), "Topic", "host", "op", principal, "LITERAL");
+            ResourceType.CLUSTER.name(),
+            "Topic",
+            "host",
+            "op",
+            principal,
+            "LITERAL",
+            AclPermissionType.ALLOW.name());
 
     TestTopologyBuilder builder =
         TestTopologyBuilder.createProject().addTopic("foo").addTopic("bar");

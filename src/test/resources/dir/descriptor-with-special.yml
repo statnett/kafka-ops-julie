@@ -1,0 +1,32 @@
+---
+context: "contextOrg"
+source: "source"
+privacy: "external"
+projects:
+  - name: "aaa"
+    topics:
+      - name: "foo"
+        producers:
+          - principal: "User:foob"
+        consumers:
+          - principal: "User:foob"
+        config:
+          replication.factor: "1"
+          num.partitions: "1"
+special_topics:
+  - name: "i-am-very-special"
+    consumers:
+      - principal: "User:Aaaa"
+    producers:
+      - principal: "User:Aaaa"
+    config:
+      replication.factor: "1"
+      num.partitions: "1"
+  - name: "i-am-more-special"
+    consumers:
+      - principal: "User:Aaaa"
+    producers:
+      - principal: "User:Aaaa"
+    config:
+      replication.factor: "1"
+      num.partitions: "1"
