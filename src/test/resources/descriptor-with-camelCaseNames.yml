@@ -6,7 +6,6 @@ bar: "bar"
 zet: "zet"
 projects:
   - name: "fooBar"
-    zookeepers: []
     consumers:
       - principal: "User:App0"
       - principal: "User:App1"
@@ -42,7 +41,6 @@ projects:
           replication.factor: "3"
           num.partitions: "3"
   - name: "barFoo"
-    zookeepers: []
     consumers: []
     producers: []
     streams: []
