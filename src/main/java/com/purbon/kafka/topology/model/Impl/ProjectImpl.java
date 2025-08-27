@@ -23,7 +23,6 @@ public class ProjectImpl implements Project, Cloneable {
   @JsonIgnore private Configuration config;
 
   private String name;
-  private List<String> zookeepers;
 
   private PlatformSystem<Consumer> consumers;
   private PlatformSystem<Producer> producers;
@@ -78,7 +77,6 @@ public class ProjectImpl implements Project, Cloneable {
         consumers.orElse(new PlatformSystem<>()),
         producers.orElse(new PlatformSystem<>()),
         streams.orElse(new PlatformSystem<>()),
-        new ArrayList<>(),
         connectors.orElse(new PlatformSystem<>()),
         schemas.orElse(new PlatformSystem<>()),
         ksqls.orElse(new PlatformSystem<>()),
@@ -93,7 +91,6 @@ public class ProjectImpl implements Project, Cloneable {
       PlatformSystem<Consumer> consumers,
       PlatformSystem<Producer> producers,
       PlatformSystem<KStream> streams,
-      List<String> zookeepers,
       PlatformSystem<Connector> connectors,
       PlatformSystem<Schemas> schemas,
       PlatformSystem<KSqlApp> ksqls,
@@ -106,7 +103,6 @@ public class ProjectImpl implements Project, Cloneable {
     this.producers = producers;
     this.streams = streams;
     this.ksqls = ksqls;
-    this.zookeepers = zookeepers;
     this.connectors = connectors;
     this.schemas = schemas;
     this.rbacRawRoles = rbacRawRoles;
@@ -118,10 +114,6 @@ public class ProjectImpl implements Project, Cloneable {
 
   public String getName() {
     return name;
-  }
-
-  public List<String> getZookeepers() {
-    return zookeepers;
   }
 
   public List<Consumer> getConsumers() {
@@ -256,7 +248,6 @@ public class ProjectImpl implements Project, Cloneable {
               new PlatformSystem<>(getConsumers()),
               new PlatformSystem<>(getProducers()),
               new PlatformSystem<>(getStreams()),
-              getZookeepers(),
               new PlatformSystem<>(getConnectors()),
               new PlatformSystem<>(getSchemas()),
               new PlatformSystem<>(getKSqls()),
