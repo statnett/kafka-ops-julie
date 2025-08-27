@@ -74,7 +74,8 @@ public class JulieOpsIT {
     var ops = JulieOps.build(fileOrDirPath, config);
     ops.run();
 
-    AdminClient kafkaAdminClient = ContainerTestUtils.getSaslJulieAdminClient(container);
+    AdminClient kafkaAdminClient =
+        ContainerTestUtils.getSaslSuperUserAdminClient(container.getBootstrapServers());
 
     var topics = kafkaAdminClient.listTopics().names().get();
 
