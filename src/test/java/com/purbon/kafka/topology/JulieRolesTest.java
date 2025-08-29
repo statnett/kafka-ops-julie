@@ -159,4 +159,14 @@ public class JulieRolesTest {
             TestUtils.getResourceFile("/descriptor-with-special-topics-and-roles.yaml"));
     roles.validateTopology(topology);
   }
+
+  @Test
+  public void testDefaultAllowPerssionTypeInRole() throws IOException {
+    JulieRoles roles =
+        parser.deserialise(TestUtils.getResourceFile("/roles-with-default-allow.yaml"));
+
+    var role = roles.get("defaultAllow");
+
+    Assert.assertEquals("ALLOW", role.getAcls().getFirst().getPermissionType());
+  }
 }

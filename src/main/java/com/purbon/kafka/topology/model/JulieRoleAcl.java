@@ -26,7 +26,7 @@ public class JulieRoleAcl {
     this.patternType = patternType;
     this.host = host;
     this.operation = operation;
-    this.permissionType = permissionType;
+    this.permissionType = permissionType == null ? "ALLOW" : permissionType;
   }
 
   public String getResourceType() {
