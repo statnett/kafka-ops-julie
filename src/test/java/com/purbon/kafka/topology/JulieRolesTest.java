@@ -89,6 +89,57 @@ public class JulieRolesTest {
     }
   }
 
+  @Test
+  public void testSerdesWithRoleDefault() throws IOException {
+    JulieRoles roles = parser.deserialise(TestUtils.getResourceFile("/roles-mirrormaker.yaml"));
+    TopologySerdes topologySerdes =
+        new TopologySerdes(new Configuration(), TopologySerdes.FileType.YAML, new PlanMap());
+    Topology topology =
+        topologySerdes.deserialise(TestUtils.getResourceFile("/descriptor-mirrormaker.yaml"));
+
+    var project = topology.getProjects().get(0);
+    for (Map.Entry<String, List<Other>> entry : project.getOthers().entrySet()) {
+      if (!entry.getKey().equals("app")) {
+        continue;
+      }
+      var role = roles.get(entry.getKey());
+      var other = entry.getValue().get(0);
+      var acls =
+          role.getAcls().stream()
+              .map(
+                  acl -> {
+                    String resourceName =
+                        JinjaUtils.serialise(acl.getResourceName(), other.asMap());
+                    return new JulieRoleAcl(
+                        acl.getResourceType(),
+                        resourceName,
+                        acl.getPatternType(),
+                        acl.getHost(),
+                        acl.getOperation(),
+                        acl.getPermissionType());
+                  })
+              .toList();
+      var names = acls.stream().map(JulieRoleAcl::getResourceName).toList();
+
+      var expected =
+          new String[] {
+            "test-cluster-status",
+            "test-cluster-offsets",
+            "test-cluster-configs",
+            "target-prefix.",
+            "mm2-offset-syncs.test-mm.internal",
+            "test-mm.checkpoints.internal",
+            "mirrormaker2-heartbeat"
+          };
+
+      Assert.assertEquals(expected.length, names.size());
+
+      for (String t : expected) {
+        Assert.assertTrue(names.contains(t));
+      }
+    }
+  }
+
   @Test(expected = IOException.class)
   public void testTopologyValidationException() throws IOException {
     JulieRoles roles = parser.deserialise(TestUtils.getResourceFile("/roles.yaml"));

@@ -860,9 +860,9 @@ public class AccessControlManagerIT {
     Collection<AclBinding> acls = kafkaAdminClient.describeAcls(filter).values().get();
     Collection<AclBinding> allAcls = kafkaAdminClient.describeAcls(allAclFilter).values().get();
 
-    // 6 topics + 1 group with ALL operation
-    assertEquals(7, acls.size());
-    assertEquals(8, allAcls.size());
+    // 7 topics + 1 group with ALL operation
+    assertEquals(8, acls.size());
+    assertEquals(9, allAcls.size());
 
     entryFilter =
         new AccessControlEntryFilter(
