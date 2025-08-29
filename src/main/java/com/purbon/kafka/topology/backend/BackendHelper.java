@@ -4,6 +4,7 @@ import com.purbon.kafka.topology.roles.TopologyAclBinding;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.kafka.common.acl.AclPermissionType;
 
 final class BackendHelper {
 
@@ -27,7 +28,7 @@ final class BackendHelper {
         matches.group(3), // host
         matches.group(4), // operation
         matches.group(5), // principal
-        matches.group(6) // pattern
-        );
+        matches.group(6), // pattern
+        AclPermissionType.ALLOW.name()); // permissionType, allow was an old default
   }
 }

@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import org.apache.kafka.common.acl.AclPermissionType;
 import org.apache.kafka.common.resource.ResourceType;
 import org.junit.After;
 import org.junit.Before;
@@ -75,7 +76,13 @@ public class S3BackendIT {
 
     TopologyAclBinding binding =
         TopologyAclBinding.build(
-            ResourceType.TOPIC.name(), "foo", "*", "Write", "User:foo", "LITERAL");
+            ResourceType.TOPIC.name(),
+            "foo",
+            "*",
+            "Write",
+            "User:foo",
+            "LITERAL",
+            AclPermissionType.ALLOW.name());
 
     BackendState state = new BackendState();
     state.addBindings(Collections.singleton(binding));

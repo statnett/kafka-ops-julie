@@ -23,6 +23,7 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.kafka.common.acl.AclPermissionType;
 import org.apache.kafka.common.resource.ResourceType;
 import org.junit.Before;
 import org.junit.Rule;
@@ -55,10 +56,22 @@ public class ExecutionPlanTest {
   public void addBindingsTest() throws IOException {
     TopologyAclBinding binding1 =
         new TopologyAclBinding(
-            ResourceType.ANY.name(), "topicA", "*", "ALL", "User:foo", "LITERAL");
+            ResourceType.ANY.name(),
+            "topicA",
+            "*",
+            "ALL",
+            "User:foo",
+            "LITERAL",
+            AclPermissionType.ALLOW.name());
     TopologyAclBinding binding2 =
         new TopologyAclBinding(
-            ResourceType.ANY.name(), "topicB", "*", "ALL", "User:foo", "LITERAL");
+            ResourceType.ANY.name(),
+            "topicB",
+            "*",
+            "ALL",
+            "User:foo",
+            "LITERAL",
+            AclPermissionType.ALLOW.name());
     Set<TopologyAclBinding> bindings = new HashSet<>(Arrays.asList(binding1, binding2));
     CreateBindings addBindingsAction = new CreateBindings(aclsProvider, bindings);
 
@@ -74,10 +87,22 @@ public class ExecutionPlanTest {
   public void deleteBindingsAfterCreateTest() throws IOException {
     TopologyAclBinding binding1 =
         new TopologyAclBinding(
-            ResourceType.ANY.name(), "topicA", "*", "ALL", "User:foo", "LITERAL");
+            ResourceType.ANY.name(),
+            "topicA",
+            "*",
+            "ALL",
+            "User:foo",
+            "LITERAL",
+            AclPermissionType.ALLOW.name());
     TopologyAclBinding binding2 =
         new TopologyAclBinding(
-            ResourceType.ANY.name(), "topicB", "*", "ALL", "User:foo", "LITERAL");
+            ResourceType.ANY.name(),
+            "topicB",
+            "*",
+            "ALL",
+            "User:foo",
+            "LITERAL",
+            AclPermissionType.ALLOW.name());
     Set<TopologyAclBinding> bindings = new HashSet<>(Arrays.asList(binding1, binding2));
     CreateBindings addBindingsAction = new CreateBindings(aclsProvider, bindings);
 

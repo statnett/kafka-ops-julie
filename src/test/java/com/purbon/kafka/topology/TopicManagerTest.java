@@ -381,4 +381,21 @@ public class TopicManagerTest {
 
     verify(adminClient, times(1)).createTopic(topicA, "TopicA");
   }
+
+  @Test
+  public void shouldManageSpecialTopicsAndRoles() throws IOException {
+    Topic topicA = new Topic("TopicA");
+    topicA.setConsumers(Collections.singletonList(new Consumer("User:foo")));
+    topicA.setProducers(Collections.singletonList(new Producer("User:bar")));
+    TestTopologyBuilder builder = TestTopologyBuilder.createProject().addSpecialTopic(topicA);
+
+    Configuration config = new Configuration(cliOps, props);
+    TopicManager topicManager = new TopicManager(adminClient, schemaRegistryManager, config);
+
+    when(adminClient.listApplicationTopics()).thenReturn(new HashSet<>());
+    topicManager.updatePlan(builder.buildTopology(), plan);
+    plan.run();
+
+    verify(adminClient, times(1)).createTopic(topicA, "TopicA");
+  }
 }

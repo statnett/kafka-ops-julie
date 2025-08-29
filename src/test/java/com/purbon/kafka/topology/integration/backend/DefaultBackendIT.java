@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import org.apache.kafka.common.acl.AclPermissionType;
 import org.apache.kafka.common.resource.ResourceType;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +33,13 @@ public class DefaultBackendIT {
 
     TopologyAclBinding binding =
         TopologyAclBinding.build(
-            ResourceType.CLUSTER.name(), "Topic", "host", "op", "principal", "LITERAL");
+            ResourceType.CLUSTER.name(),
+            "Topic",
+            "host",
+            "op",
+            "principal",
+            "LITERAL",
+            AclPermissionType.ALLOW.name());
 
     ServiceAccount serviceAccount = new ServiceAccount("1", "name", "description");
     ServiceAccount serviceAccount2 = new ServiceAccount("2", "name2", "description2");
@@ -58,7 +65,13 @@ public class DefaultBackendIT {
 
     TopologyAclBinding binding =
         TopologyAclBinding.build(
-            ResourceType.CLUSTER.name(), "Topic", "host", "op", "principal", "LITERAL");
+            ResourceType.CLUSTER.name(),
+            "Topic",
+            "host",
+            "op",
+            "principal",
+            "LITERAL",
+            AclPermissionType.ALLOW.name());
 
     backend.addBindings(Collections.singletonList(binding));
     backend.flushAndClose();

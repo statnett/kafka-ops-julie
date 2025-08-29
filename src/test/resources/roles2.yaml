@@ -1,0 +1,18 @@
+---
+roles:
+  - name: "app2"
+    acls:
+      - resourceType: "Topic"
+        resourceName: "fixed-topic-name"
+        patternType: "PREFIXED"
+        host: "*"
+        operation: "ALL"
+        permissionType: "ALLOW"
+  - name: "denyTopic"
+    acls:
+      - resourceType: "Topic"
+        resourceName: "i-am-not-accessible"
+        patternType: "LITERAL"
+        host: "*"
+        operation: "ALL"
+        permissionType: "DENY"

@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
+import org.apache.kafka.common.acl.AclPermissionType;
 import org.apache.kafka.common.resource.ResourceType;
 import org.junit.After;
 import org.junit.Before;
@@ -77,7 +78,8 @@ public class CCloudUtilsTest {
             "host",
             "operation",
             serviceName,
-            "pattern");
+            "pattern",
+            AclPermissionType.ALLOW.name());
 
     var translatedBinding = utils.translateIfNecessary(binding, lookupTable);
 

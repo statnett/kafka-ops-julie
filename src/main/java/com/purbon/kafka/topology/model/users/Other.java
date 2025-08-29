@@ -1,5 +1,7 @@
 package com.purbon.kafka.topology.model.users;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.purbon.kafka.topology.model.User;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,6 +10,7 @@ import java.util.Optional;
 
 public class Other extends User {
 
+  private Map<String, Object> unmappedFields = new HashMap<>();
   private Optional<String> transactionId;
   private Optional<Boolean> idempotence;
   private Optional<String> group;
@@ -27,6 +30,7 @@ public class Other extends User {
 
   public Map<String, Object> asMap() {
     Map<String, Object> map = new HashMap<>();
+    map.putAll(unmappedFields);
     map.put("topic", topicString());
     if (subject.isPresent()) {
       map.put("subject", subjectString());
@@ -39,6 +43,17 @@ public class Other extends User {
       map.put("transactionId", transactionId.get());
     }
     return map;
+  }
+
+  // Capture all other fields that Jackson do not match other members
+  @JsonAnyGetter
+  public Map<String, Object> otherFields() {
+    return unmappedFields;
+  }
+
+  @JsonAnySetter
+  public void setOtherField(String name, Object value) {
+    unmappedFields.put(name, value);
   }
 
   public String groupString() {

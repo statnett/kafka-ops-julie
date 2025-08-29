@@ -168,7 +168,11 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
       var resourceType = ResourceType.fromString(acl.getResourceType());
       var patternType = PatternType.fromString(acl.getPatternType());
       var aclOperation = AclOperation.fromString(acl.getOperation());
-      if (resourceType.isUnknown() || patternType.isUnknown() || aclOperation.isUnknown()) {
+      var aclPermissionType = AclPermissionType.fromString(acl.getPermissionType());
+      if (resourceType.isUnknown()
+          || patternType.isUnknown()
+          || aclOperation.isUnknown()
+          || aclPermissionType.isUnknown()) {
         throw new IOException(
             "Unknown ACL setting being used resourceType="
                 + acl.getResourceType()
@@ -189,7 +193,7 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
       var binding =
           new AclBuilder(other.getPrincipal())
               .resource(resourceType, acl.getResourceName(), patternType)
-              .allow(acl.getHost(), aclOperation)
+              .addEntry(acl.getHost(), aclOperation, aclPermissionType)
               .build();
       bindings.add(new TopologyAclBinding(binding));
     }

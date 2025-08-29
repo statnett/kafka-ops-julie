@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.common.acl.AclPermissionType;
 import org.apache.kafka.common.resource.ResourceType;
 import org.junit.*;
 import org.mockito.junit.MockitoJUnit;
@@ -108,7 +109,13 @@ public class RedisBackendIT {
 
     TopologyAclBinding binding =
         TopologyAclBinding.build(
-            ResourceType.TOPIC.name(), "foo", "*", "Write", "User:foo", "LITERAL");
+            ResourceType.TOPIC.name(),
+            "foo",
+            "*",
+            "Write",
+            "User:foo",
+            "LITERAL",
+            AclPermissionType.ALLOW.name());
 
     List<String> topics = Arrays.asList("foo", "bar");
     var connector = new KafkaConnectArtefact("path", "label", "name", "some-hash");

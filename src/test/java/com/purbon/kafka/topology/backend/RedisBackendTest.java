@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import com.purbon.kafka.topology.roles.TopologyAclBinding;
 import java.io.IOException;
 import java.util.Collections;
+import org.apache.kafka.common.acl.AclPermissionType;
 import org.apache.kafka.common.resource.ResourceType;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
@@ -61,7 +62,13 @@ public class RedisBackendTest {
   private BackendState buildBackendState() {
     TopologyAclBinding binding =
         TopologyAclBinding.build(
-            ResourceType.CLUSTER.name(), "Topic A", "host", "op", "principal", "LITERAL");
+            ResourceType.CLUSTER.name(),
+            "Topic A",
+            "host",
+            "op",
+            "principal",
+            "LITERAL",
+            AclPermissionType.ALLOW.name());
 
     BackendState state = new BackendState();
     state.addBindings(Collections.singleton(binding));

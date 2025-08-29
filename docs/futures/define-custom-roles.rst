@@ -36,13 +36,13 @@ First thing is to define your roles in a configuration file, this file should lo
             patternType: "LITERAL"
             host: "*"
             operation: "ALL"
-            permissionType: "READ"
+            permissionType: "ALLOW"
           - resourceType: "Topic"
             resourceName: "targetTopic"
             patternType: "LITERAL"
             host: "*"
             operation: "ALL"
-            permissionType: "WRITE"
+            permissionType: "ALLOW"
           - resourceType: "Group"
             resourceName: "{{group}}"
             patternType: "PREFIXED"
@@ -63,36 +63,43 @@ per acl is **role**, so the file might look like this:
             patternType: "PREFIXED"
             host: "*"
             role: "ResourceOwner"
+            permissionType: "ALLOW"
           - resourceType: "Topic"
             resourceName: "sourceTopic"
             patternType: "LITERAL"
             host: "*"
             role: "DeveloperRead"
+            permissionType: "ALLOW"
           - resourceType: "Topic"
             resourceName: "targetTopic"
             patternType: "LITERAL"
             host: "*"
             role: "DeveloperWrite"
+            permissionType: "ALLOW"
           - resourceType: "Group"
             resourceName: "{{group}}"
             patternType: "PREFIXED"
             host: "*"
             role: "DeveloperRead"
+            permissionType: "ALLOW"
           - resourceType: "Subject"
             resourceName: "Subject:foo"
             patternType: "LITERAL"
             host: "*"
             role: "DeveloperRead"
+            permissionType: "ALLOW"
           - resourceType: "Connector"
             resourceName: "Connector:con"
             patternType: "LITERAL"
             host: "*"
             role: "SecurityAdmin"
+            permissionType: "ALLOW"
           - resourceType: "KsqlCluster"
             resourceName: "KsqlCluster:ksql-cluster"
             patternType: "LITERAL"
             host: "*"
             role: "ResourceOwner"
+            permissionType: "ALLOW"
 
 
 Plug this into JulieOps
@@ -126,3 +133,87 @@ Your topology file could look like this:
         bar:
           - principal: "User:bandana"
             group: "bar"
+
+More generic usage of roles
+-----------
+
+Lets assume you need to deploy multiple instances of an application that is not willing to use JulieOps topic hierarchy,
+requires multiple topics and custom ACLs. You could define a role for each instance, or for each group/topic,
+but that would clutter the roles file quickly. You would however like to have these topics in JulieOps, for ACL management
+and for documentation. For example Kafka MirrorMaker needs many topics which would be nice to group together in JulieOps
+config.
+
+For brevity example below gives too much permissions (ALL), but works as example how feature works.
+
+.. code-block:: YAML
+
+    roles:
+      - name: "mirrorMaker"
+        acls:
+          - resourceType: "Topic"
+            resourceName: "{{statusTopic}}"
+            patternType: "LITERAL"
+            host: "*"
+            operation: "ALL"
+          - resourceType: "Topic"
+            resourceName: "{{offsetTopic}}"
+            patternType: "LITERAL"
+            host: "*"
+            operation: "ALL"
+          - resourceType: "Topic"
+            resourceName: "{{configTopic}}"
+            patternType: "LITERAL"
+            host: "*"
+            operation: "ALL"
+          - resourceType: "Topic"
+            resourceName: "{{targetPrefix}}"
+            patternType: "PREFIXED"
+            host: "*"
+            operation: "ALL"
+          - resourceType: "Topic"
+            resourceName: "{{offsetSyncTopic}}"
+            patternType: "LITERAL"
+            host: "*"
+            operation: "ALL"
+          - resourceType: "Topic"
+            resourceName: "{{checkpointsTopic}}"
+            patternType: "LITERAL"
+            host: "*"
+            operation: "ALL"
+          - resourceType: "Cluster"
+            resourceName: "kafka-cluster"
+            patternType: "LITERAL"
+            host: "*"
+            operation: "DESCRIBE"
+          - resourceType: "Cluster"
+            resourceName: "kafka-cluster"
+            patternType: "LITERAL"
+            host: "*"
+            operation: "DESCRIBE_CONFIGS"
+          - resourceType: "Group"
+            resourceName: "{{group}}"
+            patternType: "LITERAL"
+            host: "*"
+            operation: "ALL"
+
+With previous role MirrorMaker can be defined in a clutter free manner in a project. Note that `permissionType: "ALLOW"`
+is omitted here. It is default for all role given ACLs.
+
+.. code-block:: YAML
+
+    context: "contextOrg"
+    source: "source"
+    projects:
+      - name: "foo"
+        mirrorMaker:
+          - principal: "User:banana"
+            group: "foo"
+            statusTopic: "test-cluster-status"
+            offsetTopic: "test-cluster-offsets"
+            configTopic: "test-cluster-configs"
+            targetPrefix: "target-prefix."
+            offsetSyncTopic: "mm2-offset-syncs.test-mm.internal"
+            checkpointsTopic: "test-mm.checkpoints.internal"
+
+Somewhat viable alternative to this would be to use special_topics, but they limit to topic and producer/consumer ACLs
+and don't allow PREFIX type permissions.

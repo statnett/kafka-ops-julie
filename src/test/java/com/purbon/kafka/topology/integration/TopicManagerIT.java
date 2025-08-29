@@ -3,6 +3,7 @@ package com.purbon.kafka.topology.integration;
 import static com.purbon.kafka.topology.CommandLineInterface.*;
 import static com.purbon.kafka.topology.Constants.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.purbon.kafka.topology.BackendController;
@@ -356,6 +357,36 @@ public class TopicManagerIT {
     verifyTopicConfiguration(topicA.toString(), config, Collections.singletonList("segment.bytes"));
   }
 
+  @Test
+  public void testTopicCreationWithSpecialTopics()
+      throws ExecutionException, InterruptedException, IOException {
+
+    Topology topology = new TopologyImpl();
+    topology.setContext("testSpecialTopicCreationWithRoles");
+
+    Project project = new ProjectImpl("project");
+    topology.addProject(project);
+
+    HashMap<String, String> topicConfig = new HashMap<>();
+    topicConfig.put(TopicManager.NUM_PARTITIONS, "1");
+    topicConfig.put(TopicManager.REPLICATION_FACTOR, "1");
+
+    Topic topicA = new Topic("topicA", topicConfig);
+    project.addTopic(topicA);
+
+    var specialTopics = List.of(new Topic("i-am-special", topicConfig));
+    topology.setSpecialTopics(specialTopics);
+
+    topicManager.updatePlan(topology, plan);
+    plan.run();
+
+    Set<String> topicNames = kafkaAdminClient.listTopics().names().get();
+
+    assertThat(topicNames).contains(topicA.toString());
+    assertThat(topicNames).contains("i-am-special");
+    assertEquals("Should create 2 new topics", 2, topicNames.size());
+  }
+
   private void verifyTopicConfiguration(String topic, HashMap<String, String> config)
       throws ExecutionException, InterruptedException {
     verifyTopicConfiguration(topic, config, new ArrayList<>());
@@ -379,7 +410,7 @@ public class TopicManagerIT {
             entry -> {
               if (!entry.isDefault()) {
                 if (config.get(entry.name()) != null)
-                  Assert.assertEquals(config.get(entry.name()), entry.value());
+                  assertEquals(config.get(entry.name()), entry.value());
                 Assert.assertFalse(removedConfigs.contains(entry.name()));
               }
             });

@@ -376,7 +376,6 @@ public class TopologySerdesTest {
     assertTrue(topology.getProjects().get(0).getConnectors().isEmpty());
     assertTrue(topology.getProjects().get(0).getProducers().isEmpty());
     assertTrue(topology.getProjects().get(0).getStreams().isEmpty());
-    assertTrue(topology.getProjects().get(0).getZookeepers().isEmpty());
   }
 
   @Test
@@ -399,7 +398,6 @@ public class TopologySerdesTest {
     assertThat(project.getConnectors()).isEmpty();
     assertThat(project.getProducers()).isEmpty();
     assertThat(project.getStreams()).isEmpty();
-    assertThat(project.getZookeepers()).isEmpty();
 
     Topic topic = project.getTopics().get(0);
 

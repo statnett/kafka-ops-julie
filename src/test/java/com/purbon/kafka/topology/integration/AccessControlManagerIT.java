@@ -225,7 +225,13 @@ public class AccessControlManagerIT {
 
     var binding =
         TopologyAclBinding.build(
-            "TOPIC", "ctx.project.topic2", "*", "DESCRIBE", "User:foo", "LITERAL");
+            "TOPIC",
+            "ctx.project.topic2",
+            "*",
+            "DESCRIBE",
+            "User:foo",
+            "LITERAL",
+            AclPermissionType.ALLOW.name());
     adminClient.clearAcls(binding);
 
     accessControlManager.updatePlan(topology, plan);
@@ -526,6 +532,93 @@ public class AccessControlManagerIT {
     assertEquals(size, acls.size());
   }
 
+  @Test
+  public void mirrorMakerAclsCreation()
+      throws ExecutionException, InterruptedException, IOException {
+    Project project = new ProjectImpl("project");
+
+    Topology topology = new TopologyImpl();
+    topology.setContext("integration-test");
+    topology.addOther("source", "testMirrorMakerAclsCreation");
+
+    var mm = new Other();
+    mm.setPrincipal("User:mm2");
+    mm.setGroup(Optional.of("testgroup"));
+    mm.setOtherField("statusTopic", "test-mirrormaker2-cluster-status");
+    mm.setOtherField("offsetTopic", "test-mirrormaker2-cluster-offsets");
+    mm.setOtherField("configTopic", "test-mirrormaker2-cluster-configs");
+    mm.setOtherField("targetPrefix", "test-mm.");
+    mm.setOtherField("offsetSyncTopic", "mm2-offset-syncs.test-mm.internal");
+    mm.setOtherField("checkpointsTopic", "test-mm.checkpoints.internal");
+
+    var deny = new Other();
+    deny.setPrincipal("User:mm2");
+    deny.setGroup(Optional.of("testgroup"));
+
+    project.setOthers(Map.of("mirrorMaker", List.of(mm), "denyTopic", List.of(deny)));
+
+    topology.addProject(project);
+
+    Properties props = new Properties();
+    props.put(
+        JULIE_ROLES,
+        TestUtils.getResourceFilename("/roles-mirrormaker.yaml")
+            + ","
+            + TestUtils.getResourceFilename("/roles2.yaml"));
+
+    Configuration config = new Configuration(Map.of(), props);
+
+    accessControlManager =
+        new AccessControlManager(
+            aclsProvider, new AclsBindingsBuilder(config), config.getJulieRoles(), config);
+
+    accessControlManager.updatePlan(topology, plan);
+    plan.run(false);
+
+    verifyMirrorMakerAcls(mm);
+  }
+
+  @Test
+  public void testJulieRoleAclCreation_multipleRoleFiles()
+      throws IOException, ExecutionException, InterruptedException {
+    Topic topicA = new Topic("topicA");
+    Topology topology =
+        TestTopologyBuilder.createProject()
+            .addTopic(topicA)
+            .addConsumer("User:app1")
+            .addOther("app", "User:user1", "foo")
+            .addOther("denyTopic", "User:user2", "foo")
+            .buildTopology();
+
+    Map<String, String> cliOps = new HashMap<>();
+    cliOps.put(BROKERS_OPTION, "");
+
+    Properties props = new Properties();
+    String rolesFile = TestUtils.getResourceFilename("/roles.yaml");
+    String roles2File = TestUtils.getResourceFilename("/roles2.yaml");
+    props.put(JULIE_ROLES, rolesFile + "," + roles2File);
+
+    Configuration config = new Configuration(cliOps, props);
+
+    accessControlManager =
+        new AccessControlManager(
+            aclsProvider, new AclsBindingsBuilder(config), config.getJulieRoles(), config);
+
+    accessControlManager.updatePlan(topology, plan);
+
+    plan.run();
+
+    // 8 =
+    //  - 2 READ & DESCRIBE for User:app1 for topicA
+    //  - 1 Prefixed ALL/ALLOW from "app" role for topic foo for User:user1
+    //  - 1 READ to sourceTopic for User:user1
+    //  - 1 WRITE to targetTopic for User:user1
+    //  - 1 deny to i-am-not-accessible to User:user2
+    //  - 1 GROUP READ for User:app1
+    //  - 1 GROUP READ for User:user1
+    verifyAclsOfSize(ContainerTestUtils.NUM_JULIE_INITIAL_ACLS + 8);
+  }
+
   private void verifyConnectAcls(Connector connector)
       throws ExecutionException, InterruptedException {
 
@@ -748,5 +841,56 @@ public class AccessControlManagerIT {
       Assert.assertTrue(ops.contains(AclOperation.DESCRIBE));
       Assert.assertTrue(ops.contains(AclOperation.READ));
     }
+  }
+
+  private void verifyMirrorMakerAcls(Other other) throws InterruptedException, ExecutionException {
+    ResourcePatternFilter resourceFilter = ResourcePatternFilter.ANY;
+
+    AccessControlEntryFilter entryFilter =
+        new AccessControlEntryFilter(
+            other.getPrincipal(), null, AclOperation.ALL, AclPermissionType.ALLOW);
+
+    AccessControlEntryFilter anyFilter =
+        new AccessControlEntryFilter(
+            other.getPrincipal(), null, AclOperation.ALL, AclPermissionType.ANY);
+
+    AclBindingFilter filter = new AclBindingFilter(resourceFilter, entryFilter);
+    AclBindingFilter allAclFilter = new AclBindingFilter(resourceFilter, anyFilter);
+
+    Collection<AclBinding> acls = kafkaAdminClient.describeAcls(filter).values().get();
+    Collection<AclBinding> allAcls = kafkaAdminClient.describeAcls(allAclFilter).values().get();
+
+    // 7 topics + 1 group with ALL operation
+    assertEquals(8, acls.size());
+    assertEquals(9, allAcls.size());
+
+    entryFilter =
+        new AccessControlEntryFilter(
+            other.getPrincipal(), null, AclOperation.DESCRIBE, AclPermissionType.ALLOW);
+
+    filter = new AclBindingFilter(resourceFilter, entryFilter);
+
+    acls = kafkaAdminClient.describeAcls(filter).values().get();
+
+    // 1 DESCRIBE permission for cluster
+    assertEquals(1, acls.size());
+
+    entryFilter =
+        new AccessControlEntryFilter(
+            other.getPrincipal(), null, AclOperation.DESCRIBE_CONFIGS, AclPermissionType.ALLOW);
+
+    filter = new AclBindingFilter(resourceFilter, entryFilter);
+
+    acls = kafkaAdminClient.describeAcls(filter).values().get();
+
+    // 1 DESCRIBE_CONFIGS permission for cluster
+    assertEquals(1, acls.size());
+
+    var denyFilter =
+        new AccessControlEntryFilter(
+            other.getPrincipal(), null, AclOperation.ALL, AclPermissionType.DENY);
+    allAclFilter = new AclBindingFilter(resourceFilter, denyFilter);
+    acls = kafkaAdminClient.describeAcls(allAclFilter).values().get();
+    assertEquals(1, acls.size());
   }
 }

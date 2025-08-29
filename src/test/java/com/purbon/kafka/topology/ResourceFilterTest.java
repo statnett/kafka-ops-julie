@@ -9,6 +9,7 @@ import com.purbon.kafka.topology.roles.ResourceFilter;
 import com.purbon.kafka.topology.roles.TopologyAclBinding;
 import java.util.HashMap;
 import java.util.Properties;
+import org.apache.kafka.common.acl.AclPermissionType;
 import org.apache.kafka.common.resource.ResourceType;
 import org.junit.Test;
 
@@ -21,17 +22,35 @@ public class ResourceFilterTest {
 
     TopologyAclBinding binding =
         TopologyAclBinding.build(
-            ResourceType.TOPIC.name(), "d.foo.bar", "*", "read", "User:foo", "PREFIXED");
+            ResourceType.TOPIC.name(),
+            "d.foo.bar",
+            "*",
+            "read",
+            "User:foo",
+            "PREFIXED",
+            AclPermissionType.ALLOW.name());
     assertThat(filter.matchesManagedPrefixList(binding)).isTrue();
 
     binding =
         TopologyAclBinding.build(
-            ResourceType.TOPIC.name(), "d.foo.bar", "*", "read", "User:bar", "PREFIXED");
+            ResourceType.TOPIC.name(),
+            "d.foo.bar",
+            "*",
+            "read",
+            "User:bar",
+            "PREFIXED",
+            AclPermissionType.ALLOW.name());
     assertThat(filter.matchesManagedPrefixList(binding)).isFalse();
 
     binding =
         TopologyAclBinding.build(
-            ResourceType.TOPIC.name(), "c.f.b", "*", "read", "User:foo", "PREFIXED");
+            ResourceType.TOPIC.name(),
+            "c.f.b",
+            "*",
+            "read",
+            "User:foo",
+            "PREFIXED",
+            AclPermissionType.ALLOW.name());
     assertThat(filter.matchesManagedPrefixList(binding)).isFalse();
   }
 
@@ -42,7 +61,13 @@ public class ResourceFilterTest {
 
     TopologyAclBinding binding =
         TopologyAclBinding.build(
-            ResourceType.TOPIC.name(), "d.foo.bar", "*", "read", "User:foo", "PREFIXED");
+            ResourceType.TOPIC.name(),
+            "d.foo.bar",
+            "*",
+            "read",
+            "User:foo",
+            "PREFIXED",
+            AclPermissionType.ALLOW.name());
     assertThat(filter.matchesManagedPrefixList(binding)).isTrue();
   }
 
@@ -53,12 +78,24 @@ public class ResourceFilterTest {
 
     TopologyAclBinding binding =
         TopologyAclBinding.build(
-            ResourceType.TOPIC.name(), "d.foo.bar", "*", "read", "User:foo", "PREFIXED");
+            ResourceType.TOPIC.name(),
+            "d.foo.bar",
+            "*",
+            "read",
+            "User:foo",
+            "PREFIXED",
+            AclPermissionType.ALLOW.name());
     assertThat(filter.matchesManagedPrefixList(binding)).isTrue();
 
     binding =
         TopologyAclBinding.build(
-            ResourceType.TOPIC.name(), "c.foo.zet", "*", "read", "User:foo", "PREFIXED");
+            ResourceType.TOPIC.name(),
+            "c.foo.zet",
+            "*",
+            "read",
+            "User:foo",
+            "PREFIXED",
+            AclPermissionType.ALLOW.name());
     assertThat(filter.matchesManagedPrefixList(binding)).isFalse();
   }
 

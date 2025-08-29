@@ -17,6 +17,7 @@ import com.purbon.kafka.topology.model.cluster.ServiceAccount;
 import com.purbon.kafka.topology.roles.TopologyAclBinding;
 import java.io.IOException;
 import java.util.Collections;
+import org.apache.kafka.common.acl.AclPermissionType;
 import org.apache.kafka.common.resource.ResourceType;
 import org.junit.Rule;
 import org.junit.Test;
@@ -45,7 +46,13 @@ public class BackendControllerTest {
     BackendController backend = new BackendController(fileStateProcessor);
     TopologyAclBinding binding =
         TopologyAclBinding.build(
-            ResourceType.CLUSTER.name(), "Topic", "host", "op", "principal", "LITERAL");
+            ResourceType.CLUSTER.name(),
+            "Topic",
+            "host",
+            "op",
+            "principal",
+            "LITERAL",
+            AclPermissionType.ALLOW.name());
 
     backend.addBindings(Collections.singletonList(binding));
 
@@ -59,7 +66,13 @@ public class BackendControllerTest {
 
     TopologyAclBinding binding =
         TopologyAclBinding.build(
-            ResourceType.CLUSTER.name(), "Topic", "host", "op", "principal", "LITERAL");
+            ResourceType.CLUSTER.name(),
+            "Topic",
+            "host",
+            "op",
+            "principal",
+            "LITERAL",
+            AclPermissionType.ALLOW.name());
 
     ServiceAccount serviceAccount = new ServiceAccount("1", "name", "description");
 
@@ -84,7 +97,13 @@ public class BackendControllerTest {
 
     TopologyAclBinding binding =
         TopologyAclBinding.build(
-            ResourceType.CLUSTER.name(), "Topic", "host", "op", "principal", "LITERAL");
+            ResourceType.CLUSTER.name(),
+            "Topic",
+            "host",
+            "op",
+            "principal",
+            "LITERAL",
+            AclPermissionType.ALLOW.name());
 
     backend.addBindings(Collections.singletonList(binding));
     backend.addTopics(Collections.singleton(topic.getName()));

@@ -13,6 +13,7 @@ import com.purbon.kafka.topology.roles.rbac.RBACBindingsBuilder;
 import java.io.IOException;
 import java.util.*;
 import org.apache.kafka.common.acl.AclOperation;
+import org.apache.kafka.common.acl.AclPermissionType;
 import org.apache.kafka.common.resource.PatternType;
 import org.apache.kafka.common.resource.ResourceType;
 import org.junit.Before;
@@ -61,7 +62,8 @@ public class AccessControlWithRBACTest {
             "host",
             AclOperation.DESCRIBE_CONFIGS.name(),
             "User:Foo",
-            PatternType.ANY.name());
+            PatternType.ANY.name(),
+            AclPermissionType.ALLOW.name());
     when(bindingsBuilder.setPredefinedRole("User:Foo", "ResourceOwner", project.namePrefix()))
         .thenReturn(binding);
 

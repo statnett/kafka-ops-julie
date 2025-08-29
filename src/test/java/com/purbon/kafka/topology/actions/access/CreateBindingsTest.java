@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.purbon.kafka.topology.AccessControlProvider;
 import com.purbon.kafka.topology.roles.TopologyAclBinding;
 import java.util.HashSet;
+import org.apache.kafka.common.acl.AclPermissionType;
 import org.apache.kafka.common.resource.ResourceType;
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,7 +25,13 @@ public class CreateBindingsTest {
     var bindings = new HashSet<TopologyAclBinding>();
     bindings.add(
         TopologyAclBinding.build(
-            ResourceType.CLUSTER.name(), "Topic", "host", "op", "principal", "LITERAL"));
+            ResourceType.CLUSTER.name(),
+            "Topic",
+            "host",
+            "op",
+            "principal",
+            "LITERAL",
+            AclPermissionType.ALLOW.name()));
     bindings.add(
         TopologyAclBinding.build(
             ResourceType.CLUSTER.name(),
@@ -32,7 +39,8 @@ public class CreateBindingsTest {
             "host",
             "operation",
             "service",
-            "pattern"));
+            "pattern",
+            AclPermissionType.ALLOW.name()));
     var action = new CreateBindings(provider, bindings);
     var refs = action.refs();
     assertThat(refs).hasSize(2);

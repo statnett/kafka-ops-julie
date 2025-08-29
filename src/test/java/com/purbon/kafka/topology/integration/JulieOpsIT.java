@@ -4,11 +4,13 @@ import static com.purbon.kafka.topology.CommandLineInterface.*;
 
 import com.purbon.kafka.topology.JulieOps;
 import com.purbon.kafka.topology.integration.containerutils.ContainerFactory;
+import com.purbon.kafka.topology.integration.containerutils.ContainerTestUtils;
 import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextKafkaContainer;
 import com.purbon.kafka.topology.utils.TestUtils;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -56,5 +58,36 @@ public class JulieOpsIT {
     config.put(CLIENT_CONFIG_OPTION, clientConfigFile);
 
     JulieOps.build(fileOrDirPath, config);
+  }
+
+  @Test
+  public void testSetupKafkaTopologyBuilderWithDir() throws Exception {
+    String clientConfigFile = TestUtils.getResourceFilename("/client-config.properties");
+    String fileOrDirPath = TestUtils.getResourceFilename("/dir");
+
+    Map<String, String> config = new HashMap<>();
+    config.put(BROKERS_OPTION, container.getBootstrapServers());
+    config.put(DRY_RUN_OPTION, "false");
+    config.put(QUIET_OPTION, "false");
+    config.put(CLIENT_CONFIG_OPTION, clientConfigFile);
+
+    var ops = JulieOps.build(fileOrDirPath, config);
+    ops.run();
+
+    AdminClient kafkaAdminClient =
+        ContainerTestUtils.getSaslSuperUserAdminClient(container.getBootstrapServers());
+
+    var topics = kafkaAdminClient.listTopics().names().get();
+
+    assert topics.size() == 9;
+    assert topics.contains("contextOrg.source.foo.bar.zet.zet.foo");
+    assert topics.contains("contextOrg.source.foo.bar.zet.zet.bar.avro");
+    assert topics.contains("contextOrg.source.foo.foo");
+    assert topics.contains("contextOrg.source.foo.bar.zet.bear.bar.avro");
+    assert topics.contains("contextOrg.source.bar.bar.avro");
+    assert topics.contains("contextOrg.source.foo.bar.avro");
+    assert topics.contains("contextOrg.source.external.aaa.foo");
+    assert topics.contains("i-am-very-special");
+    assert topics.contains("i-am-more-special");
   }
 }

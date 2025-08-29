@@ -20,8 +20,6 @@ public interface Project {
 
   String getName();
 
-  List<String> getZookeepers();
-
   List<Consumer> getConsumers();
 
   void setConsumers(List<Consumer> consumers);

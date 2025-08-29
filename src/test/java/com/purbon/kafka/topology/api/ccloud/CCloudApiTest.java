@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
+import org.apache.kafka.common.acl.AclPermissionType;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -55,7 +56,8 @@ public class CCloudApiTest {
     when(httpClient.baseUrl()).thenReturn("http://not.valid:9999");
 
     TopologyAclBinding binding =
-        new TopologyAclBinding("TOPIC", "foo", "*", "ALL", "User:foo", "LITERAL");
+        new TopologyAclBinding(
+            "TOPIC", "foo", "*", "ALL", "User:foo", "LITERAL", AclPermissionType.ALLOW.name());
 
     apiClient.createAcl("clusterId", binding);
     var body =
@@ -74,7 +76,8 @@ public class CCloudApiTest {
   public void testAclDeleteMethod() throws IOException {
 
     TopologyAclBinding binding =
-        new TopologyAclBinding("TOPIC", "foo", "*", "ALL", "User:foo", "LITERAL");
+        new TopologyAclBinding(
+            "TOPIC", "foo", "*", "ALL", "User:foo", "LITERAL", AclPermissionType.ALLOW.name());
 
     apiClient.deleteAcls("clusterId", binding);
     var url =

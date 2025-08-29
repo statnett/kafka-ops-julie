@@ -60,7 +60,8 @@ public class CCloudUtils {
         binding.getHost(),
         binding.getOperation(),
         principal.toMappedPrincipalString(numericServiceAccountId),
-        binding.getPattern());
+        binding.getPattern(),
+        binding.getPermissionType());
   }
 
   public Map<String, Long> initializeLookupTable(CCloudApi cli) throws IOException {

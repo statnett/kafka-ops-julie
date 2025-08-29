@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.purbon.kafka.topology.model.users.Other;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class JulieRoles {
@@ -21,6 +18,12 @@ public class JulieRoles {
   @JsonCreator
   public JulieRoles(@JsonProperty("roles") List<JulieRole> roles) {
     this.roles = roles.stream().collect(Collectors.toMap(JulieRole::getName, e -> e));
+  }
+
+  public JulieRoles merge(JulieRoles other) {
+    Map<String, JulieRole> merged = new HashMap<>(this.roles); // make a copy of the original roles
+    merged.putAll(other.roles);
+    return new JulieRoles(new ArrayList<>(merged.values()));
   }
 
   public List<JulieRole> getRoles() {
