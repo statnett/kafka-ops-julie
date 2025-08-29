@@ -169,7 +169,10 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
       var patternType = PatternType.fromString(acl.getPatternType());
       var aclOperation = AclOperation.fromString(acl.getOperation());
       var aclPermissionType = AclPermissionType.fromString(acl.getPermissionType());
-      if (resourceType.isUnknown() || patternType.isUnknown() || aclOperation.isUnknown()) {
+      if (resourceType.isUnknown()
+          || patternType.isUnknown()
+          || aclOperation.isUnknown()
+          || aclPermissionType.isUnknown()) {
         throw new IOException(
             "Unknown ACL setting being used resourceType="
                 + acl.getResourceType()

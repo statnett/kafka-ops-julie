@@ -586,8 +586,8 @@ public class AccessControlManagerIT {
         TestTopologyBuilder.createProject()
             .addTopic(topicA)
             .addConsumer("User:app1")
-            .addOther("app", "User:app1", "foo")
-            .addOther("denyTopic", "User:app1", "foo")
+            .addOther("app", "User:user1", "foo")
+            .addOther("denyTopic", "User:user2", "foo")
             .buildTopology();
 
     Map<String, String> cliOps = new HashMap<>();
@@ -608,7 +608,15 @@ public class AccessControlManagerIT {
 
     plan.run();
 
-    verifyAclsOfSize(8);
+    // 8 =
+    //  - 2 READ & DESCRIBE for User:app1 for topicA
+    //  - 1 Prefixed ALL/ALLOW from "app" role for topic foo for User:user1
+    //  - 1 READ to sourceTopic for User:user1
+    //  - 1 WRITE to targetTopic for User:user1
+    //  - 1 deny to i-am-not-accessible to User:user2
+    //  - 1 GROUP READ for User:app1
+    //  - 1 GROUP READ for User:user1
+    verifyAclsOfSize(ContainerTestUtils.NUM_JULIE_INITIAL_ACLS + 8);
   }
 
   private void verifyConnectAcls(Connector connector)
