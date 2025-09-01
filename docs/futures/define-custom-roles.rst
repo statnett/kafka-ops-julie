@@ -134,6 +134,50 @@ Your topology file could look like this:
           - principal: "User:bandana"
             group: "bar"
 
+
+Role fields Types
+-----------
+
+Some role fields map directly to Kafka enums and other are names of resources. In table below
+
++----------------+-----------------------------------------------+
+| Role field     | Type                                          |
++================+===============================================+
+| permissionType | org.apache.kafka.common.acl.AclPermissionType |
++----------------+-----------------------------------------------+
+| host           | java.lang.String                              |
++----------------+-----------------------------------------------+
+| patternType    | org.apache.kafka.common.resource.PatternType  |
++----------------+-----------------------------------------------+
+| resourceName   | java.lang.String                              |
++----------------+-----------------------------------------------+
+| resourceType   | org.apache.kafka.common.resource.ResourceType |
++----------------+-----------------------------------------------+
+| operation      | org.apache.kafka.common.acl.AclOperation      |
++----------------+-----------------------------------------------+
+
+For enum values configuration must match names of values of those enum fields (`.fromString()` gets called).
+Note that there are additional limitations set by Kafka. Because the same enumerations are used for querying
+in kafka API they include values that can not be set. For example you can't set ACL which has `operation` of
+`UNKNOWN` or `ANY`.
+
+
+Shortening roles
+-----------
+
+Writing roles can be quite repetitive. Therefore `host`, `permissionType` and `patternType` have default values.
+
++----------------+---------------+
+| Role field     | Default value |
++================+===============+
+| permissionType | ALLOW         |
++----------------+---------------+
+| host           | *             |
++----------------+---------------+
+| patternType    | LITERAL       |
++----------------+---------------+
+
+
 More generic usage of roles
 -----------
 
@@ -147,57 +191,44 @@ For brevity example below gives too much permissions (ALL), but works as example
 
 .. code-block:: YAML
 
-    roles:
-      - name: "mirrorMaker"
-        acls:
-          - resourceType: "Topic"
-            resourceName: "{{statusTopic}}"
-            patternType: "LITERAL"
-            host: "*"
-            operation: "ALL"
-          - resourceType: "Topic"
-            resourceName: "{{offsetTopic}}"
-            patternType: "LITERAL"
-            host: "*"
-            operation: "ALL"
-          - resourceType: "Topic"
-            resourceName: "{{configTopic}}"
-            patternType: "LITERAL"
-            host: "*"
-            operation: "ALL"
-          - resourceType: "Topic"
-            resourceName: "{{targetPrefix}}"
-            patternType: "PREFIXED"
-            host: "*"
-            operation: "ALL"
-          - resourceType: "Topic"
-            resourceName: "{{offsetSyncTopic}}"
-            patternType: "LITERAL"
-            host: "*"
-            operation: "ALL"
-          - resourceType: "Topic"
-            resourceName: "{{checkpointsTopic}}"
-            patternType: "LITERAL"
-            host: "*"
-            operation: "ALL"
-          - resourceType: "Cluster"
-            resourceName: "kafka-cluster"
-            patternType: "LITERAL"
-            host: "*"
-            operation: "DESCRIBE"
-          - resourceType: "Cluster"
-            resourceName: "kafka-cluster"
-            patternType: "LITERAL"
-            host: "*"
-            operation: "DESCRIBE_CONFIGS"
-          - resourceType: "Group"
-            resourceName: "{{group}}"
-            patternType: "LITERAL"
-            host: "*"
-            operation: "ALL"
+---
+roles:
+  - name: "mirrorMaker"
+    acls:
+      - resourceType: "Topic"
+        resourceName: "{{statusTopic}}"
+        operation: "ALL"
+      - resourceType: "Topic"
+        resourceName: "{{offsetTopic}}"
+        operation: "ALL"
+      - resourceType: "Topic"
+        resourceName: "{{configTopic}}"
+        operation: "ALL"
+      - resourceType: "Topic"
+        resourceName: "{{targetPrefix}}"
+        patternType: "PREFIXED"
+        operation: "ALL"
+      - resourceType: "Topic"
+        resourceName: "{{offsetSyncTopic}}"
+        operation: "ALL"
+      - resourceType: "Topic"
+        resourceName: "{{checkpointsTopic}}"
+        operation: "ALL"
+      - resourceType: "Topic"
+        # using jinja2 syntax to provide a default value
+        resourceName: "{{heartbeatTopic or 'mirrormaker2-heartbeat'}}"
+        operation: "ALL"
+      - resourceType: "Cluster"
+        resourceName: "kafka-cluster"
+        operation: "DESCRIBE"
+      - resourceType: "Cluster"
+        resourceName: "kafka-cluster"
+        operation: "DESCRIBE_CONFIGS"
+      - resourceType: "Group"
+        resourceName: "{{group}}"
+        operation: "ALL"
 
-With previous role MirrorMaker can be defined in a clutter free manner in a project. Note that `permissionType: "ALLOW"`
-is omitted here. It is default for all role given ACLs.
+With previous role MirrorMaker can be defined in a clutter free manner in a project.
 
 .. code-block:: YAML
 
