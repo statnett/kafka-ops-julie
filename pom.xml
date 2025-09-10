@@ -518,7 +518,7 @@
     <dependency>
       <groupId>io.github.robothy</groupId>
       <artifactId>local-s3-rest</artifactId>
-      <version>1.26</version>
+      <version>1.27</version>
       <scope>test</scope>
     </dependency>
     <dependency>
