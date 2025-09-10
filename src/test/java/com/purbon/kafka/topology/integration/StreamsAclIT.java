@@ -58,7 +58,7 @@ public final class StreamsAclIT {
 
     final TestStreams streams =
         TestStreams.create(
-            container, ContainerTestUtils.STREAMS_USERNAME, STREAMS_APP_ID, builder.build());
+            container, ContainerTestUtils.STREAMS_USERNAME, STREAMS_APP_ID + "1", builder.build());
 
     streams.start();
 
@@ -83,7 +83,7 @@ public final class StreamsAclIT {
 
     final TestStreams streams =
         TestStreams.create(
-            container, ContainerTestUtils.STREAMS_USERNAME, STREAMS_APP_ID, builder.build());
+            container, ContainerTestUtils.STREAMS_USERNAME, STREAMS_APP_ID + "2", builder.build());
     streams.start();
 
     try (final TestConsumer consumer =
@@ -121,7 +121,7 @@ public final class StreamsAclIT {
 
     final TestStreams streams =
         TestStreams.create(
-            container, ContainerTestUtils.STREAMS_USERNAME, STREAMS_APP_ID, builder.build());
+            container, ContainerTestUtils.STREAMS_USERNAME, STREAMS_APP_ID + "3", builder.build());
     streams.start();
 
     try (final TestConsumer consumer =
