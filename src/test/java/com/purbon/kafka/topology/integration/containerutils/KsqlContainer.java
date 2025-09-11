@@ -1,5 +1,6 @@
 package com.purbon.kafka.topology.integration.containerutils;
 
+import java.time.Duration;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
@@ -8,6 +9,9 @@ public class KsqlContainer extends GenericContainer<KsqlContainer> {
 
   private static final DockerImageName DEFAULT_IMAGE =
       DockerImageName.parse("confluentinc/ksqldb-server").withTag("0.26.0");
+  /* ksqldb-server image only available for amd64, so running tests on Apple Silicon will take forever.
+   * hence set a long timeout to be able to run the tests. */
+  private static final Duration WAIT_DURATION = Duration.ofMinutes(20);
 
   public static final int KSQL_PORT = 8088;
 
@@ -17,9 +21,12 @@ public class KsqlContainer extends GenericContainer<KsqlContainer> {
 
   public KsqlContainer(final DockerImageName dockerImageName, AlternativeKafkaContainer kafka) {
     super(dockerImageName);
+    withStartupTimeout(WAIT_DURATION);
     String kafkaHost = kafka.getNetworkAliases().get(1);
     withExposedPorts(KSQL_PORT);
-    waitingFor(Wait.forLogMessage(".+ INFO Server up and running .+", 1));
+    waitingFor(
+        Wait.forLogMessage(".+ INFO Server up and running .+", 1)
+            .withStartupTimeout(WAIT_DURATION));
     // withEnv("KSQL_KSQL_SERVICE_ID", "confluent_ksql_streams_01");
     withEnv("KSQL_SECURITY_PROTOCOL", "SASL_PLAINTEXT");
     withEnv("KSQL_BOOTSTRAP_SERVERS", "SASL_PLAINTEXT://" + kafkaHost + ":" + 9091);
