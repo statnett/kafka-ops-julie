@@ -25,6 +25,7 @@ public final class StreamsAclIT {
   public static final long MAX_TEST_SEC_BEFORE_GIVING_UP = 60;
   public static final String STREAMS_APP_ID = "streams-appid";
   private static final String CONSUMER_GROUP = "streams-consumer-test-consumer-group";
+  private int appIdIndex = 0;
 
   private static SaslPlaintextKafkaContainer container;
 
@@ -58,7 +59,7 @@ public final class StreamsAclIT {
 
     final TestStreams streams =
         TestStreams.create(
-            container, ContainerTestUtils.STREAMS_USERNAME, STREAMS_APP_ID + "1", builder.build());
+            container, ContainerTestUtils.STREAMS_USERNAME, STREAMS_APP_ID + ++appIdIndex, builder.build());
 
     streams.start();
 
@@ -83,7 +84,7 @@ public final class StreamsAclIT {
 
     final TestStreams streams =
         TestStreams.create(
-            container, ContainerTestUtils.STREAMS_USERNAME, STREAMS_APP_ID + "2", builder.build());
+            container, ContainerTestUtils.STREAMS_USERNAME, STREAMS_APP_ID + ++appIdIndex, builder.build());
     streams.start();
 
     try (final TestConsumer consumer =
@@ -121,7 +122,7 @@ public final class StreamsAclIT {
 
     final TestStreams streams =
         TestStreams.create(
-            container, ContainerTestUtils.STREAMS_USERNAME, STREAMS_APP_ID + "3", builder.build());
+            container, ContainerTestUtils.STREAMS_USERNAME, STREAMS_APP_ID + ++appIdIndex, builder.build());
     streams.start();
 
     try (final TestConsumer consumer =
