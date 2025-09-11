@@ -291,7 +291,7 @@
     <mockito.version>5.19.0</mockito.version>
     <slf4j.version>2.0.17</slf4j.version>
     <testcontainers.version>1.21.3</testcontainers.version>
-    <typesafe.version>1.4.4</typesafe.version>
+    <typesafe.version>1.4.5</typesafe.version>
   </properties>
 
   <dependencies>
