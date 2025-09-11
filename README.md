@@ -18,4 +18,4 @@ Just the stuff we need.
 Unfortunately, Confluent does not provide an ARM64 build of the image `confluentinc/ksqldb-server`.
 On modern Macs without Intel, this container will be emulated.
 You must instruct your Docker Desktop for Mac to "Use Rosetta for x86_64/amd64 emulation on Apple Silicon", otherwise KSQL tests will time out.
-You find this option under "General" in Docker Desktop.
+You find this option under "Settings->General" in Docker Desktop.
