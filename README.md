@@ -10,3 +10,12 @@ The purpose of the fork is for us to be able to continue using Julie, although i
 The output from our fork is a single, versioned jar-file, published on GitHub.
 No container images, no back-porting of fixes to older major versions, no publishing to Maven Central.
 Just the stuff we need.
+
+## Tech Notes
+
+### Running Integration Tests on Apple Silicon
+
+Unfortunately, Confluent does not provide an ARM64 build of the image `confluentinc/ksqldb-server`.
+On modern Macs without Intel, this container will be emulated.
+You must instruct your Docker Desktop for Mac to "Use Rosetta for x86_64/amd64 emulation on Apple Silicon", otherwise KSQL tests will time out.
+You find this option under "Settings->General" in Docker Desktop.
