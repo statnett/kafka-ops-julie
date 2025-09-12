@@ -13,6 +13,7 @@ import com.purbon.kafka.topology.integration.containerutils.TestStreams;
 import java.util.Set;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.KStream;
+import org.jetbrains.annotations.NotNull;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -25,6 +26,7 @@ public final class StreamsAclIT {
   public static final long MAX_TEST_SEC_BEFORE_GIVING_UP = 60;
   public static final String STREAMS_APP_ID = "streams-appid";
   private static final String CONSUMER_GROUP = "streams-consumer-test-consumer-group";
+  private int appIdIndex = 0;
 
   private static SaslPlaintextKafkaContainer container;
 
@@ -58,7 +60,10 @@ public final class StreamsAclIT {
 
     final TestStreams streams =
         TestStreams.create(
-            container, ContainerTestUtils.STREAMS_USERNAME, STREAMS_APP_ID, builder.build());
+            container,
+            ContainerTestUtils.STREAMS_USERNAME,
+            getNextApplicationId(),
+            builder.build());
 
     streams.start();
 
@@ -83,7 +88,10 @@ public final class StreamsAclIT {
 
     final TestStreams streams =
         TestStreams.create(
-            container, ContainerTestUtils.STREAMS_USERNAME, STREAMS_APP_ID, builder.build());
+            container,
+            ContainerTestUtils.STREAMS_USERNAME,
+            getNextApplicationId(),
+            builder.build());
     streams.start();
 
     try (final TestConsumer consumer =
@@ -121,7 +129,10 @@ public final class StreamsAclIT {
 
     final TestStreams streams =
         TestStreams.create(
-            container, ContainerTestUtils.STREAMS_USERNAME, STREAMS_APP_ID, builder.build());
+            container,
+            ContainerTestUtils.STREAMS_USERNAME,
+            getNextApplicationId(),
+            builder.build());
     streams.start();
 
     try (final TestConsumer consumer =
@@ -136,5 +147,10 @@ public final class StreamsAclIT {
     streams.close();
 
     assertThat(values).isEmpty();
+  }
+
+  @NotNull
+  private String getNextApplicationId() {
+    return STREAMS_APP_ID + ++appIdIndex;
   }
 }
