@@ -272,7 +272,7 @@
     <!-- plugins -->
     <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
     <maven-failsafe-plugin.version>3.5.3</maven-failsafe-plugin.version>
-    <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
+    <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
     <!-- dependencies -->
     <assertj.version>3.27.4</assertj.version>
     <aws.java.sdk.version>2.33.6</aws.java.sdk.version>
