@@ -271,7 +271,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- plugins -->
     <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
-    <maven-failsafe-plugin.version>3.5.3</maven-failsafe-plugin.version>
+    <maven-failsafe-plugin.version>3.5.4</maven-failsafe-plugin.version>
     <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
     <!-- dependencies -->
     <assertj.version>3.27.4</assertj.version>
