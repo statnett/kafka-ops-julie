@@ -161,19 +161,8 @@ public class TopologyAclBinding implements Comparable<TopologyAclBinding> {
   @Override
   public String toString() {
     return "{'"
-        + resourceType
-        + "', '"
-        + resourceName
-        + "', '"
-        + host
-        + "', '"
-        + operation
-        + "', '"
-        + principal
-        + "', '"
-        + pattern
-        + "', '"
-        + permissionType
+        + StringUtils.joinWith(
+            "', '", resourceType, resourceName, host, operation, principal, pattern, permissionType)
         + "'}";
   }
 
