@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.2.2](https://github.com/statnett/kafka-ops-julie/compare/v5.2.1...v5.2.2) (2025-10-05)
+
+
+### Bug Fixes
+
+* **deps:** update dependency software.amazon.awssdk:bom to v2.35.0 ([#468](https://github.com/statnett/kafka-ops-julie/issues/468)) ([5205762](https://github.com/statnett/kafka-ops-julie/commit/5205762f68bb8304f2712968d55d4794b19f50cb))
+* make permission type ALLOW by default ([#471](https://github.com/statnett/kafka-ops-julie/issues/471)) ([7f49f12](https://github.com/statnett/kafka-ops-julie/commit/7f49f127fa67353b750a287e074c4c476ed94d62))
+
 ## [5.2.1](https://github.com/statnett/kafka-ops-julie/compare/v5.2.0...v5.2.1) (2025-10-03)
 
 
