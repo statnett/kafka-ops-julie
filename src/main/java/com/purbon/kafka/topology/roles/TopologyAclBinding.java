@@ -5,6 +5,7 @@ import com.purbon.kafka.topology.api.ccloud.response.KafkaAclResponse;
 import com.purbon.kafka.topology.api.mds.RequestScope;
 import java.util.Objects;
 import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.common.acl.AccessControlEntry;
 import org.apache.kafka.common.acl.AclBinding;
 import org.apache.kafka.common.resource.ResourcePattern;
@@ -46,7 +47,7 @@ public class TopologyAclBinding implements Comparable<TopologyAclBinding> {
     this.operation = operation;
     this.principal = principal;
     this.pattern = pattern;
-    this.permissionType = permissionType;
+    this.permissionType = StringUtils.isBlank(permissionType) ? "ALLOW" : permissionType;
     this.aclBindingOptional = Optional.empty();
   }
 
@@ -59,7 +60,7 @@ public class TopologyAclBinding implements Comparable<TopologyAclBinding> {
    * @param operation an operations to be processed
    * @param principal The selected principal
    * @param pattern the pattern used to mach this acl
-   * @return A contructed TopologyAclBinding object
+   * @return A constructed TopologyAclBinding object
    */
   public static TopologyAclBinding build(
       String resourceTypeString,
