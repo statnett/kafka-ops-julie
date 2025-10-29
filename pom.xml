@@ -277,7 +277,7 @@
     <assertj.version>3.27.6</assertj.version>
     <aws.java.sdk.version>2.36.3</aws.java.sdk.version>
     <commons.version>1.10.0</commons.version>
-    <confluent.version>8.0.0</confluent.version>
+    <confluent.version>8.1.0</confluent.version>
     <gcp.java.sdk.version>26.71.0</gcp.java.sdk.version>
     <jackson.version>2.20.0</jackson.version>
     <jedis.version>7.0.0</jedis.version>
