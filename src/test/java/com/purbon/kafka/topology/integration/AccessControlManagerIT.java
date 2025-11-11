@@ -70,7 +70,7 @@ public class AccessControlManagerIT {
   public void before() throws IOException {
     kafkaAdminClient = ContainerTestUtils.getSaslJulieAdminClient(container);
     topologyAdminClient = new TopologyBuilderAdminClient(kafkaAdminClient);
-    ContainerTestUtils.resetAcls(container);
+    ContainerTestUtils.clearAclsAndTopics(container);
     TestUtils.deleteStateFile();
 
     this.cs = new BackendController();

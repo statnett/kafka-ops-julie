@@ -32,7 +32,7 @@ public final class AclProducerAndConsumerIT {
             .withUser(ContainerTestUtils.OTHER_PRODUCER_USERNAME)
             .withUser(ContainerTestUtils.OTHER_CONSUMER_USERNAME);
     container.start();
-    ContainerTestUtils.resetAcls(container);
+    ContainerTestUtils.clearAclsAndTopics(container);
     ContainerTestUtils.populateAcls(
         container, "/acl-producer-and-consumer-it.yaml", "/integration-tests.properties");
   }

@@ -47,7 +47,7 @@ public class SchemaRegistryManagerIT {
   public static void setup() {
     container = ContainerFactory.fetchSaslKafkaContainer(System.getProperty("cp.version"));
     container.start();
-    ContainerTestUtils.resetAcls(container);
+    ContainerTestUtils.clearAclsAndTopics(container);
     schemaRegistryContainer = new SchemaRegistryContainer(container);
     schemaRegistryContainer.start();
   }

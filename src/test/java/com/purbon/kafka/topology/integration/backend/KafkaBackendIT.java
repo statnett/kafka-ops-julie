@@ -36,7 +36,7 @@ public class KafkaBackendIT {
 
     container = ContainerFactory.fetchSaslKafkaContainer(System.getProperty("cp.version"));
     container.start();
-    ContainerTestUtils.resetAcls(container);
+    ContainerTestUtils.clearAclsAndTopics(container);
 
     props = new Properties();
     props.put(JULIE_INSTANCE_ID, "1234");

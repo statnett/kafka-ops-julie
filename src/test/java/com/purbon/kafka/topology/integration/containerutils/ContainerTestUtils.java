@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.*;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.ListTopicsOptions;
 import org.apache.kafka.common.acl.*;
 import org.apache.kafka.common.resource.PatternType;
 import org.apache.kafka.common.resource.ResourcePattern;
@@ -119,15 +120,25 @@ public final class ContainerTestUtils {
     }
   }
 
-  public static void resetAcls(AlternativeKafkaContainer container) {
+  public static void clearAclsAndTopics(AlternativeKafkaContainer container) {
     AdminClient admin = getSaslSuperUserAdminClient(container.getBootstrapServers());
     clearAllAcls(admin);
+    clearAllTopics(admin);
     setupJulieAcls(admin);
   }
 
   private static void clearAllAcls(AdminClient admin) {
     try {
       admin.deleteAcls(Collections.singleton(AclBindingFilter.ANY)).all().get();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private static void clearAllTopics(AdminClient admin) {
+    try {
+      admin.deleteTopics(
+          admin.listTopics(new ListTopicsOptions().listInternal(true)).names().get());
     } catch (Exception e) {
       throw new RuntimeException(e);
     }

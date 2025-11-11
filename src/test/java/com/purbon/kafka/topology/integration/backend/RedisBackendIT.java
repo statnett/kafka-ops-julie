@@ -59,7 +59,7 @@ public class RedisBackendIT {
     bucket = "bucket";
     container = ContainerFactory.fetchSaslKafkaContainer(System.getProperty("cp.version"));
     container.start();
-    ContainerTestUtils.resetAcls(container);
+    ContainerTestUtils.clearAclsAndTopics(container);
   }
 
   @AfterClass
