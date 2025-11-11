@@ -185,7 +185,7 @@ public class JulieRolesTest {
           "test-mm.checkpoints.internal"
         };
 
-    var mirrorMaker = topology.getProjects().get(0).getOthers().get("mirrorMaker").get(0);
+    var mirrorMaker = topology.getProjects().get(0).getOthers().get("mirrormaker").get(0);
     var topics = mirrorMaker.asMap().values();
 
     for (String t : expected) {

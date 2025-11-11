@@ -7,13 +7,7 @@ import com.purbon.kafka.topology.model.Project;
 import com.purbon.kafka.topology.model.Topic;
 import com.purbon.kafka.topology.model.artefact.KConnectArtefacts;
 import com.purbon.kafka.topology.model.artefact.KsqlArtefacts;
-import com.purbon.kafka.topology.model.users.Connector;
-import com.purbon.kafka.topology.model.users.Consumer;
-import com.purbon.kafka.topology.model.users.KSqlApp;
-import com.purbon.kafka.topology.model.users.KStream;
-import com.purbon.kafka.topology.model.users.Other;
-import com.purbon.kafka.topology.model.users.Producer;
-import com.purbon.kafka.topology.model.users.Schemas;
+import com.purbon.kafka.topology.model.users.*;
 import com.purbon.kafka.topology.utils.JinjaUtils;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,6 +24,7 @@ public class ProjectImpl implements Project, Cloneable {
   private PlatformSystem<KSqlApp> ksqls;
   private PlatformSystem<Connector> connectors;
   private PlatformSystem<Schemas> schemas;
+  private PlatformSystem<MirrorMaker2> mm2;
   private Map<String, List<String>> rbacRawRoles;
   private List<Map.Entry<String, PlatformSystem<Other>>> others;
 
@@ -55,6 +50,7 @@ public class ProjectImpl implements Project, Cloneable {
         Optional.empty(),
         Optional.empty(),
         Optional.empty(),
+        Optional.empty(),
         Collections.emptyMap(),
         Collections.emptyList(),
         config);
@@ -68,6 +64,7 @@ public class ProjectImpl implements Project, Cloneable {
       Optional<PlatformSystem<Connector>> connectors,
       Optional<PlatformSystem<Schemas>> schemas,
       Optional<PlatformSystem<KSqlApp>> ksqls,
+      Optional<PlatformSystem<MirrorMaker2>> mm2,
       Map<String, List<String>> rbacRawRoles,
       List<Map.Entry<String, PlatformSystem<Other>>> others,
       Configuration config) {
@@ -80,6 +77,7 @@ public class ProjectImpl implements Project, Cloneable {
         connectors.orElse(new PlatformSystem<>()),
         schemas.orElse(new PlatformSystem<>()),
         ksqls.orElse(new PlatformSystem<>()),
+        mm2.orElse(new PlatformSystem<>()),
         rbacRawRoles,
         others,
         config);
@@ -94,6 +92,7 @@ public class ProjectImpl implements Project, Cloneable {
       PlatformSystem<Connector> connectors,
       PlatformSystem<Schemas> schemas,
       PlatformSystem<KSqlApp> ksqls,
+      PlatformSystem<MirrorMaker2> mm2,
       Map<String, List<String>> rbacRawRoles,
       List<Map.Entry<String, PlatformSystem<Other>>> others,
       Configuration config) {
@@ -103,6 +102,7 @@ public class ProjectImpl implements Project, Cloneable {
     this.producers = producers;
     this.streams = streams;
     this.ksqls = ksqls;
+    this.mm2 = mm2;
     this.connectors = connectors;
     this.schemas = schemas;
     this.rbacRawRoles = rbacRawRoles;
@@ -146,6 +146,14 @@ public class ProjectImpl implements Project, Cloneable {
 
   public void setKSqls(List<KSqlApp> ksqls) {
     this.ksqls = new PlatformSystem<>(ksqls);
+  }
+
+  public void setMM2(List<MirrorMaker2> mm2) {
+    this.mm2 = new PlatformSystem<>(mm2);
+  }
+
+  public List<MirrorMaker2> getMM2() {
+    return mm2.getAccessControlLists();
   }
 
   public List<Connector> getConnectors() {
@@ -254,6 +262,7 @@ public class ProjectImpl implements Project, Cloneable {
               new PlatformSystem<>(getConnectors()),
               new PlatformSystem<>(getSchemas()),
               new PlatformSystem<>(getKSqls()),
+              new PlatformSystem<>(getMM2()),
               getRbacRawRoles(),
               others,
               config);

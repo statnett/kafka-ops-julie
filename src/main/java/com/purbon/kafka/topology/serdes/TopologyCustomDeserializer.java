@@ -63,6 +63,7 @@ public class TopologyCustomDeserializer extends StdDeserializer<Topology> {
   private static final String RBAC_KEY = "rbac";
   private static final String TOPICS_KEY = "topics";
   private static final String PRINCIPAL_KEY = "principal";
+  private static final String MIRRORMAKER_KEY = "mirrormaker";
 
   private static final String ACCESS_CONTROL = "access_control";
   private static final String ARTEFACTS = "artefacts";
@@ -244,6 +245,7 @@ public class TopologyCustomDeserializer extends StdDeserializer<Topology> {
             Optional.ofNullable(mapOfValues.get(CONNECTORS_KEY)),
             Optional.ofNullable(mapOfValues.get(SCHEMAS_KEY)),
             Optional.ofNullable(mapOfValues.get(KSQL_KEY)),
+            Optional.ofNullable(mapOfValues.get(MIRRORMAKER_KEY)),
             parseOptionalRbacRoles(rootNode.get(RBAC_KEY)),
             filterOthers(mapOfValues),
             config);
