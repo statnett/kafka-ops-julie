@@ -152,10 +152,6 @@ public class ProjectImpl implements Project, Cloneable {
     this.mm2 = new PlatformSystem<>(mm2);
   }
 
-  public List<MirrorMaker2> getMM2() {
-    return mm2.getAccessControlLists();
-  }
-
   public List<Connector> getConnectors() {
     return connectors.getAccessControlLists();
   }
@@ -248,6 +244,21 @@ public class ProjectImpl implements Project, Cloneable {
   }
 
   @Override
+  public List<MirrorMaker2> getMirrorMakers() {
+    return this.mm2.getAccessControlLists();
+  }
+
+  @Override
+  public void addMirrorMaker(MirrorMaker2 mirrorMaker2) {
+    this.mm2.getAccessControlLists().add(mirrorMaker2);
+  }
+
+  @Override
+  public void setMirrorMakers(List<MirrorMaker2> mirrorMakers) {
+    this.mm2 = new PlatformSystem<>(mirrorMakers);
+  }
+
+  @Override
   public ProjectImpl clone() {
     try {
       return (ProjectImpl) super.clone();
@@ -262,7 +273,7 @@ public class ProjectImpl implements Project, Cloneable {
               new PlatformSystem<>(getConnectors()),
               new PlatformSystem<>(getSchemas()),
               new PlatformSystem<>(getKSqls()),
-              new PlatformSystem<>(getMM2()),
+              new PlatformSystem<>(getMirrorMakers()),
               getRbacRawRoles(),
               others,
               config);

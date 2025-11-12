@@ -2,17 +2,16 @@ package com.purbon.kafka.topology;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.purbon.kafka.topology.model.JulieRole;
-import com.purbon.kafka.topology.model.JulieRoleAcl;
-import com.purbon.kafka.topology.model.JulieRoles;
-import com.purbon.kafka.topology.model.PlanMap;
-import com.purbon.kafka.topology.model.Topology;
+import com.purbon.kafka.topology.model.*;
+import com.purbon.kafka.topology.model.users.MirrorMaker2;
 import com.purbon.kafka.topology.model.users.Other;
 import com.purbon.kafka.topology.serdes.JulieRolesSerdes;
 import com.purbon.kafka.topology.serdes.TopologySerdes;
 import com.purbon.kafka.topology.utils.JinjaUtils;
 import com.purbon.kafka.topology.utils.TestUtils;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -183,6 +182,7 @@ public class JulieRolesTest {
     Topology targetTopology =
         topologySerdesTarget.deserialise(
             TestUtils.getResourceFile("/descriptor-mirrormaker-target.yaml"));
+
     roles.validateTopology(sourceTopology);
     roles.validateTopology(targetTopology);
 
@@ -207,8 +207,11 @@ public class JulieRolesTest {
           "source-topic-B"
         };
 
-    var mirrorMaker = sourceTopology.getProjects().get(0).getOthers().get("mirrormaker").get(0);
-    var topics = mirrorMaker.asMap().values();
+    MirrorMaker2 mirrorMaker = sourceTopology.getProjects().get(0).getMirrorMakers().get(0);
+    List<Topic> sourceTopics = sourceTopology.getProjects().get(0).getTopics();
+
+    Collection<Object> topics = Collections.singleton(mirrorMaker.getAllTopics());
+    topics.addAll(sourceTopics);
 
     for (String t : expectedSource) {
       Assert.assertTrue(topics.contains(t));
