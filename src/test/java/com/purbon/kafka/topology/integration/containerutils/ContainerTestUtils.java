@@ -34,7 +34,7 @@ public final class ContainerTestUtils {
   public static final int NUM_JULIE_INITIAL_ACLS = 11;
   static final String DEFAULT_CP_KAFKA_VERSION = "8.0.0";
   static final String DEFAULT_KSQLDB_SERVER_VERSION = "0.26.0";
-  public static final String REDIS_VERSION = "7.2.4";
+  public static final String REDIS_VERSION = "8.2.3";
 
   private ContainerTestUtils() {}
 
