@@ -91,7 +91,8 @@ public class JulieRolesTest {
     TopologySerdes topologySerdes =
         new TopologySerdes(new Configuration(), TopologySerdes.FileType.YAML, new PlanMap());
     Topology topology =
-        topologySerdes.deserialise(TestUtils.getResourceFile("/descriptor-mirrormaker.yaml"));
+        topologySerdes.deserialise(
+            TestUtils.getResourceFile("/descriptor-mirrormaker-source.yaml"));
 
     var project = topology.getProjects().get(0);
     for (Map.Entry<String, List<Other>> entry : project.getOthers().entrySet()) {
@@ -168,27 +169,48 @@ public class JulieRolesTest {
 
   @Test
   public void testMirrorMakerRole() throws IOException {
-    JulieRoles roles = parser.deserialise(TestUtils.getResourceFile("/roles-mirrormaker.yaml"));
-    TopologySerdes topologySerdes = new TopologySerdes();
+    JulieRoles mmRoles = parser.deserialise(TestUtils.getResourceFile("/roles-mirrormaker.yaml"));
+    JulieRoles topicRoles =
+        parser.deserialise(TestUtils.getResourceFile("/roles-with-default-allow.yaml"));
+    JulieRoles roles = mmRoles.merge(topicRoles);
 
-    Topology topology =
-        topologySerdes.deserialise(TestUtils.getResourceFile("/descriptor-mirrormaker.yaml"));
-    roles.validateTopology(topology);
+    TopologySerdes topologySerdesSource = new TopologySerdes();
+    TopologySerdes topologySerdesTarget = new TopologySerdes();
 
-    var expected =
+    Topology sourceTopology =
+        topologySerdesSource.deserialise(
+            TestUtils.getResourceFile("/descriptor-mirrormaker-source.yaml"));
+    Topology targetTopology =
+        topologySerdesTarget.deserialise(
+            TestUtils.getResourceFile("/descriptor-mirrormaker-target.yaml"));
+    roles.validateTopology(sourceTopology);
+    roles.validateTopology(targetTopology);
+
+    var expectedSource =
+        new String[] {
+          "test-cluster-status",
+          "test-cluster-offsets",
+          "test-cluster-configs",
+          "source-topic-A",
+          "source-topic-B"
+        };
+
+    var expectedTarget =
         new String[] {
           "test-cluster-status",
           "test-cluster-offsets",
           "test-cluster-configs",
           "target-prefix.",
           "mm2-offset-syncs.test-mm.internal",
-          "test-mm.checkpoints.internal"
+          "test-mm.checkpoints.internal",
+          "source-topic-A",
+          "source-topic-B"
         };
 
-    var mirrorMaker = topology.getProjects().get(0).getOthers().get("mirrormaker").get(0);
+    var mirrorMaker = sourceTopology.getProjects().get(0).getOthers().get("mirrormaker").get(0);
     var topics = mirrorMaker.asMap().values();
 
-    for (String t : expected) {
+    for (String t : expectedSource) {
       Assert.assertTrue(topics.contains(t));
     }
   }

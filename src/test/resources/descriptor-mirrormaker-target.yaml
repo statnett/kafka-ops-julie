@@ -4,7 +4,8 @@ source: "source"
 projects:
   - name: "foo"
     mirrormaker:
-      - principal: "User:banana"
+      - role: producer
+        principal: "User:banana"
         group: "test-group"
         status-topic: "test-cluster-status"
         offset-topic: "test-cluster-offsets"
@@ -13,3 +14,6 @@ projects:
         offset-sync-topic: "mm2-offset-syncs.test-mm.internal"
         checkpoint-topic: "test-mm.checkpoints.internal"
         heartbeat-topic: "test-mm.heartbeats.internal"
+        target-topics:
+          - "target-prefix.source-topic-A"
+          - "target-prefix.source-topic-B"
