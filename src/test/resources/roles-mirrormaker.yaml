@@ -22,7 +22,6 @@ roles:
         resourceName: "{{checkpoint-topic}}"
         operation: "ALL"
       - resourceType: "Topic"
-        # using jinja2 syntax to provide a default value
         resourceName: "{{heartbeat-topic or 'mirrormaker2-heartbeat'}}"
         operation: "ALL"
       - resourceType: "Cluster"

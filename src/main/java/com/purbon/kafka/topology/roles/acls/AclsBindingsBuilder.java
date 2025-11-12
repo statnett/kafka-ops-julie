@@ -8,12 +8,7 @@ import com.purbon.kafka.topology.api.adminclient.AclBuilder;
 import com.purbon.kafka.topology.model.DynamicUser;
 import com.purbon.kafka.topology.model.JulieRoleAcl;
 import com.purbon.kafka.topology.model.User;
-import com.purbon.kafka.topology.model.users.Connector;
-import com.purbon.kafka.topology.model.users.Consumer;
-import com.purbon.kafka.topology.model.users.KSqlApp;
-import com.purbon.kafka.topology.model.users.KStream;
-import com.purbon.kafka.topology.model.users.Other;
-import com.purbon.kafka.topology.model.users.Producer;
+import com.purbon.kafka.topology.model.users.*;
 import com.purbon.kafka.topology.model.users.platform.KsqlServerInstance;
 import com.purbon.kafka.topology.model.users.platform.SchemaRegistryInstance;
 import com.purbon.kafka.topology.roles.TopologyAclBinding;
@@ -198,6 +193,13 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
       bindings.add(new TopologyAclBinding(binding));
     }
     return bindings;
+  }
+
+  // TODO: figure out the difference between this method and the one in
+  // ../rbac/RBACBindingsBuilder.java
+  @Override
+  public Collection<TopologyAclBinding> buildBindingForMirrorMaker2(MirrorMaker2 mm2) {
+    return toList(mirrorMaker2Stream(mm2));
   }
 
   private List<TopologyAclBinding> toList(Stream<AclBinding> bindingStream) {
@@ -425,6 +427,24 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
 
     bindings.add(buildPrefixedTopicLevelAcl(principal, prefix, AclOperation.ALL));
     bindings.add(buildPrefixedGroupLevelAcl(principal, prefix, AclOperation.ALL));
+
+    return bindings.stream();
+  }
+
+  // TODO: core ACL construction logic
+  private Stream<AclBinding> mirrorMaker2Stream(MirrorMaker2 mm2) {
+
+    String principal = mm2.getPrincipal();
+
+    List<AclBinding> bindings = mm2.getSource_topics()
+      .stream()
+      .filter(Optional::isPresent)
+      .map(t -> buildLiteralTopicLevelAcl(
+        principal,
+        t.get(),
+        mm2.getRole() == MirrorMaker2.Role.consumer
+          ? AclOperation.READ
+          : AclOperation.WRITE)).toList();
 
     return bindings.stream();
   }
