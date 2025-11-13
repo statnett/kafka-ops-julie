@@ -124,8 +124,8 @@ public final class ContainerTestUtils {
 
   public static void clearAclsAndTopics(AlternativeKafkaContainer container) {
     AdminClient admin = getSaslSuperUserAdminClient(container.getBootstrapServers());
-    clearAllAcls(admin);
     clearAllTopics(admin);
+    clearAllAcls(admin);
     setupJulieAcls(admin);
   }
 
