@@ -10,6 +10,7 @@ import com.purbon.kafka.topology.ExecutionPlan;
 import com.purbon.kafka.topology.KSqlArtefactManager;
 import com.purbon.kafka.topology.api.ksql.KsqlApiClient;
 import com.purbon.kafka.topology.api.ksql.KsqlClientConfig;
+import com.purbon.kafka.topology.integration.containerutils.ContainerTestUtils;
 import com.purbon.kafka.topology.integration.containerutils.KsqlContainer;
 import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextKafkaContainer;
 import com.purbon.kafka.topology.model.Topology;
@@ -22,9 +23,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 public class KsqlManagerIT {
 
@@ -34,27 +33,33 @@ public class KsqlManagerIT {
   private KsqlApiClient client;
   private ExecutionPlan plan;
 
-  @After
-  public void after() {
-    ksqlContainer.stop();
-    container.stop();
+  @BeforeClass
+  public static void beforeClass() {
+    container = new SaslPlaintextKafkaContainer();
+    container.start();
   }
 
   @Before
-  public void configure() throws IOException {
-    container = new SaslPlaintextKafkaContainer();
-    container.start();
+  public void before() throws IOException {
+    ContainerTestUtils.clearAclsAndTopics(container);
+    Files.deleteIfExists(Paths.get(".cluster-state"));
     ksqlContainer = new KsqlContainer(container);
     ksqlContainer.start();
-
-    Files.deleteIfExists(Paths.get(".cluster-state"));
-
     KsqlClientConfig ksqlClientConfig =
         KsqlClientConfig.builder().setServer(ksqlContainer.getUrl()).build();
     client = new KsqlApiClient(ksqlClientConfig);
     parser = new TopologySerdes();
-
     this.plan = ExecutionPlan.init(new BackendController(), System.out);
+  }
+
+  @After
+  public void after() {
+    ksqlContainer.stop();
+  }
+
+  @AfterClass
+  public static void afterClass() {
+    container.stop();
   }
 
   @Test

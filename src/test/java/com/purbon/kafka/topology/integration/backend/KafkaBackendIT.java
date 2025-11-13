@@ -17,10 +17,7 @@ import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.acl.AclPermissionType;
 import org.apache.kafka.common.config.TopicConfig;
 import org.apache.kafka.common.resource.ResourceType;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 public class KafkaBackendIT {
 
@@ -30,11 +27,14 @@ public class KafkaBackendIT {
 
   private static SaslPlaintextKafkaContainer container;
 
-  @Before
-  public void before() {
-
+  @BeforeClass
+  public static void setup() {
     container = new SaslPlaintextKafkaContainer();
     container.start();
+  }
+
+  @Before
+  public void before() {
     ContainerTestUtils.clearAclsAndTopics(container);
 
     props = new Properties();
@@ -54,8 +54,8 @@ public class KafkaBackendIT {
     config = new Configuration(cliOps, props);
   }
 
-  @After
-  public void after() {
+  @AfterClass
+  public static void afterClass() {
     container.stop();
   }
 
