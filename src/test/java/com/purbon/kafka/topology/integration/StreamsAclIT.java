@@ -4,7 +4,6 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-import com.purbon.kafka.topology.integration.containerutils.ContainerFactory;
 import com.purbon.kafka.topology.integration.containerutils.ContainerTestUtils;
 import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextKafkaContainer;
 import com.purbon.kafka.topology.integration.containerutils.TestConsumer;
@@ -31,7 +30,7 @@ public final class StreamsAclIT {
   @BeforeClass
   public static void beforeClass() {
     container =
-        ContainerFactory.fetchSaslKafkaContainer(System.getProperty("cp.version"))
+        new SaslPlaintextKafkaContainer()
             .withUser(ContainerTestUtils.PRODUCER_USERNAME)
             .withUser(ContainerTestUtils.CONSUMER_USERNAME)
             .withUser(ContainerTestUtils.STREAMS_USERNAME);
