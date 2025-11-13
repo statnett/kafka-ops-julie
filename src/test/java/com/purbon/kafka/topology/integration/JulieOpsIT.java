@@ -3,7 +3,6 @@ package com.purbon.kafka.topology.integration;
 import static com.purbon.kafka.topology.CommandLineInterface.*;
 
 import com.purbon.kafka.topology.JulieOps;
-import com.purbon.kafka.topology.integration.containerutils.ContainerFactory;
 import com.purbon.kafka.topology.integration.containerutils.ContainerTestUtils;
 import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextKafkaContainer;
 import com.purbon.kafka.topology.utils.TestUtils;
@@ -21,7 +20,7 @@ public class JulieOpsIT {
 
   @BeforeClass
   public static void setup() {
-    container = ContainerFactory.fetchSaslKafkaContainer(System.getProperty("cp.version"));
+    container = new SaslPlaintextKafkaContainer();
     container.start();
   }
 

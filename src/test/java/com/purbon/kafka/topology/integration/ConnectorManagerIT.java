@@ -10,7 +10,6 @@ import com.purbon.kafka.topology.ExecutionPlan;
 import com.purbon.kafka.topology.KafkaConnectArtefactManager;
 import com.purbon.kafka.topology.api.connect.KConnectApiClient;
 import com.purbon.kafka.topology.integration.containerutils.ConnectContainer;
-import com.purbon.kafka.topology.integration.containerutils.ContainerFactory;
 import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextKafkaContainer;
 import com.purbon.kafka.topology.model.PlanMap;
 import com.purbon.kafka.topology.model.Topology;
@@ -48,7 +47,7 @@ public class ConnectorManagerIT {
 
   @Before
   public void configure() throws IOException {
-    container = ContainerFactory.fetchSaslKafkaContainer(System.getProperty("cp.version"));
+    container = new SaslPlaintextKafkaContainer();
     container.start();
     connectContainer = new ConnectContainer(container, TRUSTSTORE_JKS, KEYSTORE_JKS);
     connectContainer.start();
