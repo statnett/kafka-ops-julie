@@ -10,6 +10,7 @@ import com.purbon.kafka.topology.ExecutionPlan;
 import com.purbon.kafka.topology.KafkaConnectArtefactManager;
 import com.purbon.kafka.topology.api.connect.KConnectApiClient;
 import com.purbon.kafka.topology.integration.containerutils.ConnectContainer;
+import com.purbon.kafka.topology.integration.containerutils.ContainerTestUtils;
 import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextKafkaContainer;
 import com.purbon.kafka.topology.model.PlanMap;
 import com.purbon.kafka.topology.model.Topology;
@@ -22,9 +23,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 public class ConnectorManagerIT {
 
@@ -39,22 +38,28 @@ public class ConnectorManagerIT {
   private static final String TRUSTSTORE_JKS = "/ksql-ssl/truststore/ksqldb.truststore.jks";
   private static final String KEYSTORE_JKS = "/ksql-ssl/keystore/ksqldb.keystore.jks";
 
-  @After
-  public void after() {
-    connectContainer.stop();
-    container.stop();
-  }
-
-  @Before
-  public void configure() throws IOException {
+  @BeforeClass
+  public static void beforeClass() {
     container = new SaslPlaintextKafkaContainer();
     container.start();
     connectContainer = new ConnectContainer(container, TRUSTSTORE_JKS, KEYSTORE_JKS);
     connectContainer.start();
+  }
 
+  @Before
+  public void before() throws IOException {
+    ContainerTestUtils.clearAclsAndTopics(container);
     Files.deleteIfExists(Paths.get(".cluster-state"));
-
     this.plan = ExecutionPlan.init(new BackendController(), System.out);
+  }
+
+  @After
+  public void after() {}
+
+  @AfterClass
+  public static void afterClass() {
+    connectContainer.stop();
+    container.stop();
   }
 
   @Test
