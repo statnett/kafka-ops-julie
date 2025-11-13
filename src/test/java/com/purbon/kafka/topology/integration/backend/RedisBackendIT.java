@@ -1,7 +1,11 @@
 package com.purbon.kafka.topology.integration.backend;
 
 import static com.purbon.kafka.topology.CommandLineInterface.BROKERS_OPTION;
-import static com.purbon.kafka.topology.Constants.*;
+import static com.purbon.kafka.topology.Constants.ALLOW_DELETE_TOPICS;
+import static com.purbon.kafka.topology.Constants.REDIS_HOST_CONFIG;
+import static com.purbon.kafka.topology.Constants.REDIS_PORT_CONFIG;
+import static com.purbon.kafka.topology.Constants.STATE_PROCESSOR_IMPLEMENTATION_CLASS;
+import static com.purbon.kafka.topology.Constants.TOPOLOGY_TOPIC_STATE_FROM_CLUSTER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.purbon.kafka.topology.BackendController;
@@ -26,31 +30,31 @@ import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Properties;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.common.acl.AclPermissionType;
 import org.apache.kafka.common.resource.ResourceType;
-import org.junit.*;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
 import redis.clients.jedis.Jedis;
 
 public class RedisBackendIT {
 
-  @Rule
-  public GenericContainer redis =
-      new GenericContainer<>(DockerImageName.parse("redis:" + ContainerTestUtils.REDIS_VERSION))
-          .withExposedPorts(6379);
-
   private static SaslPlaintextKafkaContainer container;
+  private static GenericContainer redis;
   private TopicManager topicManager;
   private AdminClient kafkaAdminClient;
-
   private ExecutionPlan plan;
-
-  @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
   private Jedis jedis;
   private static String bucket;
 
@@ -59,17 +63,16 @@ public class RedisBackendIT {
     bucket = "bucket";
     container = new SaslPlaintextKafkaContainer();
     container.start();
-    ContainerTestUtils.clearAclsAndTopics(container);
-  }
-
-  @AfterClass
-  public static void teardown() {
-    container.stop();
   }
 
   @Before
   public void before() throws IOException {
+    ContainerTestUtils.clearAclsAndTopics(container);
     Files.deleteIfExists(Paths.get(".cluster-state"));
+    redis =
+        new GenericContainer<>(DockerImageName.parse("redis:" + ContainerTestUtils.REDIS_VERSION))
+            .withExposedPorts(6379);
+    redis.start();
 
     kafkaAdminClient = ContainerTestUtils.getSaslJulieAdminClient(container);
     TopologyBuilderAdminClient adminClient = new TopologyBuilderAdminClient(kafkaAdminClient);
@@ -99,9 +102,18 @@ public class RedisBackendIT {
     this.topicManager = new TopicManager(adminClient, schemaRegistryManager, config);
   }
 
+  @After
+  public void after() {
+    redis.stop();
+  }
+
+  @AfterClass
+  public static void teardown() {
+    container.stop();
+  }
+
   @Test
   public void testStoreAndFetch() throws IOException {
-
     String host = redis.getHost();
     int port = redis.getFirstMappedPort();
     RedisBackend rsp = new RedisBackend(host, port, bucket);
@@ -140,7 +152,6 @@ public class RedisBackendIT {
 
   @Test
   public void testTopicCreation() throws IOException {
-
     Topology topology = new TopologyImpl();
     topology.setContext("testTopicCreation");
     Project project = new ProjectImpl("project");
