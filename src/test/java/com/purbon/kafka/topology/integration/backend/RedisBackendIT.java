@@ -13,6 +13,7 @@ import com.purbon.kafka.topology.Configuration;
 import com.purbon.kafka.topology.ExecutionPlan;
 import com.purbon.kafka.topology.TopicManager;
 import com.purbon.kafka.topology.api.adminclient.TopologyBuilderAdminClient;
+import com.purbon.kafka.topology.backend.Backend;
 import com.purbon.kafka.topology.backend.BackendState;
 import com.purbon.kafka.topology.backend.RedisBackend;
 import com.purbon.kafka.topology.integration.containerutils.ContainerTestUtils;
@@ -51,9 +52,8 @@ import redis.clients.jedis.Jedis;
 public class RedisBackendIT {
 
   private static SaslPlaintextKafkaContainer container;
-  private static GenericContainer redis;
+  private GenericContainer<?> redis;
   private TopicManager topicManager;
-  private AdminClient kafkaAdminClient;
   private ExecutionPlan plan;
   private Jedis jedis;
   private static String bucket;
@@ -74,19 +74,19 @@ public class RedisBackendIT {
             .withExposedPorts(6379);
     redis.start();
 
-    kafkaAdminClient = ContainerTestUtils.getSaslJulieAdminClient(container);
-    TopologyBuilderAdminClient adminClient = new TopologyBuilderAdminClient(kafkaAdminClient);
+    final AdminClient kafkaAdminClient = ContainerTestUtils.getSaslJulieAdminClient(container);
+    final TopologyBuilderAdminClient adminClient = new TopologyBuilderAdminClient(kafkaAdminClient);
 
     final SchemaRegistryClient schemaRegistryClient = new MockSchemaRegistryClient();
     final SchemaRegistryManager schemaRegistryManager =
         new SchemaRegistryManager(schemaRegistryClient, System.getProperty("user.dir"));
 
     this.jedis = new Jedis(redis.getHost(), redis.getFirstMappedPort());
-    var backend = new RedisBackend(jedis, bucket);
+    final Backend backend = new RedisBackend(jedis, bucket);
 
     this.plan = ExecutionPlan.init(new BackendController(backend), System.out);
 
-    Properties props = new Properties();
+    final Properties props = new Properties();
     props.put(TOPOLOGY_TOPIC_STATE_FROM_CLUSTER, true);
     props.put(ALLOW_DELETE_TOPICS, true);
     props.put(
@@ -94,10 +94,10 @@ public class RedisBackendIT {
     props.put(REDIS_HOST_CONFIG, redis.getHost());
     props.put(REDIS_PORT_CONFIG, redis.getFirstMappedPort());
 
-    HashMap<String, String> cliOps = new HashMap<>();
+    final HashMap<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
 
-    Configuration config = new Configuration(cliOps, props);
+    final Configuration config = new Configuration(cliOps, props);
 
     this.topicManager = new TopicManager(adminClient, schemaRegistryManager, config);
   }
@@ -114,12 +114,12 @@ public class RedisBackendIT {
 
   @Test
   public void testStoreAndFetch() throws IOException {
-    String host = redis.getHost();
-    int port = redis.getFirstMappedPort();
-    RedisBackend rsp = new RedisBackend(host, port, bucket);
+    final String host = redis.getHost();
+    final int port = redis.getFirstMappedPort();
+    final RedisBackend rsp = new RedisBackend(host, port, bucket);
     rsp.load();
 
-    TopologyAclBinding binding =
+    final TopologyAclBinding binding =
         TopologyAclBinding.build(
             ResourceType.TOPIC.name(),
             "foo",
@@ -129,17 +129,18 @@ public class RedisBackendIT {
             "LITERAL",
             AclPermissionType.ALLOW.name());
 
-    List<String> topics = Arrays.asList("foo", "bar");
-    var connector = new KafkaConnectArtefact("path", "label", "name", "some-hash");
-    List<KafkaConnectArtefact> connectors = Arrays.asList(connector);
-    BackendState state = new BackendState();
+    final List<String> topics = Arrays.asList("foo", "bar");
+    final KafkaConnectArtefact connector =
+        new KafkaConnectArtefact("path", "label", "name", "some-hash");
+    final List<KafkaConnectArtefact> connectors = List.of(connector);
+    final BackendState state = new BackendState();
     state.addTopics(topics);
     state.addBindings(Collections.singleton(binding));
     state.addConnectors(connectors);
 
     rsp.save(state);
 
-    BackendState recoveredState = rsp.load();
+    final BackendState recoveredState = rsp.load();
 
     Assert.assertEquals(2, recoveredState.getTopics().size());
     assertThat(state.getTopics()).contains("foo", "bar");
@@ -152,29 +153,29 @@ public class RedisBackendIT {
 
   @Test
   public void testTopicCreation() throws IOException {
-    Topology topology = new TopologyImpl();
+    final Topology topology = new TopologyImpl();
     topology.setContext("testTopicCreation");
-    Project project = new ProjectImpl("project");
+    final Project project = new ProjectImpl("project");
     topology.addProject(project);
 
     HashMap<String, String> config = new HashMap<>();
     config.put(TopicManager.NUM_PARTITIONS, "1");
     config.put(TopicManager.REPLICATION_FACTOR, "1");
 
-    Topic topicA = new Topic("topicA", config);
+    final Topic topicA = new Topic("topicA", config);
     project.addTopic(topicA);
 
     config = new HashMap<>();
     config.put(TopicManager.NUM_PARTITIONS, "1");
     config.put(TopicManager.REPLICATION_FACTOR, "1");
 
-    Topic topicB = new Topic("topicB", config);
+    final Topic topicB = new Topic("topicB", config);
     project.addTopic(topicB);
 
     topicManager.updatePlan(topology, plan);
     plan.run();
 
-    String content = jedis.get(bucket);
+    final String content = jedis.get(bucket);
     assertThat(content)
         .contains(
             "\"topics\" : [\n    \"testTopicCreation.project.topicB\",\n    \"testTopicCreation.project.topicA\"\n  ]");
