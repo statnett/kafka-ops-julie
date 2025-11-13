@@ -11,7 +11,6 @@ import com.purbon.kafka.topology.TopicManager;
 import com.purbon.kafka.topology.api.adminclient.TopologyBuilderAdminClient;
 import com.purbon.kafka.topology.backend.BackendState;
 import com.purbon.kafka.topology.backend.RedisBackend;
-import com.purbon.kafka.topology.integration.containerutils.ContainerFactory;
 import com.purbon.kafka.topology.integration.containerutils.ContainerTestUtils;
 import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextKafkaContainer;
 import com.purbon.kafka.topology.model.Impl.ProjectImpl;
@@ -58,7 +57,7 @@ public class RedisBackendIT {
   @BeforeClass
   public static void setup() {
     bucket = "bucket";
-    container = ContainerFactory.fetchSaslKafkaContainer(System.getProperty("cp.version"));
+    container = new SaslPlaintextKafkaContainer();
     container.start();
     ContainerTestUtils.clearAclsAndTopics(container);
   }

@@ -14,7 +14,6 @@ import com.purbon.kafka.topology.ExecutionPlan;
 import com.purbon.kafka.topology.TestTopologyBuilder;
 import com.purbon.kafka.topology.api.adminclient.AclBuilder;
 import com.purbon.kafka.topology.api.adminclient.TopologyBuilderAdminClient;
-import com.purbon.kafka.topology.integration.containerutils.ContainerFactory;
 import com.purbon.kafka.topology.integration.containerutils.ContainerTestUtils;
 import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextKafkaContainer;
 import com.purbon.kafka.topology.model.*;
@@ -57,7 +56,7 @@ public class AccessControlManagerIT {
 
   @BeforeClass
   public static void setup() {
-    container = ContainerFactory.fetchSaslKafkaContainer(System.getProperty("cp.version"));
+    container = new SaslPlaintextKafkaContainer();
     container.start();
   }
 

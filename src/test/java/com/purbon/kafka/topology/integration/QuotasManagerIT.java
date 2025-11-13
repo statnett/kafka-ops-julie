@@ -53,10 +53,7 @@ public class QuotasManagerIT {
   @BeforeClass
   public static void setup() {
     container =
-        ContainerFactory.fetchSaslKafkaContainer(System.getProperty("cp.version"))
-            .withUser("user1")
-            .withUser("user2")
-            .withUser("user3");
+        new SaslPlaintextKafkaContainer().withUser("user1").withUser("user2").withUser("user3");
     container.start();
   }
 

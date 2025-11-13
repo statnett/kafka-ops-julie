@@ -10,7 +10,6 @@ import com.purbon.kafka.topology.ExecutionPlan;
 import com.purbon.kafka.topology.KSqlArtefactManager;
 import com.purbon.kafka.topology.api.ksql.KsqlApiClient;
 import com.purbon.kafka.topology.api.ksql.KsqlClientConfig;
-import com.purbon.kafka.topology.integration.containerutils.ContainerFactory;
 import com.purbon.kafka.topology.integration.containerutils.KsqlContainer;
 import com.purbon.kafka.topology.integration.containerutils.SaslPlaintextKafkaContainer;
 import com.purbon.kafka.topology.model.Topology;
@@ -43,7 +42,7 @@ public class KsqlManagerIT {
 
   @Before
   public void configure() throws IOException {
-    container = ContainerFactory.fetchSaslKafkaContainer(System.getProperty("cp.version"));
+    container = new SaslPlaintextKafkaContainer();
     container.start();
     ksqlContainer = new KsqlContainer(container);
     ksqlContainer.start();
