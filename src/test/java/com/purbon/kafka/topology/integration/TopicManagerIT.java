@@ -65,7 +65,6 @@ public class TopicManagerIT {
   public static void setup() {
     container = new SaslPlaintextKafkaContainer();
     container.start();
-    ContainerTestUtils.clearAclsAndTopics(container);
   }
 
   @AfterClass
@@ -75,6 +74,7 @@ public class TopicManagerIT {
 
   @Before
   public void before() throws IOException {
+    ContainerTestUtils.clearAclsAndTopics(container);
     Files.deleteIfExists(Paths.get(".cluster-state"));
 
     kafkaAdminClient = ContainerTestUtils.getSaslJulieAdminClient(container);
@@ -285,7 +285,7 @@ public class TopicManagerIT {
     topicManager.updatePlan(topology, plan);
     plan.run();
 
-    verifyTopics(Arrays.asList(topicA.toString(), internalTopic, topicC.toString()), 2);
+    verifyTopics(Arrays.asList(topicA.toString(), internalTopic, topicC.toString()), 2, 1);
   }
 
   private String createInternalTopic() {
@@ -423,19 +423,19 @@ public class TopicManagerIT {
   }
 
   private void verifyTopics(List<String> topics) throws ExecutionException, InterruptedException {
-    verifyTopics(topics, topics.size());
+    verifyTopics(topics, topics.size(), 0);
   }
 
-  private void verifyTopics(List<String> topics, int topicsCount)
+  private void verifyTopics(List<String> topics, int topicsCount, int internalTopicsCount)
       throws ExecutionException, InterruptedException {
 
     Set<String> topicNames = kafkaAdminClient.listTopics().names().get();
     topics.forEach(
         topic -> assertTrue("Topic " + topic + " not found", topicNames.contains(topic)));
-    boolean isInternal = false;
+    int numInternalTopics = 0;
     for (String topic : topicNames) {
       if (topic.startsWith("_")) {
-        isInternal = true;
+        ++numInternalTopics;
         break;
       }
     }
@@ -443,6 +443,6 @@ public class TopicManagerIT {
         topicNames.stream().filter(topic -> !topic.startsWith("_")).collect(Collectors.toSet());
 
     assertThat(topicsCount).isLessThanOrEqualTo(nonInternalTopics.size());
-    assertTrue("Internal topics not found", isInternal);
+    assertThat(internalTopicsCount).isEqualTo(numInternalTopics);
   }
 }
