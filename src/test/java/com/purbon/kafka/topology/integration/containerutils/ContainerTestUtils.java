@@ -139,8 +139,10 @@ public final class ContainerTestUtils {
 
   private static void clearAllTopics(AdminClient admin) {
     try {
-      admin.deleteTopics(
-          admin.listTopics(new ListTopicsOptions().listInternal(true)).names().get());
+      admin
+          .deleteTopics(admin.listTopics(new ListTopicsOptions().listInternal(true)).names().get())
+          .all()
+          .get();
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
