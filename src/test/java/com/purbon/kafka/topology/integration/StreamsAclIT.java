@@ -13,6 +13,7 @@ import java.util.Set;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.KStream;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -35,14 +36,18 @@ public final class StreamsAclIT {
             .withUser(ContainerTestUtils.CONSUMER_USERNAME)
             .withUser(ContainerTestUtils.STREAMS_USERNAME);
     container.start();
-    ContainerTestUtils.clearAclsAndTopics(container);
-    ContainerTestUtils.populateAcls(
-        container, "/streams-acl-it.yaml", "/integration-tests.properties");
   }
 
   @AfterClass
   public static void afterClass() {
     container.stop();
+  }
+
+  @Before
+  public void before() {
+    ContainerTestUtils.clearAclsAndTopics(container);
+    ContainerTestUtils.populateAcls(
+        container, "/streams-acl-it.yaml", "/integration-tests.properties");
   }
 
   @Test
