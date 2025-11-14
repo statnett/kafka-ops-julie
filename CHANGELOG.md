@@ -1,5 +1,16 @@
 # Changelog
 
+## [6.0.0](https://github.com/statnett/kafka-ops-julie/compare/v5.3.0...v6.0.0) (2025-11-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove RBAC/MDS functionality that has not been tested for years ([#520](https://github.com/statnett/kafka-ops-julie/issues/520))
+
+### Features
+
+* remove RBAC/MDS functionality that has not been tested for years ([#520](https://github.com/statnett/kafka-ops-julie/issues/520)) ([e8ffec0](https://github.com/statnett/kafka-ops-julie/commit/e8ffec0dcdded67f531fe5904d6c27ab3d1b5567))
+
 ## [5.3.0](https://github.com/statnett/kafka-ops-julie/compare/v5.2.3...v5.3.0) (2025-11-14)
 
 
