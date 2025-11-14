@@ -1,5 +1,18 @@
 # Changelog
 
+## [5.3.0](https://github.com/statnett/kafka-ops-julie/compare/v5.2.3...v5.3.0) (2025-11-14)
+
+
+### Features
+
+* update Java to 25 ([#517](https://github.com/statnett/kafka-ops-julie/issues/517)) ([e342360](https://github.com/statnett/kafka-ops-julie/commit/e34236053189ad45bd0bce5776e477065317f554))
+
+
+### Bug Fixes
+
+* **deps:** update confluent.version to v8.1.0 ([#501](https://github.com/statnett/kafka-ops-julie/issues/501)) ([e5b2718](https://github.com/statnett/kafka-ops-julie/commit/e5b2718d2dd5c42ed408532bcceba05b724bd6d1))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.38.6 ([#518](https://github.com/statnett/kafka-ops-julie/issues/518)) ([07f1c96](https://github.com/statnett/kafka-ops-julie/commit/07f1c963d2839d46b6f581ac9c7da6a6752e6d11))
+
 ## [5.2.3](https://github.com/statnett/kafka-ops-julie/compare/v5.2.2...v5.2.3) (2025-11-13)
 
 
