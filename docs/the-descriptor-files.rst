@@ -28,7 +28,7 @@ The Julie Ops files use a common structure for describing the cluster entities, 
 * **context** : It is commonly used to describe where a collection of entities are coming from. This value could be for example a team name, a line of business or simply the origin of the topics (the data center).
 This attribute is used as a primary key to group all the entities.
 
-* **project**: In each *context* there could be one or more projects, this attribute is the next level of personalisation as it is usually used to group all final entities such as permissions (acls/rbac), topics and schemas. Each Topology can have multiple of them.
+* **project**: In each *context* there could be one or more projects, this attribute is the next level of personalisation as it is usually used to group all final entities such as permissions (ACLs), topics and schemas. Each Topology can have multiple of them.
 
 In between the *context* and the *project* attribute the user can define a free list of attributes in form of a key and value.
 This list of attributes is going to be listed, in order, by default during the topic name composition in between the context and the project attribute.
@@ -72,7 +72,6 @@ What can you do in the descriptor files?
 
 The `example` directory in the project contains a set of example topologies that you can use to get an idea of how to
 use the different features. For example:
-* RBAC roles with Confluent Platform
 * Administration of schemas for the topics
 * Using plans to create common topic configurations
 * Add metadata to different elements in the topology
@@ -80,7 +79,7 @@ use the different features. For example:
 Add metadata to your topology
 -----------
 
-In addition to definitions needed for creating the required topics, acls, rbac bindings etc in your Kafka cluster KTB
+In addition to definitions needed for creating the required topics, ACLs, etc in your Kafka cluster KTB
 also supports annotating your topology through metadata. This can allow you to make the descriptor files easier to read,
 e.g. for someone not into the details of what a given topic is all about.
 

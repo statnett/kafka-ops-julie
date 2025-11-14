@@ -4,7 +4,7 @@ import static java.net.http.HttpRequest.BodyPublishers.noBody;
 import static java.net.http.HttpRequest.BodyPublishers.ofString;
 
 import com.purbon.kafka.topology.Configuration;
-import com.purbon.kafka.topology.api.mds.Response;
+import com.purbon.kafka.topology.model.misc.Response;
 import com.purbon.kafka.topology.utils.BasicAuth;
 import java.io.IOException;
 import java.io.InputStream;

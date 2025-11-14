@@ -4,7 +4,6 @@ import static com.purbon.kafka.topology.JulieOpsAuxiliary.*;
 
 import com.purbon.kafka.topology.api.adminclient.TopologyBuilderAdminClient;
 import com.purbon.kafka.topology.api.adminclient.TopologyBuilderAdminClientBuilder;
-import com.purbon.kafka.topology.api.mds.MDSApiClientBuilder;
 import com.purbon.kafka.topology.audit.Auditor;
 import com.purbon.kafka.topology.exceptions.ValidationException;
 import com.purbon.kafka.topology.model.Topology;
@@ -83,8 +82,7 @@ public class JulieOps implements AutoCloseable {
     TopologyBuilderAdminClient adminClient =
         new TopologyBuilderAdminClientBuilder(builderConfig).build();
     AccessControlProviderFactory factory =
-        new AccessControlProviderFactory(
-            builderConfig, adminClient, new MDSApiClientBuilder(builderConfig));
+        new AccessControlProviderFactory(builderConfig, adminClient);
 
     PrincipalProviderFactory principalProviderFactory = new PrincipalProviderFactory(builderConfig);
 

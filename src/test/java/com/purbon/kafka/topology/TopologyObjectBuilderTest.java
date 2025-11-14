@@ -102,16 +102,6 @@ public class TopologyObjectBuilderTest {
   }
 
   @Test
-  public void buildTopoOnlyPlatform() throws IOException {
-    String fileOrDirPath = TestUtils.getResourceFilename("/descriptor-only-platform.yaml");
-    var topologies = TopologyObjectBuilder.build(fileOrDirPath);
-    var topology = topologies.values().stream().findFirst().get();
-    assertThat(topology.getProjects()).hasSize(0);
-    assertThat(topology.getPlatform().getKafka().getRbac()).isPresent();
-    assertThat(topology.getPlatform().getKafka().getRbac().get()).hasSize(2);
-  }
-
-  @Test
   public void testConfigUpdateWhenUsingCustomPlans() throws IOException {
     String descriptorFile = TestUtils.getResourceFilename("/descriptor-with-plans.yaml");
     String plansFile = TestUtils.getResourceFilename("/plans.yaml");

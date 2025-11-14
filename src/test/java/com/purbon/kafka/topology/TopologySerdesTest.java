@@ -4,8 +4,6 @@ import static com.purbon.kafka.topology.CommandLineInterface.*;
 import static com.purbon.kafka.topology.Constants.*;
 import static com.purbon.kafka.topology.model.SubjectNameStrategy.TOPIC_NAME_STRATEGY;
 import static com.purbon.kafka.topology.model.SubjectNameStrategy.TOPIC_RECORD_NAME_STRATEGY;
-import static com.purbon.kafka.topology.roles.rbac.RBACPredefinedRoles.DEVELOPER_READ;
-import static com.purbon.kafka.topology.roles.rbac.RBACPredefinedRoles.RESOURCE_OWNER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -386,76 +384,6 @@ public class TopologySerdesTest {
     var project = topology.getProjects().get(0);
     assertEquals("context", topology.getContext());
     assertTrue(project.getConnectors().isEmpty());
-  }
-
-  @Test
-  public void testRBACTopics() {
-    Topology topology =
-        parser.deserialise(TestUtils.getResourceFile("/descriptor-with-rbac-topics.yaml"));
-
-    Project project = topology.getProjects().get(0);
-    assertEquals("contextOrg", topology.getContext());
-    assertThat(project.getConnectors()).isEmpty();
-    assertThat(project.getProducers()).isEmpty();
-    assertThat(project.getStreams()).isEmpty();
-
-    Topic topic = project.getTopics().get(0);
-
-    assertThat(topic.getConsumers()).hasSize(1);
-    assertThat(topic.getConsumers()).contains(new Consumer("User:App0"));
-
-    assertThat(topic.getProducers()).hasSize(1);
-    assertThat(topic.getProducers()).contains(new Producer("User:App1"));
-
-    assertEquals("foo", topic.getName());
-  }
-
-  @Test
-  public void testWithRBACDescriptor() {
-    Topology topology = parser.deserialise(TestUtils.getResourceFile("/descriptor-with-rbac.yaml"));
-    Project myProject = topology.getProjects().get(0);
-
-    assertEquals(2, myProject.getRbacRawRoles().size());
-    assertEquals(3, myProject.getSchemas().size());
-    assertSchemas(
-        myProject.getSchemas().get(0),
-        "User:App0",
-        Collections.singletonList("transactions"),
-        RESOURCE_OWNER,
-        false);
-    assertSchemas(
-        myProject.getSchemas().get(1),
-        "User:App1",
-        Collections.singletonList("contracts"),
-        RESOURCE_OWNER,
-        false);
-    assertSchemas(
-        myProject.getSchemas().get(2),
-        "User:App2",
-        Collections.singletonList("myapp"),
-        DEVELOPER_READ,
-        true);
-    Connector connector = myProject.getConnectors().get(0);
-    assertEquals(true, connector.getConnectors().isPresent());
-    assertEquals("jdbc-sync", connector.getConnectors().get().get(0));
-    assertEquals("ibmmq-source", connector.getConnectors().get().get(1));
-
-    Optional<Map<String, List<User>>> rbacOptional =
-        topology.getPlatform().getSchemaRegistry().getRbac();
-    assertTrue(rbacOptional.isPresent());
-
-    Set<String> keys = Arrays.asList("Operator").stream().collect(Collectors.toSet());
-    assertEquals(keys, rbacOptional.get().keySet());
-    assertEquals(2, rbacOptional.get().get("Operator").size());
-
-    Optional<Map<String, List<User>>> kafkaRbacOptional =
-        topology.getPlatform().getKafka().getRbac();
-    assertTrue(kafkaRbacOptional.isPresent());
-
-    Set<String> kafkaKeys =
-        Arrays.asList("SecurityAdmin", "ClusterAdmin").stream().collect(Collectors.toSet());
-    assertEquals(kafkaKeys, kafkaRbacOptional.get().keySet());
-    assertEquals(1, kafkaRbacOptional.get().get("SecurityAdmin").size());
   }
 
   @Test

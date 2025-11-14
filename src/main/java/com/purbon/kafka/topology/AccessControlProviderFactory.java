@@ -3,14 +3,10 @@ package com.purbon.kafka.topology;
 import static com.purbon.kafka.topology.Constants.*;
 
 import com.purbon.kafka.topology.api.adminclient.TopologyBuilderAdminClient;
-import com.purbon.kafka.topology.api.mds.MDSApiClient;
-import com.purbon.kafka.topology.api.mds.MDSApiClientBuilder;
 import com.purbon.kafka.topology.roles.CCloudAclsProvider;
 import com.purbon.kafka.topology.roles.HybridCCloudAclsProvider;
-import com.purbon.kafka.topology.roles.RBACProvider;
 import com.purbon.kafka.topology.roles.SimpleAclsProvider;
 import com.purbon.kafka.topology.roles.acls.AclsBindingsBuilder;
-import com.purbon.kafka.topology.roles.rbac.RBACBindingsBuilder;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 
@@ -18,15 +14,11 @@ public class AccessControlProviderFactory {
 
   private final Configuration config;
   private final TopologyBuilderAdminClient builderAdminClient;
-  private final MDSApiClientBuilder mdsApiClientBuilder;
 
   public AccessControlProviderFactory(
-      Configuration config,
-      TopologyBuilderAdminClient builderAdminClient,
-      MDSApiClientBuilder mdsApiClientBuilder) {
+      Configuration config, TopologyBuilderAdminClient builderAdminClient) {
     this.config = config;
     this.builderAdminClient = builderAdminClient;
-    this.mdsApiClientBuilder = mdsApiClientBuilder;
   }
 
   public AccessControlProvider get() throws IOException {
@@ -50,13 +42,6 @@ public class AccessControlProviderFactory {
               clazz.getConstructor(TopologyBuilderAdminClient.class, Configuration.class);
           return (HybridCCloudAclsProvider)
               hybridCcloudProviderConstructor.newInstance(builderAdminClient, config);
-        case RBAC_ACCESS_CONTROL_CLASS:
-          Constructor<?> rbacProviderConstructor = clazz.getConstructor(MDSApiClient.class);
-          MDSApiClient apiClient = apiClientLogIn();
-          if (!config.doValidate()) {
-            apiClient.authenticate();
-          }
-          return (RBACProvider) rbacProviderConstructor.newInstance(apiClient);
         default:
           throw new IOException("Unknown access control provided. " + accessControlClassName);
       }
@@ -74,23 +59,11 @@ public class AccessControlProviderFactory {
       } else if (accessControlClass.equalsIgnoreCase(CONFLUENT_CLOUD_CONTROL_CLASS)
           || accessControlClass.equalsIgnoreCase(CONFLUENT_HYBRID_CLOUD_CONTROL_CLASS)) {
         return new AclsBindingsBuilder(config);
-      } else if (accessControlClass.equalsIgnoreCase(RBAC_ACCESS_CONTROL_CLASS)) {
-        MDSApiClient apiClient = apiClientLogIn();
-        if (!config.doValidate()) {
-          apiClient.authenticate();
-        }
-        return new RBACBindingsBuilder(apiClient);
       } else {
         throw new IOException(accessControlClass + " Unknown access control provided.");
       }
     } catch (Exception ex) {
       throw new IOException(ex);
     }
-  }
-
-  private MDSApiClient apiClientLogIn() throws IOException {
-    MDSApiClient apiClient = mdsApiClientBuilder.build();
-    config.getMdsBasicAuth().ifPresent(apiClient::setBasicAuth);
-    return apiClient;
   }
 }

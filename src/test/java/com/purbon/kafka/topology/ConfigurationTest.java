@@ -40,13 +40,7 @@ public class ConfigurationTest {
   @Test
   public void testWithAllRequiredFields() throws ConfigurationException {
     Topology topology = new TopologyImpl();
-
-    props.put(ACCESS_CONTROL_IMPLEMENTATION_CLASS, RBAC_ACCESS_CONTROL_CLASS);
-    props.put(MDS_SERVER, "example.com");
-    props.put(MDS_USER_CONFIG, "foo");
-    props.put(MDS_PASSWORD_CONFIG, "bar");
-    props.put(MDS_KAFKA_CLUSTER_ID_CONFIG, "1234");
-
+    props.put(ACCESS_CONTROL_IMPLEMENTATION_CLASS, ACCESS_CONTROL_DEFAULT_CLASS);
     Configuration config = new Configuration(cliOps, props);
     config.validateWith(topology);
   }

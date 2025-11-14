@@ -9,9 +9,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.purbon.kafka.topology.Configuration;
-import com.purbon.kafka.topology.api.mds.Response;
 import com.purbon.kafka.topology.clients.JulieHttpClient;
 import com.purbon.kafka.topology.model.cluster.ServiceAccount;
+import com.purbon.kafka.topology.model.misc.Response;
 import com.purbon.kafka.topology.roles.TopologyAclBinding;
 import java.io.IOException;
 import java.util.HashMap;

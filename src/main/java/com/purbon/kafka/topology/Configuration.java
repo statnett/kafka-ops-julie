@@ -103,25 +103,6 @@ public class Configuration {
 
   public void validateWith(Topology topology) throws ConfigurationException {
     validateGeneralConfiguration(topology);
-    boolean isRBAC = this.getAccessControlClassName().equalsIgnoreCase(RBAC_ACCESS_CONTROL_CLASS);
-    if (isRBAC) {
-      validateRBACConfiguration(topology);
-    }
-  }
-
-  public void validateRBACConfiguration(Topology topology) throws ConfigurationException {
-    raiseIfNull(MDS_SERVER, MDS_USER_CONFIG, MDS_PASSWORD_CONFIG);
-    raiseIfNull(MDS_KAFKA_CLUSTER_ID_CONFIG);
-
-    final boolean hasSchemaRegistry = !topology.getPlatform().getSchemaRegistry().isEmpty();
-    final boolean hasKafkaConnect =
-        !topology.getProjects().stream().allMatch(project -> project.getConnectors().isEmpty());
-
-    if (hasSchemaRegistry) {
-      raiseIfNull(MDS_SR_CLUSTER_ID_CONFIG);
-    } else if (hasKafkaConnect && getString(MDS_KC_CLUSTER_ID_CONFIG) == null) {
-      raiseIfNull(MDS_KC_CLUSTER_ID_CONFIG);
-    }
   }
 
   private void validateGeneralConfiguration(Topology topology) throws ConfigurationException {
@@ -448,34 +429,6 @@ public class Configuration {
     return getString(JULIE_GCP_BUCKET);
   }
 
-  public String getMdsServer() {
-    return getString(MDS_SERVER);
-  }
-
-  public List<String> getValidClusterIds() {
-    return config.getStringList(MDS_VALID_CLUSTER_IDS_CONFIG);
-  }
-
-  public Boolean mdsInsecureAllowed() {
-    return config.getBoolean(MDS_ALLOW_INSECURE_CONFIG);
-  }
-
-  public String getKafkaClusterId() {
-    return getString(MDS_KAFKA_CLUSTER_ID_CONFIG);
-  }
-
-  public String getSchemaRegistryClusterId() {
-    return getString(MDS_SR_CLUSTER_ID_CONFIG);
-  }
-
-  public String getKafkaConnectClusterId() {
-    return getString(MDS_KC_CLUSTER_ID_CONFIG);
-  }
-
-  public String getKsqlDBClusterID() {
-    return getString(MDS_KSQLDB_CLUSTER_ID_CONFIG);
-  }
-
   public Optional<String> getSslTrustStoreLocation() {
     try {
       return Optional.of(getString(SSL_TRUSTSTORE_LOCATION));
@@ -583,14 +536,6 @@ public class Configuration {
       }
       return null;
     }
-  }
-
-  public Optional<BasicAuth> getMdsBasicAuth() {
-    BasicAuth auth = null;
-    if (hasProperty(MDS_USER_CONFIG) && hasProperty(MDS_PASSWORD_CONFIG)) {
-      auth = new BasicAuth(getProperty(MDS_USER_CONFIG), getProperty(MDS_PASSWORD_CONFIG));
-    }
-    return Optional.ofNullable(auth);
   }
 
   public JulieRoles getJulieRoles() throws IOException {

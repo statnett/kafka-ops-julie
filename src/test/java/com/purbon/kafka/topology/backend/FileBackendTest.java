@@ -3,11 +3,8 @@ package com.purbon.kafka.topology.backend;
 import static com.purbon.kafka.topology.BackendController.STATE_FILE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.purbon.kafka.topology.BackendController.Mode;
 import com.purbon.kafka.topology.TestTopologyBuilder;
-import com.purbon.kafka.topology.api.mds.ClusterIDs;
-import com.purbon.kafka.topology.api.mds.RequestScope;
 import com.purbon.kafka.topology.model.Topic;
 import com.purbon.kafka.topology.roles.TopologyAclBinding;
 import com.purbon.kafka.topology.utils.JSON;
@@ -19,9 +16,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
-import org.apache.kafka.common.acl.AclOperation;
 import org.apache.kafka.common.acl.AclPermissionType;
-import org.apache.kafka.common.resource.PatternType;
 import org.apache.kafka.common.resource.ResourceType;
 import org.junit.After;
 import org.junit.Before;
@@ -54,34 +49,6 @@ public class FileBackendTest {
   @Test
   public void shouldHandlePrincipalWithUri() throws IOException {
     verifyStoreAndLoadWithPrincipal("SPIFFE:spiffe://example.com/foo/bar");
-  }
-
-  @Test
-  public void testBindingSerdes() throws JsonProcessingException {
-    TopologyAclBinding binding =
-        TopologyAclBinding.build(
-            ResourceType.TOPIC.name(),
-            "foo",
-            "*",
-            AclOperation.CREATE.name(),
-            "User:foo",
-            PatternType.LITERAL.name(),
-            AclPermissionType.ALLOW.name());
-
-    RequestScope scope = new RequestScope();
-    ClusterIDs clusterIDs = new ClusterIDs();
-    clusterIDs.setKafkaClusterId("kafka");
-    scope.setClusters(clusterIDs.forKafka().asMap());
-    binding.setScope(scope);
-
-    scope.addResource("type", "name", "pattern");
-
-    String content = JSON.asString(binding);
-    TopologyAclBinding newBindings =
-        (TopologyAclBinding) JSON.toObject(content, TopologyAclBinding.class);
-
-    assertThat(newBindings.getScope().getResources()).hasSize(1);
-    assertThat(newBindings.getScope().clusterIDs()).hasSize(1);
   }
 
   @Test

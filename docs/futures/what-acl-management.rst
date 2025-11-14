@@ -55,7 +55,7 @@ Consumer definition with principal "User:App0" and consumer group name "foo".
 In the default mode Julie Ops will create dedicated ACL for each user and topic pair. For organisations that aim not to have dedicated pair of rules Julie Ops offer the option
 to optimise the number of ACLs using prefixed rules.
 
-The optimised ACLs/RBAC can be enabled using the *topology.acls.optimized* configuration property.
+The optimised ACLs can be enabled using the *topology.acls.optimized* configuration property.
 
 Producers
 ^^^^^^^^^^^
@@ -91,7 +91,7 @@ Producers may also have a transactional ID, which can be specified as either lit
 In the default mode Julie Ops will create dedicated ACL for each user and topic pair. For organisations that aim not to have dedicated pair of rules Julie Ops offer the option
 to optimise the number of ACLs using prefixed rules.
 
-The optimised ACLs/RBAC can be enabled using the *topology.acls.optimized* configuration property.
+The optimised ACLs can be enabled using the *topology.acls.optimized* configuration property.
 
 Streams
 ^^^^^^^^^^^
@@ -178,15 +178,11 @@ Connectors can either read (Sink) or write (Source) into Apache Kafka and they d
 
 If you are having more than one Kafka Connect cluster you can specify a custom group, status, offset and config topics.
 
-When using RBAC, you can add under each principal the connectors it can use and this principals will only have visibility over them.
-
 KSQL servers and queries
 ^^^^^^^^^^^
 
 In a similar fashion as with the previous roles, users can setup specific KSQL setups.
 In JulieOps you can manage either single KSQL queries or ACL to deploy KSQL servers using a given Kafka Cluster.
-
-*Note* When using RBAC, according role bindings will be created
 
 .. code-block:: YAML
 
@@ -247,8 +243,6 @@ topic name and group used for the communication.
             Operator:
               - principal: "User:Hans"
               - principal: "User:Bob"
-
-If you are using rbac, under the specific section users can attach their own cluster wide role principals.
 
 What ACLs are created
 ^^^^^^^^^^^^^^^^^^^^^

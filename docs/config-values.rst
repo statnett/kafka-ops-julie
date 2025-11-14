@@ -12,25 +12,7 @@ Configure the access control methodology.
 **Property**: *topology.builder.access.control.class*
 **Default value**: "com.purbon.kafka.topology.roles.SimpleAclsProvider"
 **values**:
- - RBAC: "com.purbon.topology.roles.RBACProvider"
  - ACLs: "com.purbon.kafka.topology.roles.SimpleAclsProvider"
-
-RBAC configuration
------------
-
-To configure RBAC, as a user you need to setup the access to your MDS server location, for this you need to setup the user and password to access it.
-An example configuration looks like this:
-::
-    topology.builder.mds.server = "http://localhost:8090"
-    topology.builder.mds.user = "mds"
-    topology.builder.mds.password = "mds-secret"
-
-A part from that, you need to setup the UUID for each of your clusters. This is one like this:
-::
-    topology.builder.mds.kafka.cluster.id = "foobar"
-    topology.builder.mds.schema.registry.cluster.id = "schema-registry-cluster"
-    topology.builder.mds.kafka.connect.cluster.id = "connect-cluster"
-
 
 Schema Management
 -----------
@@ -79,10 +61,10 @@ As a user you can customize:
 - **Property**: *topology.project.prefix.format*, to set the project level name format, it should be a subset of the previous one.
 - **Property**: *topology.topic.prefix.separator*, to select a custom separator between attributes.
 
-Optimised number of ACLs and RBAC bindings
+Optimised number of ACL bindings
 -----------
 
-This property is used to reduce the number of ACLs, or RBAC bindings, created. In the normal operational mode, Julie Ops, will create direct pair of bindings for each user and topic.
+This property is used to reduce the number of ACLs created. In the normal operational mode, Julie Ops, will create direct pair of bindings for each user and topic.
 However for some organisations, it might be enough, to create an optimised list by using prefixed bindings.
 
 **Property**: *topology.acls.optimized*
@@ -196,7 +178,7 @@ An example configuration would be:
 
 julie.internal.principal="User:Julie"
 
-this would exclude all ACLs or RBAC rules that has this principal from the management of JulieOps
+this would exclude all ACL rules that has this principal from the management of JulieOps
 
 Retrieve topic management state from local controlled view
 -----------

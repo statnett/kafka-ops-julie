@@ -13,8 +13,6 @@ configuration:
         level: info
       - name: com.purbon.kafka.topology
         level: info
-      - name: com.purbon.kafka.topology.api.mds
-        level: info
       - name: org.apache.kafka
         level: warn
       - name: org.apache.kafka.clients.admin.AdminClientConfig

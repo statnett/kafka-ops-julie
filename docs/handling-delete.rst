@@ -13,7 +13,7 @@ Granular delete flags
 -----------
 
 There could be situations when the reader aim to :
- * Control delete operations in a more granular way, for example allow delete of bindings (Acls/RBAC) but not topics.
+ * Control delete operations in a more granular way, for example allow delete of bindings (ACLs) but not topics.
  * Control the delete via ENV variables. This could be very handy when doing CI/CD integrations and setting variables over the pipeline executions.
 
 This can be done in Julie Ops by using the capabilities provided by the configuration library in use.

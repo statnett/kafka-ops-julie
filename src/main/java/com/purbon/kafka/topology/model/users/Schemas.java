@@ -1,7 +1,5 @@
 package com.purbon.kafka.topology.model.users;
 
-import static com.purbon.kafka.topology.roles.rbac.RBACPredefinedRoles.RESOURCE_OWNER;
-
 import com.purbon.kafka.topology.model.User;
 import java.util.List;
 
@@ -16,7 +14,7 @@ public class Schemas extends User {
 
     // using default role RESOURCE_OWNER and non-prefixed (literal) binding
     // for backward compatibility
-    this.role = RESOURCE_OWNER;
+    this.role = "ResourceOwner";
     this.prefixed = false;
   }
 

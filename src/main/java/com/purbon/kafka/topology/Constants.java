@@ -16,9 +16,6 @@ public final class Constants {
   public static final String CONFLUENT_HYBRID_CLOUD_CONTROL_CLASS =
       "com.purbon.kafka.topology.roles.HybridCCloudAclsProvider";
 
-  public static final String RBAC_ACCESS_CONTROL_CLASS =
-      "com.purbon.kafka.topology.roles.RBACProvider";
-
   public static final String STATE_PROCESSOR_IMPLEMENTATION_CLASS =
       "topology.builder.state.processor.class";
 
@@ -40,20 +37,6 @@ public final class Constants {
   public static final String REDIS_HOST_CONFIG = "topology.builder.redis.host";
   public static final String REDIS_PORT_CONFIG = "topology.builder.redis.port";
   public static final String REDIS_BUCKET_CONFIG = "topology.builder.redis.bucket";
-
-  public static final String MDS_SERVER = "topology.builder.mds.server";
-  public static final String MDS_USER_CONFIG = "topology.builder.mds.user";
-  public static final String MDS_PASSWORD_CONFIG = "topology.builder.mds.password";
-
-  public static final String MDS_KAFKA_CLUSTER_ID_CONFIG = "topology.builder.mds.kafka.cluster.id";
-  static final String MDS_SR_CLUSTER_ID_CONFIG = "topology.builder.mds.schema.registry.cluster.id";
-  static final String MDS_KC_CLUSTER_ID_CONFIG = "topology.builder.mds.kafka.connect.cluster.id";
-  static final String MDS_KSQLDB_CLUSTER_ID_CONFIG = "topology.builder.mds.ksqldb.cluster.id";
-
-  public static final String MDS_VALID_CLUSTER_IDS_CONFIG =
-      "topology.builder.mds.valid.cluster.ids";
-
-  public static final String MDS_ALLOW_INSECURE_CONFIG = "topology.builder.mds.allow.insecure";
 
   public static final String CONFLUENT_SCHEMA_REGISTRY_URL_CONFIG = "schema.registry.url";
   static final String CONFLUENT_MONITORING_TOPIC_CONFIG = "confluent.monitoring.topic";

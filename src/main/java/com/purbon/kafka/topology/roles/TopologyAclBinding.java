@@ -1,8 +1,8 @@
 package com.purbon.kafka.topology.roles;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.purbon.kafka.topology.api.ccloud.response.KafkaAclResponse;
-import com.purbon.kafka.topology.api.mds.RequestScope;
 import java.util.Objects;
 import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
@@ -11,6 +11,7 @@ import org.apache.kafka.common.acl.AclBinding;
 import org.apache.kafka.common.resource.ResourcePattern;
 import org.apache.kafka.common.resource.ResourceType;
 
+@JsonIgnoreProperties("scope")
 public class TopologyAclBinding implements Comparable<TopologyAclBinding> {
 
   @JsonIgnore private Optional<AclBinding> aclBindingOptional;
@@ -198,16 +199,6 @@ public class TopologyAclBinding implements Comparable<TopologyAclBinding> {
         getPrincipal(),
         getPattern(),
         getPermissionType());
-  }
-
-  private RequestScope scope;
-
-  public void setScope(RequestScope scope) {
-    this.scope = scope;
-  }
-
-  public RequestScope getScope() {
-    return scope;
   }
 
   @Override
