@@ -49,9 +49,13 @@ public class QuotasClientBindingsBuilder {
 
   public static final class CollectNotNull {
     public static <T> boolean addSafe(List<T> list, T... elements) {
-      if (list == null) return false;
+      if (list == null) {
+        return false;
+      }
       for (T element : elements) {
-        if (element != null) list.add(element);
+        if (element != null) {
+          list.add(element);
+        }
       }
       return true;
     }

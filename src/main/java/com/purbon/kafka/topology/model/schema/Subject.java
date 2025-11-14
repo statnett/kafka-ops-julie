@@ -67,11 +67,11 @@ public class Subject {
   public String buildSubjectName(Topic topic) throws IOException {
     switch (topic.getSubjectNameStrategy()) {
       case TOPIC_NAME_STRATEGY:
-        return topic.toString() + "-" + kind.label;
+        return topic + "-" + kind.label;
       case RECORD_NAME_STRATEGY:
         return recordTypeAsString();
       case TOPIC_RECORD_NAME_STRATEGY:
-        return topic.toString() + "-" + recordTypeAsString();
+        return topic + "-" + recordTypeAsString();
       default:
         return "";
     }

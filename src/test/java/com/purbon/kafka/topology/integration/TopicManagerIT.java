@@ -408,8 +408,9 @@ public class TopicManagerIT {
         .forEach(
             entry -> {
               if (!entry.isDefault()) {
-                if (config.get(entry.name()) != null)
+                if (config.get(entry.name()) != null) {
                   assertEquals(config.get(entry.name()), entry.value());
+                }
                 Assert.assertFalse(removedConfigs.contains(entry.name()));
               }
             });

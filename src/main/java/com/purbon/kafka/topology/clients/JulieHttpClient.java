@@ -283,7 +283,9 @@ public class JulieHttpClient {
   }
 
   private boolean shouldRetry(HttpResponse<String> response, Throwable throwable, int count) {
-    if (response != null && !isRetrievableStatusCode(response) || count >= retryTimes) return false;
+    if (response != null && !isRetrievableStatusCode(response) || count >= retryTimes) {
+      return false;
+    }
     var backoffTime = backoff(count);
     LOGGER.debug("Sleeping before retry on " + backoffTime + " ms");
     return true;

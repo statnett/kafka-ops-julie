@@ -39,9 +39,7 @@ public class Other extends User {
       map.put("connector", connectorString());
     }
     map.put("group", groupString());
-    if (transactionId.isPresent()) {
-      map.put("transactionId", transactionId.get());
-    }
+    transactionId.ifPresent(s -> map.put("transactionId", s));
     return map;
   }
 

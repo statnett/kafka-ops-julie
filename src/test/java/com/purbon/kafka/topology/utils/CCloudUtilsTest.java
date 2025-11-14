@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Properties;
 import org.apache.kafka.common.acl.AclPermissionType;
 import org.apache.kafka.common.resource.ResourceType;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,9 +39,6 @@ public class CCloudUtilsTest {
     cliOps.put(BROKERS_OPTION, "");
     props = new Properties();
   }
-
-  @After
-  public void after() {}
 
   @Test
   public void translationShouldNotRaiseErrors() throws IOException {

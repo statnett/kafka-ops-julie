@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -46,9 +45,6 @@ public class KsqlArtefactManagerTest {
 
     parser = new TopologySerdes(config, new PlanMap());
   }
-
-  @After
-  public void after() {}
 
   @Test
   public void testArtefactGenerationOrder() {

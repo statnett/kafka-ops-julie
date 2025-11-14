@@ -7,8 +7,6 @@ import com.purbon.kafka.topology.api.adminclient.TopologyBuilderAdminClient;
 import com.purbon.kafka.topology.api.ccloud.CCloudApi;
 import com.purbon.kafka.topology.utils.CCloudUtils;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.kafka.common.acl.AclOperation;
@@ -72,10 +70,5 @@ public class HybridCCloudAclsProvider extends SimpleAclsProvider implements Acce
     for (TopologyAclBinding binding : bindings) {
       adminClient.clearAcls(cCloudUtils.translateIfNecessary(binding, serviceAccountIdByNameMap));
     }
-  }
-
-  @Override
-  public Map<String, List<TopologyAclBinding>> listAcls() {
-    return super.listAcls();
   }
 }

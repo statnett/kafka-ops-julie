@@ -130,10 +130,11 @@ public class TopicManager implements ExecutionPlanUpdater {
 
     listOfTopics =
         listOfTopics.stream().filter(this::matchesPrefixList).collect(Collectors.toSet());
-    if (!listOfTopics.isEmpty())
+    if (!listOfTopics.isEmpty()) {
       LOGGER.debug(
           "Full list of managed topics in the cluster: "
               + StringUtils.join(new ArrayList<>(listOfTopics), ","));
+    }
 
     if (!config.shouldVerifyRemoteState()) {
       OnceOnlyWarningLogger.getInstance().logRemoteStateVerificationDisabledWarning();

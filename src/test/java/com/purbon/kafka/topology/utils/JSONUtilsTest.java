@@ -7,13 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.junit.Before;
 import org.junit.Test;
 
 public class JSONUtilsTest {
-
-  @Before
-  public void setup() {}
 
   @Test
   public void testToMapDeserialization() throws JsonProcessingException {

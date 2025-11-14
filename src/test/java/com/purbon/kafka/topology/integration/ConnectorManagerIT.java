@@ -53,9 +53,6 @@ public class ConnectorManagerIT {
     this.plan = ExecutionPlan.init(new BackendController(), System.out);
   }
 
-  @After
-  public void after() {}
-
   @AfterClass
   public static void afterClass() {
     connectContainer.stop();

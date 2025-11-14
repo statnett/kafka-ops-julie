@@ -470,7 +470,9 @@ public class TopologyCustomDeserializer extends StdDeserializer<Topology> {
   }
 
   private Map<String, List<String>> parseOptionalRbacRoles(JsonNode rbacRootNode) {
-    if (rbacRootNode == null) return new HashMap<>();
+    if (rbacRootNode == null) {
+      return new HashMap<>();
+    }
     return StreamSupport.stream(rbacRootNode.spliterator(), true)
         .map(
             (Function<JsonNode, Pair<String, JsonNode>>)

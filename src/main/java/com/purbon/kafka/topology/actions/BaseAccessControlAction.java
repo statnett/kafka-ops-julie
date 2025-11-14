@@ -31,7 +31,9 @@ public abstract class BaseAccessControlAction extends BaseAction {
   public void run() throws IOException {
     LOGGER.debug(String.format("Running Action %s", getClass()));
     execute();
-    if (!getAclBindings().isEmpty()) logResults();
+    if (!getAclBindings().isEmpty()) {
+      logResults();
+    }
   }
 
   private void logResults() {

@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import org.apache.kafka.common.KafkaException;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,9 +31,6 @@ public class JulieOpsAuxiliaryTest {
     props = new Properties();
     props.put(JULIE_AUDIT_ENABLED, "true");
   }
-
-  @After
-  public void after() {}
 
   @Test
   public void shouldConfigureAFileBackend() throws IOException {

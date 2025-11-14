@@ -124,8 +124,12 @@ public class TestTopologyBuilder {
     Other other = new Other();
     other.setPrincipal(principal);
     other.setTopic(Optional.of(topic));
-    if (!connector.isEmpty()) other.setConnector(Optional.of(connector));
-    if (!subject.isEmpty()) other.setSubject(Optional.of(subject));
+    if (!connector.isEmpty()) {
+      other.setConnector(Optional.of(connector));
+    }
+    if (!subject.isEmpty()) {
+      other.setSubject(Optional.of(subject));
+    }
     others.add(Map.entry(roleName, Collections.singletonList(other)));
     return this;
   }

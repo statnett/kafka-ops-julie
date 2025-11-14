@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,9 +28,6 @@ public class JulieRolesTest {
   public void before() {
     this.parser = new JulieRolesSerdes();
   }
-
-  @After
-  public void after() {}
 
   @Test
   public void testSerdes() throws IOException {

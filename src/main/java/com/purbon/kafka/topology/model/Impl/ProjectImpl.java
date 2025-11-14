@@ -194,8 +194,11 @@ public class ProjectImpl implements Project, Cloneable {
   }
 
   public String namePrefix() {
-    if (config.getProjectPrefixFormat().equals("default")) return namePrefix(buildNamePrefix());
-    else return patternBasedProjectPrefix();
+    if (config.getProjectPrefixFormat().equals("default")) {
+      return namePrefix(buildNamePrefix());
+    } else {
+      return patternBasedProjectPrefix();
+    }
   }
 
   private String patternBasedProjectPrefix() {

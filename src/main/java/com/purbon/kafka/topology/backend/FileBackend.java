@@ -31,7 +31,9 @@ public class FileBackend implements Backend {
   @Override
   public void createOrOpen(Mode mode) {
     try {
-      if (this.writer != null) writer.close();
+      if (this.writer != null) {
+        writer.close();
+      }
       this.writer = new FileWriter(STATE_FILE_NAME, !Mode.TRUNCATE.equals(mode));
     } catch (IOException e) {
       LOGGER.error(e);

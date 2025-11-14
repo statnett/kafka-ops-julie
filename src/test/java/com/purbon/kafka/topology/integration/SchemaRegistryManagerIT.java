@@ -82,9 +82,6 @@ public class SchemaRegistryManagerIT {
     schemaRegistryClient = new CachedSchemaRegistryClient(restService, 10, providers, null, null);
   }
 
-  @After
-  public void teardown() {}
-
   @Test
   public void testSchemaSetupForAvroDefaults() throws IOException, RestClientException {
     AdminClient kafkaAdminClient = ContainerTestUtils.getSaslJulieAdminClient(container);
