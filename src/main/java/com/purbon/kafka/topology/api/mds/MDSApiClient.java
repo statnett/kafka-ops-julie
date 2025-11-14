@@ -32,7 +32,6 @@ public class MDSApiClient extends JulieHttpClient {
 
   private static final Logger LOGGER = LogManager.getLogger(MDSApiClient.class);
 
-  private AuthenticationCredentials authenticationCredentials;
   private final ClusterIDs clusterIDs;
 
   public MDSApiClient(String mdsServer) throws IOException {
@@ -87,21 +86,12 @@ public class MDSApiClient extends JulieHttpClient {
     return HttpClient.newBuilder().sslContext(sslContext).build();
   }
 
-  public AuthenticationCredentials getCredentials() {
-    return authenticationCredentials;
-  }
-
   public void authenticate() throws IOException {
     try {
       Response response = doGet("/security/1.0/authenticate");
       if (response.getStatus() < 200 || response.getStatus() > 204) {
         throw new IOException("MDS Authentication error: " + response.getResponseAsString());
       }
-      authenticationCredentials =
-          new AuthenticationCredentials(
-              response.getField("auth_token").toString(),
-              response.getField("token_type").toString(),
-              Integer.valueOf(response.getField("expires_in").toString()));
     } catch (Exception e) {
       LOGGER.error(e);
       throw new IOException(e);
@@ -238,16 +228,6 @@ public class MDSApiClient extends JulieHttpClient {
     return lookupKafkaPrincipalsByRole(role, clusters);
   }
 
-  public List<String> lookupKafkaPrincipalsByRoleForConnect(String role) {
-    Map<String, Map<String, String>> clusters = clusterIDs.forKafka().forKafkaConnect().asMap();
-    return lookupKafkaPrincipalsByRole(role, clusters);
-  }
-
-  public List<String> lookupKafkaPrincipalsByRoleForSchemaRegistry(String role) {
-    Map<String, Map<String, String>> clusters = clusterIDs.forKafka().forSchemaRegistry().asMap();
-    return lookupKafkaPrincipalsByRole(role, clusters);
-  }
-
   public List<String> lookupKafkaPrincipalsByRole(
       String role, Map<String, Map<String, String>> clusters) {
     List<String> users = new ArrayList<>();
@@ -264,37 +244,8 @@ public class MDSApiClient extends JulieHttpClient {
     return users;
   }
 
-  public List<String> lookupRoles(String principal) {
-    return lookupRoles(principal, clusterIDs.getKafkaClusterIds());
-  }
-
-  public List<String> lookupRoles(String principal, Map<String, Map<String, String>> clusters) {
-    List<String> roles = new ArrayList<>();
-    try {
-      String url = "/security/1.0/lookup/principals/" + principal + "/roleNames";
-      String response = doPost(url, JSON.asString(clusters));
-      if (!response.isEmpty()) {
-        roles = JSON.toArray(response);
-      }
-    } catch (IOException e) {
-      LOGGER.error(e);
-    }
-
-    return roles;
-  }
-
   public List<RbacResourceType> lookupResourcesForKafka(String principal, String role) {
     Map<String, Map<String, String>> clusters = clusterIDs.forKafka().asMap();
-    return lookupResources(principal, role, clusters);
-  }
-
-  public List<RbacResourceType> lookupResourcesForConnect(String principal, String role) {
-    Map<String, Map<String, String>> clusters = clusterIDs.forKafka().forKafkaConnect().asMap();
-    return lookupResources(principal, role, clusters);
-  }
-
-  public List<RbacResourceType> lookupResourcesForSchemaRegistry(String principal, String role) {
-    Map<String, Map<String, String>> clusters = clusterIDs.forKafka().forSchemaRegistry().asMap();
     return lookupResources(principal, role, clusters);
   }
 
