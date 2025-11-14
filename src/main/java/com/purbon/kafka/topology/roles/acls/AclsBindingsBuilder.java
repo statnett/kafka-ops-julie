@@ -436,15 +436,36 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
 
     String principal = mm2.getPrincipal();
 
-    List<AclBinding> bindings = mm2.getSource_topics()
-      .stream()
-      .filter(Optional::isPresent)
-      .map(t -> buildLiteralTopicLevelAcl(
-        principal,
-        t.get(),
-        mm2.getRole() == MirrorMaker2.Role.consumer
-          ? AclOperation.READ
-          : AclOperation.WRITE)).toList();
+    List<AclBinding> bindings = new ArrayList<>();
+    bindings.add(buildLiteralTopicLevelAcl(principal, mm2.configsTopicString(), AclOperation.ALL));
+    bindings.add(buildLiteralTopicLevelAcl(principal, mm2.offsetTopicString(), AclOperation.ALL));
+    bindings.add(buildLiteralTopicLevelAcl(principal, mm2.statusTopicString(), AclOperation.ALL));
+
+    if (mm2.getRole() == MirrorMaker2.Role.producer) {
+      mm2.getSourceTopics().stream()
+          .filter(Optional::isPresent)
+          .map(t -> buildLiteralTopicLevelAcl(principal, t.get(), AclOperation.READ));
+    } else {
+      mm2.getTargetTopics().stream()
+          .filter(Optional::isPresent)
+          .map(t -> buildLiteralTopicLevelAcl(principal, t.get(), AclOperation.WRITE));
+
+      // TODO: this topic is always required, should cause an exception if not present
+      if (mm2.getOffsetSyncsTopic().isPresent()) {
+        bindings.add(
+            buildLiteralTopicLevelAcl(principal, mm2.offsetSyncsTopicString(), AclOperation.WRITE));
+      }
+
+      if (mm2.getCheckpointsTopic().isPresent()) {
+        bindings.add(
+            buildLiteralTopicLevelAcl(principal, mm2.checkpointsTopicString(), AclOperation.WRITE));
+      }
+
+      if (mm2.getHeartbeatsTopic().isPresent()) {
+        bindings.add(
+            buildLiteralTopicLevelAcl(principal, mm2.heartbeatsTopicString(), AclOperation.WRITE));
+      }
+    }
 
     return bindings.stream();
   }

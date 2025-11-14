@@ -15,6 +15,14 @@ public class MirrorMaker2 extends DynamicUser {
     producer
   };
 
+  private static final String DEFAULT_CONNECT_STATUS_TOPIC = "connect-status";
+  private static final String DEFAULT_CONNECT_OFFSET_TOPIC = "connect-offsets";
+  private static final String DEFAULT_CONNECT_CONFIGS_TOPIC = "connect-configs";
+  private static final String DEFAULT_CONNECT_GROUP = "connect-cluster";
+  private static final String DEFAULT_MM2_OFFSET_SYNCS_TOPIC = "mm2.offset_syncs";
+  private static final String DEFAULT_MM2_HEARTBEATS_TOPIC = "mm2.heartbeats";
+  private static final String DEFAULT_MM2_CHECKPOINTS_TOPIC = "mm2.checkpoints";
+
   private Role role;
 
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -26,6 +34,7 @@ public class MirrorMaker2 extends DynamicUser {
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
   private Optional<String> configs_topic;
 
+  // TODO: need to be prepended to internal topics
   private Optional<String> target_prefix;
 
   @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -79,79 +88,71 @@ public class MirrorMaker2 extends DynamicUser {
     this.role = role;
   }
 
-  public Optional<String> getStatusTopic() {
-    return status_topic;
+  public String statusTopicString() {
+    return status_topic.orElse(DEFAULT_CONNECT_STATUS_TOPIC);
   }
 
-  public void setStatus_topic(Optional<String> status_topic) {
+  public String offsetTopicString() {
+    return offset_topic.orElse(DEFAULT_CONNECT_OFFSET_TOPIC);
+  }
+
+  public String configsTopicString() {
+    return configs_topic.orElse(DEFAULT_CONNECT_CONFIGS_TOPIC);
+  }
+
+  public String groupString() {
+    return group.orElse(DEFAULT_CONNECT_GROUP);
+  }
+
+  public void setStatusTopic(Optional<String> status_topic) {
     this.status_topic = status_topic;
   }
 
-  public Optional<String> getOffset_topic() {
-    return offset_topic;
-  }
-
-  public void setOffset_topic(Optional<String> offset_topic) {
+  public void setOffsetTopic(Optional<String> offset_topic) {
     this.offset_topic = offset_topic;
   }
 
-  public Optional<String> getConfigs_topic() {
-    return configs_topic;
-  }
-
-  public void setConfigs_topic(Optional<String> configs_topic) {
+  public void setConfigsTopic(Optional<String> configs_topic) {
     this.configs_topic = configs_topic;
   }
 
-  public Optional<String> getTarget_prefix() {
-    return target_prefix;
+  public Optional<String> getOffsetSyncsTopic() {
+    return this.offset_syncs_topic;
   }
 
-  public void setTarget_prefix(Optional<String> target_prefix) {
-    this.target_prefix = target_prefix;
+  public Optional<String> getCheckpointsTopic() {
+    return this.checkpoints_topic;
   }
 
-  public Optional<String> getOffset_syncs_topic() {
-    return offset_syncs_topic;
-  }
-
-  public void setOffset_syncs_topic(Optional<String> offset_syncs_topic) {
-    this.offset_syncs_topic = offset_syncs_topic;
-  }
-
-  public Optional<String> getCheckpoints_topic() {
-    return checkpoints_topic;
-  }
-
-  public void setCheckpoints_topic(Optional<String> checkpoints_topic) {
-    this.checkpoints_topic = checkpoints_topic;
-  }
-
-  public Optional<String> getHeartbeats_topic() {
-    return heartbeats_topic;
-  }
-
-  public void setHeartbeats_topic(Optional<String> heartbeats_topic) {
-    this.heartbeats_topic = heartbeats_topic;
-  }
-
-  public Optional<String> getGroup() {
-    return group;
+  public Optional<String> getHeartbeatsTopic() {
+    return this.heartbeats_topic;
   }
 
   public void setGroup(Optional<String> group) {
     this.group = group;
   }
 
-  public List<Optional<String>> getSource_topics() {
+  public String offsetSyncsTopicString() {
+    return offset_syncs_topic.orElse(DEFAULT_MM2_OFFSET_SYNCS_TOPIC);
+  }
+
+  public String checkpointsTopicString() {
+    return checkpoints_topic.orElse(DEFAULT_MM2_CHECKPOINTS_TOPIC);
+  }
+
+  public String heartbeatsTopicString() {
+    return heartbeats_topic.orElse(DEFAULT_MM2_HEARTBEATS_TOPIC);
+  }
+
+  public List<Optional<String>> getSourceTopics() {
     return source_topics;
   }
 
-  public void setSource_topics(List<Optional<String>> source_topics) {
+  public void setSourceTopics(List<Optional<String>> source_topics) {
     this.source_topics = source_topics;
   }
 
-  public List<Optional<String>> getTarget_topics() {
+  public List<Optional<String>> getTargetTopics() {
     return target_topics;
   }
 
@@ -160,24 +161,17 @@ public class MirrorMaker2 extends DynamicUser {
   }
 
   public List<String> getAllTopics() {
-    List<String> allTopics = new ArrayList<>();
+    List<String> allTopics =
+        new ArrayList<>(
+            this.source_topics.stream().filter(Optional::isPresent).map(Optional::get).toList());
 
-    if (this.role == Role.consumer) {
-      this.source_topics.forEach(
-          t -> {
-            allTopics.add(t.get());
-          });
-    }
+    allTopics.addAll(
+        this.target_topics.stream().filter(Optional::isPresent).map(Optional::get).toList());
 
-    if (this.role == Role.producer) {
-      this.target_topics.forEach(
-          t -> {
-            allTopics.add(t.get());
-          });
-      allTopics.add(this.offset_syncs_topic.get());
-      this.checkpoints_topic.ifPresent(allTopics::add);
-      this.heartbeats_topic.ifPresent(allTopics::add);
-    }
+    allTopics.add(this.offsetSyncsTopicString());
+
+    this.checkpoints_topic.ifPresent(allTopics::add);
+    this.heartbeats_topic.ifPresent(allTopics::add);
 
     return allTopics;
   }
