@@ -70,7 +70,7 @@ public class CommandLineInterface {
 
   private Options buildOptions() {
     final Options options = new Options();
-    options.addOption(requiredArgOption(TOPOLOGY_OPTION, TOPOLOGY_OPTION));
+    options.addOption(requiredArgOption(TOPOLOGY_OPTION, TOPOLOGY_DESC));
     options.addOption(argOption(PLANS_OPTION, PLANS_DESC));
     options.addOption(argOption(BROKERS_OPTION, BROKERS_DESC));
     options.addOption(requiredArgOption(CLIENT_CONFIG_OPTION, CLIENT_CONFIG_DESC));
