@@ -21,7 +21,6 @@ import com.purbon.kafka.topology.model.users.Consumer;
 import com.purbon.kafka.topology.model.users.KSqlApp;
 import com.purbon.kafka.topology.model.users.KStream;
 import com.purbon.kafka.topology.model.users.Producer;
-import com.purbon.kafka.topology.model.users.Schemas;
 import com.purbon.kafka.topology.model.users.platform.ControlCenterInstance;
 import com.purbon.kafka.topology.model.users.platform.KsqlServerInstance;
 import com.purbon.kafka.topology.model.users.platform.SchemaRegistryInstance;
@@ -765,13 +764,5 @@ public class TopologySerdesTest {
     consumers.add(new Consumer("app1"));
     consumers.add(new Consumer("app2"));
     return consumers;
-  }
-
-  private void assertSchemas(
-      Schemas schemas, String principal, List<String> subjects, String role, boolean prefixed) {
-    assertEquals("Schemas principal", principal, schemas.getPrincipal());
-    assertEquals("Schemas subjects", subjects, schemas.getSubjects());
-    assertEquals("Schemas role", role, schemas.getRole());
-    assertEquals("Schemas isPrefixed", prefixed, schemas.isPrefixed());
   }
 }

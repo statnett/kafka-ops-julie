@@ -1,9 +1,6 @@
 package com.purbon.kafka.topology.serdes;
 
 import static com.purbon.kafka.topology.serdes.JsonSerdesUtils.validateRequiresKeys;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.mapping;
-import static java.util.stream.Collectors.toList;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -29,13 +26,11 @@ import com.purbon.kafka.topology.model.users.platform.Kafka;
 import com.purbon.kafka.topology.model.users.platform.KafkaConnect;
 import com.purbon.kafka.topology.model.users.platform.KsqlServer;
 import com.purbon.kafka.topology.model.users.platform.SchemaRegistry;
-import com.purbon.kafka.topology.utils.Pair;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -62,7 +57,6 @@ public class TopologyCustomDeserializer extends StdDeserializer<Topology> {
   private static final String SCHEMAS_KEY = "schemas";
   private static final String RBAC_KEY = "rbac";
   private static final String TOPICS_KEY = "topics";
-  private static final String PRINCIPAL_KEY = "principal";
 
   private static final String ACCESS_CONTROL = "access_control";
   private static final String ARTEFACTS = "artefacts";
@@ -244,7 +238,6 @@ public class TopologyCustomDeserializer extends StdDeserializer<Topology> {
             Optional.ofNullable(mapOfValues.get(CONNECTORS_KEY)),
             Optional.ofNullable(mapOfValues.get(SCHEMAS_KEY)),
             Optional.ofNullable(mapOfValues.get(KSQL_KEY)),
-            parseOptionalRbacRoles(rootNode.get(RBAC_KEY)),
             filterOthers(mapOfValues),
             config);
 
@@ -465,26 +458,5 @@ public class TopologyCustomDeserializer extends StdDeserializer<Topology> {
               + "\" is illegal, it contains a character other than "
               + validCharacters);
     }
-  }
-
-  private Map<String, List<String>> parseOptionalRbacRoles(JsonNode rbacRootNode) {
-    if (rbacRootNode == null) {
-      return new HashMap<>();
-    }
-    return StreamSupport.stream(rbacRootNode.spliterator(), true)
-        .map(
-            (Function<JsonNode, Pair<String, JsonNode>>)
-                node -> {
-                  String key = node.fieldNames().next();
-                  return new Pair(key, node.get(key));
-                })
-        .flatMap(
-            (Function<Pair<String, JsonNode>, Stream<Pair<String, String>>>)
-                principals ->
-                    StreamSupport.stream(principals.getValue().spliterator(), true)
-                        .map(
-                            node ->
-                                new Pair<>(principals.getKey(), node.get(PRINCIPAL_KEY).asText())))
-        .collect(groupingBy(Pair::getKey, mapping(Pair::getValue, toList())));
   }
 }

@@ -34,12 +34,6 @@ public interface BindingsBuilderProvider {
   List<TopologyAclBinding> buildPrefixedBindingsForProducers(
       Collection<Producer> principals, String resource);
 
-  default TopologyAclBinding setPredefinedRole(
-      String principal, String predefinedRole, String topicPrefix) {
-    // NOOP
-    return null;
-  }
-
   List<TopologyAclBinding> buildBindingsForSchemaRegistry(SchemaRegistryInstance schemaRegistry);
 
   List<TopologyAclBinding> buildBindingsForControlCenter(String principal, String appId);

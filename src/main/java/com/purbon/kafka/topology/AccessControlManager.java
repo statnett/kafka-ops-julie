@@ -169,8 +169,6 @@ public class AccessControlManager implements ExecutionPlanUpdater {
                 .getAclBindings());
       }
 
-      syncRbacRawRoles(project.getRbacRawRoles(), topicPrefix, aclBindingsResults);
-
       for (Map.Entry<String, List<Other>> other : project.getOthers().entrySet()) {
         if (julieRoles.size() == 0) {
           throw new IllegalStateException(
@@ -354,20 +352,6 @@ public class AccessControlManager implements ExecutionPlanUpdater {
         }
       }
     }
-  }
-
-  private void syncRbacRawRoles(
-      Map<String, List<String>> rbacRawRoles,
-      String topicPrefix,
-      List<AclBindingsResult> aclBindingsResults) {
-    rbacRawRoles.forEach(
-        (predefinedRole, principals) ->
-            principals.forEach(
-                principal ->
-                    aclBindingsResults.add(
-                        new PredefinedAclBindingsBuilder(
-                                bindingsBuilder, principal, predefinedRole, topicPrefix)
-                            .getAclBindings())));
   }
 
   private Optional<AclBindingsResult> syncApplicationAcls(DynamicUser app, String topicPrefix) {

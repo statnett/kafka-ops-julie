@@ -61,9 +61,5 @@ public interface Project {
 
   String namePrefix();
 
-  void setRbacRawRoles(Map<String, List<String>> rbacRawRoles);
-
-  Map<String, List<String>> getRbacRawRoles();
-
   void setPrefixContextAndOrder(Map<String, Object> asFullContext, List<String> order);
 }

@@ -195,11 +195,6 @@ public class TopologyBuilderAdminClient {
     }
   }
 
-  public void createTopic(String topicName) throws IOException {
-    Topic topic = new Topic();
-    createTopic(topic, topicName);
-  }
-
   private void createAllTopics(Collection<NewTopic> newTopics)
       throws ExecutionException, InterruptedException {
     adminClient.createTopics(newTopics).all().get();

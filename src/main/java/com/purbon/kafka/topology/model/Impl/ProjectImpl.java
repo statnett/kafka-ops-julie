@@ -30,7 +30,6 @@ public class ProjectImpl implements Project, Cloneable {
   private PlatformSystem<KSqlApp> ksqls;
   private PlatformSystem<Connector> connectors;
   private PlatformSystem<Schemas> schemas;
-  private Map<String, List<String>> rbacRawRoles;
   private List<Map.Entry<String, PlatformSystem<Other>>> others;
 
   private List<Topic> topics;
@@ -55,7 +54,6 @@ public class ProjectImpl implements Project, Cloneable {
         Optional.empty(),
         Optional.empty(),
         Optional.empty(),
-        Collections.emptyMap(),
         Collections.emptyList(),
         config);
   }
@@ -68,7 +66,6 @@ public class ProjectImpl implements Project, Cloneable {
       Optional<PlatformSystem<Connector>> connectors,
       Optional<PlatformSystem<Schemas>> schemas,
       Optional<PlatformSystem<KSqlApp>> ksqls,
-      Map<String, List<String>> rbacRawRoles,
       List<Map.Entry<String, PlatformSystem<Other>>> others,
       Configuration config) {
     this(
@@ -80,7 +77,6 @@ public class ProjectImpl implements Project, Cloneable {
         connectors.orElse(new PlatformSystem<>()),
         schemas.orElse(new PlatformSystem<>()),
         ksqls.orElse(new PlatformSystem<>()),
-        rbacRawRoles,
         others,
         config);
   }
@@ -94,7 +90,6 @@ public class ProjectImpl implements Project, Cloneable {
       PlatformSystem<Connector> connectors,
       PlatformSystem<Schemas> schemas,
       PlatformSystem<KSqlApp> ksqls,
-      Map<String, List<String>> rbacRawRoles,
       List<Map.Entry<String, PlatformSystem<Other>>> others,
       Configuration config) {
     this.name = name;
@@ -105,7 +100,6 @@ public class ProjectImpl implements Project, Cloneable {
     this.ksqls = ksqls;
     this.connectors = connectors;
     this.schemas = schemas;
-    this.rbacRawRoles = rbacRawRoles;
     this.others = others;
     this.config = config;
     this.prefixContext = new HashMap<>();
@@ -244,16 +238,6 @@ public class ProjectImpl implements Project, Cloneable {
   }
 
   @Override
-  public void setRbacRawRoles(Map<String, List<String>> rbacRawRoles) {
-    this.rbacRawRoles = rbacRawRoles;
-  }
-
-  @Override
-  public Map<String, List<String>> getRbacRawRoles() {
-    return rbacRawRoles;
-  }
-
-  @Override
   public void setPrefixContextAndOrder(Map<String, Object> prefixContext, List<String> order) {
     this.prefixContext = prefixContext;
     this.prefixContext.put("project", getName());
@@ -275,7 +259,6 @@ public class ProjectImpl implements Project, Cloneable {
               new PlatformSystem<>(getConnectors()),
               new PlatformSystem<>(getSchemas()),
               new PlatformSystem<>(getKSqls()),
-              getRbacRawRoles(),
               others,
               config);
       project.setPrefixContextAndOrder(prefixContext, order);
