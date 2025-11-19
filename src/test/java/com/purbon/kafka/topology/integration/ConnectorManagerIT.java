@@ -32,7 +32,6 @@ public class ConnectorManagerIT {
 
   private KConnectApiClient client;
   private KafkaConnectArtefactManager connectorManager;
-  private TopologySerdes parser;
   private ExecutionPlan plan;
 
   private static final String TRUSTSTORE_JKS = "/ksql-ssl/truststore/ksqldb.truststore.jks";
@@ -134,7 +133,7 @@ public class ConnectorManagerIT {
 
   private Topology initTopology(Properties props, File file) throws IOException {
     Configuration config = prepareClientConfig(props);
-    parser = new TopologySerdes(config, new PlanMap());
+    TopologySerdes parser = new TopologySerdes(config, new PlanMap());
     Topology topology = parser.deserialise(file);
     connectorManager = prepareManager(config, file);
     return topology;

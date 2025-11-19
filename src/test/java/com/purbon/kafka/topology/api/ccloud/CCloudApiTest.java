@@ -30,7 +30,6 @@ import org.mockito.junit.MockitoRule;
 public class CCloudApiTest {
 
   private CCloudApi apiClient;
-  private Configuration config;
 
   @Mock JulieHttpClient httpClient;
   @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -46,9 +45,8 @@ public class CCloudApiTest {
     props.put(CCLOUD_CLOUD_API_KEY, "apiKey");
     props.put(CCLOUD_CLOUD_API_SECRET, "apiSecret");
     props.put(CCLOUD_SA_ACCOUNT_QUERY_PAGE_SIZE, 1);
-    config = new Configuration(cliOps, props);
-
-    apiClient = new CCloudApi(httpClient, Optional.of(httpClient), config);
+    apiClient =
+        new CCloudApi(httpClient, Optional.of(httpClient), new Configuration(cliOps, props));
   }
 
   @Test
