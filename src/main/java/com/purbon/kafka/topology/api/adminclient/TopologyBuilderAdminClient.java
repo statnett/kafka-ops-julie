@@ -168,7 +168,7 @@ public class TopologyBuilderAdminClient {
     ConfigResource resource = new ConfigResource(Type.TOPIC, topic);
     Collection<ConfigResource> resources = Collections.singletonList(resource);
 
-    Map<ConfigResource, Config> configs = null;
+    Map<ConfigResource, Config> configs;
     try {
       configs = adminClient.describeConfigs(resources).all().get();
     } catch (InterruptedException | ExecutionException ex) {

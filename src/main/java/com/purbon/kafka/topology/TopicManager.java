@@ -176,7 +176,7 @@ public class TopicManager implements ExecutionPlanUpdater {
   private boolean matchesPrefixList(String topic) {
     boolean matches =
         managedPrefixes.isEmpty() || managedPrefixes.stream().anyMatch(topic::startsWith);
-    LOGGER.debug(String.format("Topic %s matches %s with $s", topic, matches, managedPrefixes));
+    LOGGER.debug(String.format("Topic %s matches %s with %s", topic, matches, managedPrefixes));
     return matches;
   }
 

@@ -198,7 +198,7 @@ public class TopologyCustomDeserializer extends StdDeserializer<Topology> {
     List<String> keys =
         StreamSupport.stream(it.spliterator(), false)
             .filter(key -> !Arrays.asList(TOPICS_KEY, NAME_KEY).contains(key))
-            .collect(Collectors.toList());
+            .toList();
     Map<String, JsonNode> rootNodes = Maps.asMap(new HashSet<>(keys), rootNode::get);
 
     Map<String, PlatformSystem> mapOfValues = new HashMap<>();
@@ -289,9 +289,8 @@ public class TopologyCustomDeserializer extends StdDeserializer<Topology> {
   private Function<String, Boolean> shouldGenerateDlqTopic(
       List<Pattern> allowList, List<Pattern> denyList) {
     return name -> {
-      var foundInAllowList =
-          allowList.stream().map(e -> e.matcher(name).matches()).anyMatch(p -> p);
-      var foundInDenyList = denyList.stream().map(e -> e.matcher(name).matches()).anyMatch(p -> p);
+      var foundInAllowList = allowList.stream().anyMatch(e -> e.matcher(name).matches());
+      var foundInDenyList = denyList.stream().anyMatch(e -> e.matcher(name).matches());
 
       var isAllowedOrEmpty = allowList.isEmpty() || foundInAllowList;
       var isNotDeniedOrEmpty = denyList.isEmpty() || !foundInDenyList;
@@ -415,11 +414,10 @@ public class TopologyCustomDeserializer extends StdDeserializer<Topology> {
     List<KStream> streams =
         new JsonSerdesUtils<KStream>()
             .parseApplicationUser(parser, node, KStream.class).stream()
-                .map(
+                .peek(
                     ks -> {
                       ks.getTopics().putIfAbsent(KStream.READ_TOPICS, Collections.emptyList());
                       ks.getTopics().putIfAbsent(KStream.WRITE_TOPICS, Collections.emptyList());
-                      return ks;
                     })
                 .collect(Collectors.toList());
 

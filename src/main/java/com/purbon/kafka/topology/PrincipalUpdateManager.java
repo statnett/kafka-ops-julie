@@ -28,7 +28,7 @@ public class PrincipalUpdateManager extends AbstractPrincipalManager {
       Map<String, ServiceAccount> accounts) {
     LOGGER.debug(
         "Updating accounts for principals = "
-            + principals.stream().collect(Collectors.joining(","))
+            + String.join(",", principals)
             + " accounts = "
             + accounts.values().stream()
                 .map(ServiceAccount::toString)

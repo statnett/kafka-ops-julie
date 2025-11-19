@@ -93,10 +93,7 @@ public class KSqlArtefactManager extends ArtefactManager {
             .collect(Collectors.toList());
 
     List<IOException> errors =
-        list.stream()
-            .filter(Either::isLeft)
-            .map(e -> (IOException) e.getLeft().get())
-            .collect(Collectors.toList());
+        list.stream().filter(Either::isLeft).map(e -> (IOException) e.getLeft().get()).toList();
     if (!errors.isEmpty()) {
       throw new IOException(errors.get(0));
     }
@@ -134,7 +131,7 @@ public class KSqlArtefactManager extends ArtefactManager {
                   KsqlArtefacts kSql = project.getKsqlArtefacts();
                   return Stream.concat(
                       Stream.concat(kSql.getStreams().stream(), kSql.getTables().stream()),
-                      Collections.singletonList(kSql.getVars()).stream());
+                      Stream.of(kSql.getVars()));
                 })
         .sorted()
         .collect(Collectors.toCollection(LinkedHashSet::new));

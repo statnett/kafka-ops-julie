@@ -21,7 +21,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -81,8 +80,7 @@ public class CCloudApi {
       KafkaAclListResponse response =
           (KafkaAclListResponse)
               JSON.toObject(rawResponse.getResponseAsString(), KafkaAclListResponse.class);
-      acls.addAll(
-          response.getData().stream().map(TopologyAclBinding::new).collect(Collectors.toList()));
+      acls.addAll(response.getData().stream().map(TopologyAclBinding::new).toList());
       url = response.getMetadata().getNext();
     } while (url != null);
     return acls;

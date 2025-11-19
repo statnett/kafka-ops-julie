@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public final class TopologyObjectBuilder {
 
@@ -43,7 +42,7 @@ public final class TopologyObjectBuilder {
       if (!config.areMultipleContextPerDirEnabled()
           && (!collection.containsKey(context) && collection.size() == 1)) {
         // the parsing found a new topology with a different context, as it is not enabled
-        // it should be flag as error
+        // it should be flagged as error
         throw new IOException("Topologies from different contexts are not allowed");
       }
       if (!collection.containsKey(context)) {
@@ -51,9 +50,7 @@ public final class TopologyObjectBuilder {
       } else {
         Topology mainTopology = collection.get(context);
         List<String> projectNames =
-            mainTopology.getProjects().stream()
-                .map(p -> p.getName().toLowerCase())
-                .collect(Collectors.toList());
+            mainTopology.getProjects().stream().map(p -> p.getName().toLowerCase()).toList();
 
         for (Project project : topology.getProjects()) {
           if (projectNames.contains(project.getName().toLowerCase())) {

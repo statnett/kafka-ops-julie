@@ -5,7 +5,6 @@ import com.purbon.kafka.topology.actions.access.builders.AclBindingsBuilder;
 import com.purbon.kafka.topology.actions.access.builders.AclBindingsResult;
 import com.purbon.kafka.topology.model.Component;
 import com.purbon.kafka.topology.model.User;
-import java.io.IOException;
 
 public class ClusterLevelAclBindingsBuilder implements AclBindingsBuilder {
 
@@ -24,11 +23,7 @@ public class ClusterLevelAclBindingsBuilder implements AclBindingsBuilder {
 
   @Override
   public AclBindingsResult getAclBindings() {
-    try {
-      return AclBindingsResult.forAclBindings(
-          builderProvider.setClusterLevelRole(role, user.getPrincipal(), cmp));
-    } catch (IOException e) {
-      return AclBindingsResult.forError(e.getMessage());
-    }
+    return AclBindingsResult.forAclBindings(
+        builderProvider.setClusterLevelRole(role, user.getPrincipal(), cmp));
   }
 }

@@ -45,7 +45,7 @@ public class JulieRoles {
               "trying to deploy role: "
                   + other.getKey()
                   + " not available in the configured roles: "
-                  + roles.keySet().stream().collect(Collectors.joining(", ")));
+                  + String.join(", ", roles.keySet()));
         }
       }
     }

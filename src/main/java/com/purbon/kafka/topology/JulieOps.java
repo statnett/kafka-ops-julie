@@ -234,6 +234,7 @@ public class JulieOps implements AutoCloseable {
     run(buildBackendController(config), outputStream, configureAndBuildAuditor(config));
   }
 
+  @Override
   public void close() {
     topicManager.close();
   }

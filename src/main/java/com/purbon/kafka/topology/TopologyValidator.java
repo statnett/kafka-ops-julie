@@ -43,7 +43,7 @@ public class TopologyValidator {
         validations().stream()
             .filter(p -> p instanceof TopicValidation)
             .map(validation -> (TopicValidation) validation)
-            .collect(Collectors.toList());
+            .toList();
 
     Stream<Topic> streamOfTopics =
         topology.getProjects().stream()

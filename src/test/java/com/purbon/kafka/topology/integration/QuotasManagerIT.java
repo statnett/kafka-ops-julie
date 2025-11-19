@@ -354,13 +354,13 @@ public class QuotasManagerIT {
 
   private void verifyQuotaAssigment(Quota q, Map<String, Double> map) {
     if (q.getProducer_byte_rate().isPresent()) {
-      assertTrue(map.get("producer_byte_rate").equals(q.getProducer_byte_rate().get()));
+      assertEquals(map.get("producer_byte_rate"), q.getProducer_byte_rate().get());
     }
     if (q.getConsumer_byte_rate().isPresent()) {
-      assertTrue(map.get("consumer_byte_rate").equals(q.getConsumer_byte_rate().get()));
+      assertEquals(map.get("consumer_byte_rate"), q.getConsumer_byte_rate().get());
     }
     if (q.getRequest_percentage().isPresent()) {
-      assertTrue(map.get("request_percentage").equals(q.getRequest_percentage().get()));
+      assertEquals(map.get("request_percentage"), q.getRequest_percentage().get());
     }
   }
 }

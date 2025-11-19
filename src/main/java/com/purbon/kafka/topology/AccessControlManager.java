@@ -255,7 +255,7 @@ public class AccessControlManager implements ExecutionPlanUpdater {
   /**
    * Build a list of actions required to create or delete necessary bindings
    *
-   * @param aclBindingsResults List of pre computed actions based on a topology
+   * @param aclBindingsResults List of pre-computed actions based on a topology
    * @param bindings List of current bindings available in the cluster
    * @return List<Action> list of actions necessary to update the cluster
    */
@@ -269,7 +269,7 @@ public class AccessControlManager implements ExecutionPlanUpdater {
         aclBindingsResults.stream()
             .filter(AclBindingsResult::isError)
             .map(AclBindingsResult::getErrorMessage)
-            .collect(Collectors.toList());
+            .toList();
     if (!errorMessages.isEmpty()) {
       for (String errorMessage : errorMessages) {
         LOGGER.error(errorMessage);

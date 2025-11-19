@@ -111,14 +111,14 @@ public class TopicCustomDeserializer extends StdDeserializer<Topic> {
       List<Either<ValidationException, TopicSchemas>> listOfResultsOrErrors =
           StreamSupport.stream(iterable.spliterator(), true)
               .map(validateAndBuildSchemas(topic))
-              .collect(Collectors.toList());
+              .toList();
 
       List<ValidationException> errors =
           listOfResultsOrErrors.stream()
               .filter(Either::isLeft)
               .map(Either::getLeft)
               .map(Optional::get)
-              .collect(Collectors.toList());
+              .toList();
       if (!errors.isEmpty()) {
         throw new IOException(errors.get(0));
       }

@@ -60,7 +60,7 @@ public interface BindingsBuilderProvider {
   }
 
   default List<TopologyAclBinding> setClusterLevelRole(
-      String role, String principal, Component component) throws IOException {
+      String role, String principal, Component component) {
     return Collections.emptyList();
   }
 

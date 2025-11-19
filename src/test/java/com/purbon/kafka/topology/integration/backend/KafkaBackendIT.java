@@ -117,7 +117,7 @@ public class KafkaBackendIT {
     KafkaBackend backend = new KafkaBackend();
     try {
       backend.configure(new Configuration(cliOps, overriddenProps));
-      Assert.fail("Expected expection since topis is not compacting");
+      Assert.fail("Expected exception since topic is not compacting");
     } catch (Exception e) {
       Assert.assertTrue(
           "Unexpected exception", e.getMessage().contains(TopicConfig.CLEANUP_POLICY_COMPACT));

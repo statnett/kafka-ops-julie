@@ -73,7 +73,7 @@ abstract class AbstractPrincipalManager implements ExecutionPlanUpdater {
     boolean matches =
         managedPrefixes.isEmpty() || managedPrefixes.stream().anyMatch(principal::startsWith);
     LOGGER.debug(
-        String.format("Principal %s matches %s with $s", principal, matches, managedPrefixes));
+        String.format("Principal %s matches %s with %s", principal, matches, managedPrefixes));
     return matches;
   }
 

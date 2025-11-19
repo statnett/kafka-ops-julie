@@ -28,7 +28,6 @@ import com.purbon.kafka.topology.utils.TestUtils;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.common.acl.*;
 import org.apache.kafka.common.resource.PatternType;
@@ -93,7 +92,7 @@ public class AccessControlManagerIT {
 
     accessControlManager = new AccessControlManager(aclsProvider, bindingsBuilder, config);
 
-    // Crate an ACL outside of the control of the state manager.
+    // Crate an ACL outside the control of the state manager.
     List<TopologyAclBinding> bindings =
         bindingsBuilder.buildLiteralBindingsForProducers(
             Collections.singleton(new Producer("User:foo")), "bar");
@@ -794,16 +793,12 @@ public class AccessControlManagerIT {
       assertEquals(aclsCount, acls.size());
 
       List<ResourceType> types =
-          acls.stream()
-              .map(aclBinding -> aclBinding.pattern().resourceType())
-              .collect(Collectors.toList());
+          acls.stream().map(aclBinding -> aclBinding.pattern().resourceType()).toList();
 
       Assert.assertTrue(types.contains(ResourceType.TOPIC));
 
       List<AclOperation> ops =
-          acls.stream()
-              .map(aclsBinding -> aclsBinding.entry().operation())
-              .collect(Collectors.toList());
+          acls.stream().map(aclsBinding -> aclsBinding.entry().operation()).toList();
 
       Assert.assertTrue(ops.contains(AclOperation.DESCRIBE));
       Assert.assertTrue(ops.contains(AclOperation.WRITE));
@@ -825,17 +820,13 @@ public class AccessControlManagerIT {
       assertEquals(3, acls.size());
 
       List<ResourceType> types =
-          acls.stream()
-              .map(aclBinding -> aclBinding.pattern().resourceType())
-              .collect(Collectors.toList());
+          acls.stream().map(aclBinding -> aclBinding.pattern().resourceType()).toList();
 
       Assert.assertTrue(types.contains(ResourceType.GROUP));
       Assert.assertTrue(types.contains(ResourceType.TOPIC));
 
       List<AclOperation> ops =
-          acls.stream()
-              .map(aclsBinding -> aclsBinding.entry().operation())
-              .collect(Collectors.toList());
+          acls.stream().map(aclsBinding -> aclsBinding.entry().operation()).toList();
 
       Assert.assertTrue(ops.contains(AclOperation.DESCRIBE));
       Assert.assertTrue(ops.contains(AclOperation.READ));

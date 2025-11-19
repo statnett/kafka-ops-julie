@@ -112,64 +112,79 @@ public class ProjectImpl implements Project, Cloneable {
     this.order = new ArrayList<>();
   }
 
+  @Override
   public String getName() {
     return name;
   }
 
+  @Override
   public List<Consumer> getConsumers() {
     return consumers.getAccessControlLists();
   }
 
+  @Override
   public void setConsumers(List<Consumer> consumers) {
     this.consumers = new PlatformSystem<>(consumers);
   }
 
+  @Override
   public List<Producer> getProducers() {
     return producers.getAccessControlLists();
   }
 
+  @Override
   public void setProducers(List<Producer> producers) {
     this.producers = new PlatformSystem<>(producers);
   }
 
+  @Override
   public List<KStream> getStreams() {
     return streams.getAccessControlLists();
   }
 
+  @Override
   public void setStreams(List<KStream> streams) {
     this.streams = new PlatformSystem<>(streams);
   }
 
+  @Override
   public List<KSqlApp> getKSqls() {
     return ksqls.getAccessControlLists();
   }
 
+  @Override
   public void setKSqls(List<KSqlApp> ksqls) {
     this.ksqls = new PlatformSystem<>(ksqls);
   }
 
+  @Override
   public List<Connector> getConnectors() {
     return connectors.getAccessControlLists();
   }
 
+  @Override
   public KConnectArtefacts getConnectorArtefacts() {
     return (KConnectArtefacts) connectors.getArtefacts().orElse(new KConnectArtefacts());
   }
 
+  @Override
   public KsqlArtefacts getKsqlArtefacts() {
     return (KsqlArtefacts) ksqls.getArtefacts().orElse(new KsqlArtefacts());
   }
 
+  @Override
   public void setConnectors(List<Connector> connectors) {
     this.connectors = new PlatformSystem<>(connectors);
   }
 
+  @Override
   public Map<String, List<Other>> getOthers() {
     return this.others.stream()
         .map(e -> Map.entry(e.getKey(), e.getValue().getAccessControlLists()))
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
+  @Override
   public void setOthers(Map<String, List<Other>> others) {
     this.others =
         others.entrySet().stream()
@@ -177,10 +192,12 @@ public class ProjectImpl implements Project, Cloneable {
             .collect(Collectors.toList());
   }
 
+  @Override
   public List<Topic> getTopics() {
     return topics;
   }
 
+  @Override
   public void addTopic(Topic topic) {
     topic.setProjectPrefix(namePrefix());
     prefixContext.put("project", getName());
@@ -188,11 +205,13 @@ public class ProjectImpl implements Project, Cloneable {
     this.topics.add(topic);
   }
 
+  @Override
   public void setTopics(List<Topic> topics) {
     this.topics.clear();
     topics.forEach(this::addTopic);
   }
 
+  @Override
   public String namePrefix() {
     if (config.getProjectPrefixFormat().equals("default")) {
       return namePrefix(buildNamePrefix());
@@ -224,10 +243,12 @@ public class ProjectImpl implements Project, Cloneable {
     return sb.toString();
   }
 
+  @Override
   public void setRbacRawRoles(Map<String, List<String>> rbacRawRoles) {
     this.rbacRawRoles = rbacRawRoles;
   }
 
+  @Override
   public Map<String, List<String>> getRbacRawRoles() {
     return rbacRawRoles;
   }

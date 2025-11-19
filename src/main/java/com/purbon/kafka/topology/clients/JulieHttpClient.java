@@ -85,7 +85,7 @@ public class JulieHttpClient {
     }
     Configuration config = configOptional.get();
 
-    SSLContext sslContext = null;
+    SSLContext sslContext;
 
     try {
       sslContext = SSLContext.getInstance("TLS");

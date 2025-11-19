@@ -49,6 +49,7 @@ public class KConnectApiClient extends JulieHttpClient implements ArtefactClient
     throw new IOException("Not implemented in this context");
   }
 
+  @Override
   public List<String> list() throws IOException {
     JsonNode node = doList();
     return ImmutableList.copyOf(node.fieldNames());
@@ -103,6 +104,7 @@ public class KConnectApiClient extends JulieHttpClient implements ArtefactClient
     return keySet.contains("config") && keySet.contains("name") && keySet.size() == 2;
   }
 
+  @Override
   public void delete(String connector) throws IOException {
     doDelete("/connectors/" + connector + "/", "");
   }
