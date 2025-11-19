@@ -306,10 +306,6 @@ public class AccessControlManager implements ExecutionPlanUpdater {
       aclBindingsResults.add(
           new SchemaRegistryAclBindingsBuilder(bindingsBuilder, schemaRegistry).getAclBindings());
     }
-    for (ControlCenterInstance controlCenter : platform.getControlCenter().getInstances()) {
-      aclBindingsResults.add(
-          new ControlCenterAclBindingsBuilder(bindingsBuilder, controlCenter).getAclBindings());
-    }
     for (KsqlServerInstance ksqlServer : platform.getKsqlServer().getInstances()) {
       aclBindingsResults.add(
           new KSqlServerAclBindingsBuilder(bindingsBuilder, ksqlServer).getAclBindings());

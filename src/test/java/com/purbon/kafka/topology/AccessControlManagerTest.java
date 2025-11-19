@@ -281,26 +281,6 @@ public class AccessControlManagerTest {
   }
 
   @Test
-  public void newControlCenterACLCreation() throws IOException {
-    Project project = new ProjectImpl();
-    Topology topology = new TopologyImpl();
-    topology.addProject(project);
-    Platform platform = new Platform();
-    ControlCenter c3 = new ControlCenter();
-    ControlCenterInstance instance = new ControlCenterInstance();
-    instance.setPrincipal("User:foo");
-    instance.setAppId("appid");
-    c3.setInstances(singletonList(instance));
-    platform.setControlCenter(c3);
-    topology.setPlatform(platform);
-    accessControlManager.updatePlan(topology, plan);
-    doReturn(new ArrayList<TopologyAclBinding>())
-        .when(aclsBuilder)
-        .buildBindingsForControlCenter("User:foo", "appid");
-    verify(aclsBuilder, times(1)).buildBindingsForControlCenter("User:foo", "appid");
-  }
-
-  @Test
   public void newKafkaClusterRBACCreation() throws IOException {
     Project project = new ProjectImpl();
     Topology topology = new TopologyImpl();

@@ -95,7 +95,6 @@ abstract class AbstractPrincipalManager implements ExecutionPlanUpdater {
                 });
     List<User> platformPrincipals = new ArrayList<>();
     Platform platform = topology.getPlatform();
-    platformPrincipals.addAll(platform.getControlCenter().getInstances());
     platformPrincipals.addAll(platform.getSchemaRegistry().getInstances());
     return Stream.concat(projectPrincipals, platformPrincipals.stream())
         .map(User::getPrincipal)

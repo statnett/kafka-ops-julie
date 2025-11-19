@@ -5,7 +5,6 @@ import static com.purbon.kafka.topology.Constants.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 
 import com.purbon.kafka.topology.AccessControlManager;
 import com.purbon.kafka.topology.BackendController;
@@ -363,30 +362,6 @@ public class AccessControlManagerIT {
   }
 
   @Test
-  public void controlcenterAclsCreation()
-      throws ExecutionException, InterruptedException, IOException {
-    when(config.getConfluentCommandTopic()).thenReturn("foo");
-    when(config.getConfluentMetricsTopic()).thenReturn("bar");
-    when(config.getConfluentMonitoringTopic()).thenReturn("zet");
-    Project project = new ProjectImpl();
-    Topology topology = new TopologyImpl();
-    topology.setContext("integration-test");
-    topology.addOther("source", "controlcenterAclsCreation");
-    topology.addProject(project);
-    Platform platform = new Platform();
-    ControlCenter c3 = new ControlCenter();
-    ControlCenterInstance instance = new ControlCenterInstance();
-    instance.setPrincipal("User:foo");
-    instance.setAppId("appid");
-    c3.setInstances(Collections.singletonList(instance));
-    platform.setControlCenter(c3);
-    topology.setPlatform(platform);
-    accessControlManager.updatePlan(topology, plan);
-    plan.run();
-    verifyControlCenterAcls(platform);
-  }
-
-  @Test
   public void connectAclsCreation() throws ExecutionException, InterruptedException, IOException {
     Project project = new ProjectImpl();
     Connector connector = new Connector();
@@ -548,21 +523,6 @@ public class AccessControlManagerIT {
       Collection<AclBinding> groupAcls = kafkaAdminClient.describeAcls(groupFilter).values().get();
       assertEquals(6, acls.size());
       assertEquals(1, groupAcls.size());
-    }
-  }
-
-  private void verifyControlCenterAcls(Platform platform)
-      throws ExecutionException, InterruptedException {
-    List<ControlCenterInstance> c3List = platform.getControlCenter().getInstances();
-    for (ControlCenterInstance c3 : c3List) {
-      ResourcePatternFilter resourceFilter =
-          new ResourcePatternFilter(ResourceType.TOPIC, null, PatternType.ANY);
-      AccessControlEntryFilter entryFilter =
-          new AccessControlEntryFilter(
-              c3.getPrincipal(), null, AclOperation.ANY, AclPermissionType.ALLOW);
-      AclBindingFilter filter = new AclBindingFilter(resourceFilter, entryFilter);
-      Collection<AclBinding> acls = kafkaAdminClient.describeAcls(filter).values().get();
-      assertEquals(17, acls.size());
     }
   }
 

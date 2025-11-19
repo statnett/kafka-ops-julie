@@ -36,8 +36,6 @@ public interface BindingsBuilderProvider {
 
   List<TopologyAclBinding> buildBindingsForSchemaRegistry(SchemaRegistryInstance schemaRegistry);
 
-  List<TopologyAclBinding> buildBindingsForControlCenter(String principal, String appId);
-
   default List<TopologyAclBinding> setSchemaAuthorization(
       String principal,
       List<String> subjects,

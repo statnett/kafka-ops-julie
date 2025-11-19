@@ -21,7 +21,6 @@ import com.purbon.kafka.topology.model.users.Consumer;
 import com.purbon.kafka.topology.model.users.KSqlApp;
 import com.purbon.kafka.topology.model.users.KStream;
 import com.purbon.kafka.topology.model.users.Producer;
-import com.purbon.kafka.topology.model.users.platform.ControlCenterInstance;
 import com.purbon.kafka.topology.model.users.platform.KsqlServerInstance;
 import com.purbon.kafka.topology.model.users.platform.SchemaRegistryInstance;
 import com.purbon.kafka.topology.serdes.TopologySerdes;
@@ -300,10 +299,6 @@ public class TopologySerdesTest {
     assertEquals("foo", listOfSR.get(0).topicString());
     assertEquals("bar", listOfSR.get(0).groupString());
     assertEquals("User:SchemaRegistry02", listOfSR.get(1).getPrincipal());
-    List<ControlCenterInstance> listOfC3 = topology.getPlatform().getControlCenter().getInstances();
-    assertEquals(1, listOfC3.size());
-    assertEquals("User:ControlCenter", listOfC3.get(0).getPrincipal());
-    assertEquals("controlcenter", listOfC3.get(0).getAppId());
     List<KsqlServerInstance> listOfKsql = topology.getPlatform().getKsqlServer().getInstances();
     assertEquals(2, listOfKsql.size());
     assertEquals("User:ksql", listOfKsql.get(0).getPrincipal());

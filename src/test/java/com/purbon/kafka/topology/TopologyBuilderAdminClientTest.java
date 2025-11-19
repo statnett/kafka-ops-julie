@@ -10,8 +10,6 @@ import com.purbon.kafka.topology.model.users.Connector;
 import com.purbon.kafka.topology.model.users.Consumer;
 import com.purbon.kafka.topology.model.users.KStream;
 import com.purbon.kafka.topology.model.users.Producer;
-import com.purbon.kafka.topology.model.users.platform.ControlCenter;
-import com.purbon.kafka.topology.model.users.platform.ControlCenterInstance;
 import com.purbon.kafka.topology.model.users.platform.SchemaRegistry;
 import com.purbon.kafka.topology.model.users.platform.SchemaRegistryInstance;
 import com.purbon.kafka.topology.roles.SimpleAclsProvider;
@@ -126,24 +124,6 @@ public class TopologyBuilderAdminClientTest {
     rbac.put("ClusterAdmin", Collections.singletonList(new User("User:bar")));
     sr.setRbac(Optional.of(rbac));
     platform.setSchemaRegistry(sr);
-    topology.setPlatform(platform);
-    accessControlManager.updatePlan(topology, plan);
-    plan.run();
-    verify(kafkaAdminClient, times(1)).createAcls(anyCollection());
-  }
-
-  @Test
-  public void newControlCenterACLCreation() throws IOException {
-    Project project = new ProjectImpl();
-    Topology topology = new TopologyImpl();
-    topology.addProject(project);
-    Platform platform = new Platform();
-    ControlCenter c3 = new ControlCenter();
-    ControlCenterInstance instance = new ControlCenterInstance();
-    instance.setPrincipal("User:foo");
-    instance.setAppId("appid");
-    c3.setInstances(Collections.singletonList(instance));
-    platform.setControlCenter(c3);
     topology.setPlatform(platform);
     accessControlManager.updatePlan(topology, plan);
     plan.run();

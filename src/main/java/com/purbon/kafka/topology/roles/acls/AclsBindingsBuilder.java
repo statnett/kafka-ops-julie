@@ -135,11 +135,6 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
   }
 
   @Override
-  public List<TopologyAclBinding> buildBindingsForControlCenter(String principal, String appId) {
-    return toList(controlCenterStream(principal, appId));
-  }
-
-  @Override
   public Collection<TopologyAclBinding> buildBindingsForKSqlServer(KsqlServerInstance ksqlServer) {
     return toList(ksqlServerStream(ksqlServer));
   }
@@ -311,42 +306,6 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
             principal, schemaRegistry.consumerOffsetsTopicString(), AclOperation.DESCRIBE));
     bindings.add(
         buildLiteralGroupLevelAcl(principal, schemaRegistry.groupString(), AclOperation.READ));
-    return bindings.stream();
-  }
-
-  private Stream<AclBinding> controlCenterStream(String principal, String appId) {
-    List<AclBinding> bindings = new ArrayList<>();
-    bindings.add(buildPrefixedGroupLevelAcl(principal, appId, AclOperation.READ));
-    bindings.add(buildPrefixedGroupLevelAcl(principal, appId + "-command", AclOperation.READ));
-    bindings.add(buildLiteralGroupLevelAcl(principal, "*", AclOperation.DESCRIBE));
-    asList(
-            config.getConfluentMonitoringTopic(),
-            config.getConfluentCommandTopic(),
-            config.getConfluentMetricsTopic())
-        .forEach(
-            topic ->
-                Stream.of(
-                        AclOperation.WRITE,
-                        AclOperation.READ,
-                        AclOperation.CREATE,
-                        AclOperation.DESCRIBE)
-                    .map(aclOperation -> buildLiteralTopicLevelAcl(principal, topic, aclOperation))
-                    .forEach(bindings::add));
-    Stream.of(AclOperation.WRITE, AclOperation.READ, AclOperation.CREATE, AclOperation.DESCRIBE)
-        .map(
-            aclOperation ->
-                buildPrefixedTopicLevelAcl(principal, "_confluent-controlcenter", aclOperation))
-        .forEach(bindings::add);
-    bindings.add(buildLiteralTopicLevelAcl(principal, "*", AclOperation.CREATE));
-    ResourcePattern resourcePattern =
-        new ResourcePattern(ResourceType.CLUSTER, "kafka-cluster", PatternType.LITERAL);
-    AccessControlEntry entry =
-        new AccessControlEntry(principal, "*", AclOperation.DESCRIBE, AclPermissionType.ALLOW);
-    bindings.add(new AclBinding(resourcePattern, entry));
-    entry =
-        new AccessControlEntry(
-            principal, "*", AclOperation.DESCRIBE_CONFIGS, AclPermissionType.ALLOW);
-    bindings.add(new AclBinding(resourcePattern, entry));
     return bindings.stream();
   }
 

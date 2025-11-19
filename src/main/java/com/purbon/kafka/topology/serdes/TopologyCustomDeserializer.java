@@ -21,7 +21,6 @@ import com.purbon.kafka.topology.model.users.KStream;
 import com.purbon.kafka.topology.model.users.Other;
 import com.purbon.kafka.topology.model.users.Producer;
 import com.purbon.kafka.topology.model.users.Schemas;
-import com.purbon.kafka.topology.model.users.platform.ControlCenter;
 import com.purbon.kafka.topology.model.users.platform.Kafka;
 import com.purbon.kafka.topology.model.users.platform.KafkaConnect;
 import com.purbon.kafka.topology.model.users.platform.KsqlServer;
@@ -46,7 +45,6 @@ public class TopologyCustomDeserializer extends StdDeserializer<Topology> {
   private static final String KAFKA_KEY = "kafka";
   private static final String KAFKA_CONNECT_KEY = "kafka_connect";
   private static final String SCHEMA_REGISTRY_KEY = "schema_registry";
-  private static final String CONTROL_CENTER_KEY = "control_center";
   private static final String KSQL_KEY = "ksql";
 
   private static final String NAME_KEY = "name";
@@ -121,8 +119,6 @@ public class TopologyCustomDeserializer extends StdDeserializer<Topology> {
           .ifPresent(obj -> platform.setKafkaConnect((KafkaConnect) obj));
       parse(platformNode, SCHEMA_REGISTRY_KEY, parser, SchemaRegistry.class)
           .ifPresent(obj -> platform.setSchemaRegistry((SchemaRegistry) obj));
-      parse(platformNode, CONTROL_CENTER_KEY, parser, ControlCenter.class)
-          .ifPresent(obj -> platform.setControlCenter((ControlCenter) obj));
       parse(platformNode, KSQL_KEY, parser, KsqlServer.class)
           .ifPresent(obj -> platform.setKsqlServer((KsqlServer) obj));
     } else {
