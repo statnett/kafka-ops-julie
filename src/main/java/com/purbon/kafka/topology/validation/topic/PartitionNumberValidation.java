@@ -38,30 +38,7 @@ public class PartitionNumberValidation implements TopicValidation {
   }
 
   private boolean validatePartitionCount(int topicValue) throws ValidationException {
-    boolean result;
-    switch (partitionNumberOp) {
-      case "gt":
-        result = topicValue > partitionNumberValue;
-        break;
-      case "lt":
-        result = topicValue < partitionNumberValue;
-        break;
-      case "eq":
-        result = topicValue == partitionNumberValue;
-        break;
-      case "gte":
-        result = topicValue >= partitionNumberValue;
-        break;
-      case "lte":
-        result = topicValue <= partitionNumberValue;
-        break;
-      case "ne":
-        result = topicValue != partitionNumberValue;
-        break;
-      default:
-        throw new ValidationException("Invalid Operation code in use " + partitionNumberOp);
-    }
-    return result;
+    return TopicValidationUtils.compare(topicValue, partitionNumberOp, partitionNumberValue);
   }
 
   private static String getPartitionNumberOp(Configuration config) throws ConfigurationException {
