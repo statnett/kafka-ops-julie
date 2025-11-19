@@ -69,104 +69,42 @@ public class CommandLineInterface {
   }
 
   private Options buildOptions() {
-
-    final Option topologyFileOption =
-        Option.builder().longOpt(TOPOLOGY_OPTION).hasArg().desc(TOPOLOGY_DESC).required().get();
-
-    final Option plansFileOption =
-        Option.builder().longOpt(PLANS_OPTION).hasArg().desc(PLANS_DESC).required(false).get();
-
-    final Option brokersListOption =
-        Option.builder().longOpt(BROKERS_OPTION).hasArg().desc(BROKERS_DESC).required(false).get();
-
-    final Option clientConfigFileOption =
-        Option.builder()
-            .longOpt(CLIENT_CONFIG_OPTION)
-            .hasArg()
-            .desc(CLIENT_CONFIG_DESC)
-            .required()
-            .get();
-
-    final Option overridingAdminClientConfigFileOption =
-        Option.builder()
-            .longOpt(OVERRIDING_CLIENT_CONFIG_OPTION)
-            .hasArg()
-            .desc(OVERRIDING_CLIENT_CONFIG_DESC)
-            .required(false)
-            .get();
-
-    final Option dryRunOption =
-        Option.builder()
-            .longOpt(DRY_RUN_OPTION)
-            .hasArg(false)
-            .desc(DRY_RUN_DESC)
-            .required(false)
-            .get();
-
-    final Option recursiveOption =
-        Option.builder()
-            .longOpt(RECURSIVE_OPTION)
-            .hasArg(false)
-            .desc(RECURSIVE_DESC)
-            .required(false)
-            .get();
-
-    final Option dontWarnForReadOnlyStreamsOption =
-        Option.builder()
-            .longOpt(DONT_WARN_FOR_READ_ONLY_STREAMS_OPTION)
-            .hasArg(false)
-            .desc(DONT_WARN_FOR_READ_ONLY_STREAMS_DESC)
-            .required(false)
-            .get();
-
-    final Option dontWarnForProjectsWithoutTopicsOption =
-        Option.builder()
-            .longOpt(DONT_WARN_FOR_PROJECTS_WITHOUT_TOPICS_OPTION)
-            .hasArg(false)
-            .desc(DONT_WARN_FOR_PROJECTS_WITHOUT_TOPICS_DESC)
-            .required(false)
-            .get();
-
-    final Option quietOption =
-        Option.builder().longOpt(QUIET_OPTION).hasArg(false).desc(QUIET_DESC).required(false).get();
-
-    final Option validateOption =
-        Option.builder()
-            .longOpt(VALIDATE_OPTION)
-            .hasArg(false)
-            .desc(VALIDATE_DESC)
-            .required(false)
-            .get();
-
-    final Option versionOption =
-        Option.builder()
-            .longOpt(VERSION_OPTION)
-            .hasArg(false)
-            .desc(VERSION_DESC)
-            .required(false)
-            .get();
-
-    final Option helpOption =
-        Option.builder().longOpt(HELP_OPTION).hasArg(false).desc(HELP_DESC).required(false).get();
-
     final Options options = new Options();
-
-    options.addOption(topologyFileOption);
-    options.addOption(plansFileOption);
-    options.addOption(brokersListOption);
-    options.addOption(clientConfigFileOption);
-
-    options.addOption(overridingAdminClientConfigFileOption);
-    options.addOption(dryRunOption);
-    options.addOption(recursiveOption);
-    options.addOption(dontWarnForReadOnlyStreamsOption);
-    options.addOption(dontWarnForProjectsWithoutTopicsOption);
-    options.addOption(quietOption);
-    options.addOption(validateOption);
-    options.addOption(versionOption);
-    options.addOption(helpOption);
-
+    options.addOption(requiredArgOption(TOPOLOGY_OPTION, TOPOLOGY_OPTION));
+    options.addOption(argOption(PLANS_OPTION, PLANS_DESC));
+    options.addOption(argOption(BROKERS_OPTION, BROKERS_DESC));
+    options.addOption(requiredArgOption(CLIENT_CONFIG_OPTION, CLIENT_CONFIG_DESC));
+    options.addOption(argOption(OVERRIDING_CLIENT_CONFIG_OPTION, OVERRIDING_CLIENT_CONFIG_DESC));
+    options.addOption(noArgOption(DRY_RUN_OPTION, DRY_RUN_DESC));
+    options.addOption(noArgOption(RECURSIVE_OPTION, RECURSIVE_DESC));
+    options.addOption(
+        noArgOption(DONT_WARN_FOR_READ_ONLY_STREAMS_OPTION, DONT_WARN_FOR_READ_ONLY_STREAMS_DESC));
+    options.addOption(
+        noArgOption(
+            DONT_WARN_FOR_PROJECTS_WITHOUT_TOPICS_OPTION,
+            DONT_WARN_FOR_PROJECTS_WITHOUT_TOPICS_DESC));
+    options.addOption(noArgOption(QUIET_OPTION, QUIET_DESC));
+    options.addOption(noArgOption(VALIDATE_OPTION, VALIDATE_DESC));
+    options.addOption(noArgOption(VERSION_OPTION, VERSION_DESC));
+    options.addOption(noArgOption(HELP_OPTION, HELP_DESC));
     return options;
+  }
+
+  private Option argOption(final String longOption, final String description) {
+    return Option.builder().longOpt(longOption).hasArg().desc(description).required(false).get();
+  }
+
+  private Option requiredArgOption(final String longOption, final String description) {
+    return Option.builder().longOpt(longOption).hasArg().desc(description).required().get();
+  }
+
+  private Option noArgOption(final String longOption, final String description) {
+    return Option.builder()
+        .longOpt(longOption)
+        .hasArg(false)
+        .desc(description)
+        .required(false)
+        .get();
   }
 
   public static void main(String[] args) {
