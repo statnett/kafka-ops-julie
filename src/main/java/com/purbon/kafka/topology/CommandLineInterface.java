@@ -2,11 +2,13 @@ package com.purbon.kafka.topology;
 
 import static java.lang.System.exit;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.cli.*;
+import org.apache.commons.cli.help.HelpFormatter;
 
 public class CommandLineInterface {
 
@@ -61,7 +63,7 @@ public class CommandLineInterface {
   private Options options;
 
   public CommandLineInterface() {
-    formatter = new HelpFormatter();
+    formatter = HelpFormatter.builder().setShowSince(false).get();
     parser = new DefaultParser();
     options = buildOptions();
   }
@@ -69,18 +71,13 @@ public class CommandLineInterface {
   private Options buildOptions() {
 
     final Option topologyFileOption =
-        Option.builder().longOpt(TOPOLOGY_OPTION).hasArg().desc(TOPOLOGY_DESC).required().build();
+        Option.builder().longOpt(TOPOLOGY_OPTION).hasArg().desc(TOPOLOGY_DESC).required().get();
 
     final Option plansFileOption =
-        Option.builder().longOpt(PLANS_OPTION).hasArg().desc(PLANS_DESC).required(false).build();
+        Option.builder().longOpt(PLANS_OPTION).hasArg().desc(PLANS_DESC).required(false).get();
 
     final Option brokersListOption =
-        Option.builder()
-            .longOpt(BROKERS_OPTION)
-            .hasArg()
-            .desc(BROKERS_DESC)
-            .required(false)
-            .build();
+        Option.builder().longOpt(BROKERS_OPTION).hasArg().desc(BROKERS_DESC).required(false).get();
 
     final Option clientConfigFileOption =
         Option.builder()
@@ -88,7 +85,7 @@ public class CommandLineInterface {
             .hasArg()
             .desc(CLIENT_CONFIG_DESC)
             .required()
-            .build();
+            .get();
 
     final Option overridingAdminClientConfigFileOption =
         Option.builder()
@@ -96,7 +93,7 @@ public class CommandLineInterface {
             .hasArg()
             .desc(OVERRIDING_CLIENT_CONFIG_DESC)
             .required(false)
-            .build();
+            .get();
 
     final Option dryRunOption =
         Option.builder()
@@ -104,7 +101,7 @@ public class CommandLineInterface {
             .hasArg(false)
             .desc(DRY_RUN_DESC)
             .required(false)
-            .build();
+            .get();
 
     final Option recursiveOption =
         Option.builder()
@@ -112,7 +109,7 @@ public class CommandLineInterface {
             .hasArg(false)
             .desc(RECURSIVE_DESC)
             .required(false)
-            .build();
+            .get();
 
     final Option dontWarnForReadOnlyStreamsOption =
         Option.builder()
@@ -120,7 +117,7 @@ public class CommandLineInterface {
             .hasArg(false)
             .desc(DONT_WARN_FOR_READ_ONLY_STREAMS_DESC)
             .required(false)
-            .build();
+            .get();
 
     final Option dontWarnForProjectsWithoutTopicsOption =
         Option.builder()
@@ -128,15 +125,10 @@ public class CommandLineInterface {
             .hasArg(false)
             .desc(DONT_WARN_FOR_PROJECTS_WITHOUT_TOPICS_DESC)
             .required(false)
-            .build();
+            .get();
 
     final Option quietOption =
-        Option.builder()
-            .longOpt(QUIET_OPTION)
-            .hasArg(false)
-            .desc(QUIET_DESC)
-            .required(false)
-            .build();
+        Option.builder().longOpt(QUIET_OPTION).hasArg(false).desc(QUIET_DESC).required(false).get();
 
     final Option validateOption =
         Option.builder()
@@ -144,7 +136,7 @@ public class CommandLineInterface {
             .hasArg(false)
             .desc(VALIDATE_DESC)
             .required(false)
-            .build();
+            .get();
 
     final Option versionOption =
         Option.builder()
@@ -152,10 +144,10 @@ public class CommandLineInterface {
             .hasArg(false)
             .desc(VERSION_DESC)
             .required(false)
-            .build();
+            .get();
 
     final Option helpOption =
-        Option.builder().longOpt(HELP_OPTION).hasArg(false).desc(HELP_DESC).required(false).build();
+        Option.builder().longOpt(HELP_OPTION).hasArg(false).desc(HELP_DESC).required(false).get();
 
     final Options options = new Options();
 
@@ -229,7 +221,7 @@ public class CommandLineInterface {
     List<String> listOfArgs = Arrays.asList(args);
 
     if (listOfArgs.contains("--" + HELP_OPTION)) {
-      formatter.printHelp(APP_NAME, options);
+      printHelp();
       exit(0);
     } else if (listOfArgs.contains("--" + VERSION_OPTION)) {
       System.out.println(JulieOps.getVersion());
@@ -243,10 +235,18 @@ public class CommandLineInterface {
       cmd = parser.parse(options, args);
     } catch (ParseException e) {
       System.out.println("Parsing failed cause of " + e.getMessage());
-      formatter.printHelp("cli", options);
+      printHelp();
       exit(1);
     }
     return cmd;
+  }
+
+  private void printHelp() {
+    try {
+      formatter.printHelp(APP_NAME, "", options, "", false);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   void processTopology(String topologyFile, String plansFile, Map<String, String> config)
