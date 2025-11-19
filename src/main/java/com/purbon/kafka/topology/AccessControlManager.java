@@ -1,7 +1,5 @@
 package com.purbon.kafka.topology;
 
-import static com.purbon.kafka.topology.model.Component.*;
-
 import com.purbon.kafka.topology.actions.Action;
 import com.purbon.kafka.topology.actions.access.ClearBindings;
 import com.purbon.kafka.topology.actions.access.CreateBindings;
@@ -296,11 +294,6 @@ public class AccessControlManager implements ExecutionPlanUpdater {
   private List<AclBindingsResult> buildPlatformLevelActions(final Topology topology) {
     List<AclBindingsResult> aclBindingsResults = new ArrayList<>();
     Platform platform = topology.getPlatform();
-    // Set cluster level ACLs
-    syncClusterLevelRbac(platform.getKafka().getRbac(), KAFKA, aclBindingsResults);
-    syncClusterLevelRbac(platform.getKafkaConnect().getRbac(), KAFKA_CONNECT, aclBindingsResults);
-    syncClusterLevelRbac(
-        platform.getSchemaRegistry().getRbac(), SCHEMA_REGISTRY, aclBindingsResults);
     // Set component level ACLs
     for (SchemaRegistryInstance schemaRegistry : platform.getSchemaRegistry().getInstances()) {
       aclBindingsResults.add(
@@ -311,22 +304,6 @@ public class AccessControlManager implements ExecutionPlanUpdater {
           new KSqlServerAclBindingsBuilder(bindingsBuilder, ksqlServer).getAclBindings());
     }
     return aclBindingsResults;
-  }
-
-  private void syncClusterLevelRbac(
-      Optional<Map<String, List<User>>> rbac,
-      Component cmp,
-      List<AclBindingsResult> aclBindingsResults) {
-    if (rbac.isPresent()) {
-      Map<String, List<User>> roles = rbac.get();
-      for (String role : roles.keySet()) {
-        for (User user : roles.get(role)) {
-          aclBindingsResults.add(
-              new ClusterLevelAclBindingsBuilder(bindingsBuilder, role, user, cmp)
-                  .getAclBindings());
-        }
-      }
-    }
   }
 
   private Optional<AclBindingsResult> syncApplicationAcls(DynamicUser app, String topicPrefix) {

@@ -86,11 +86,6 @@ public final class Constants {
   public static final String CCLOUD_SA_ACCOUNT_QUERY_PAGE_SIZE =
       "ccloud.service_account.query.page.size";
 
-  public static final String TOPOLOGY_EXPERIMENTAL_ENABLED_CONFIG =
-      "topology.features.experimental";
-  static final String TOPOLOGY_PRINCIPAL_TRANSLATION_ENABLED_CONFIG =
-      "topology.translation.principal.enabled";
-
   public static final String TOPOLOGY_TOPIC_STATE_FROM_CLUSTER =
       "topology.state.topics.cluster.enabled";
 
@@ -163,8 +158,6 @@ public final class Constants {
   public static final String JULIE_KAFKA_STATE_CHUNK_SIZE = "julie.kafka.state.chunk.size";
   public static final String JULIE_KAFKA_STATE_CONSUMER_GROUP_ID =
       "julie.kafka.state.consumer.group.id";
-  public static final String JULIE_KAFKA_STATE_CONSUMER_RETRIES =
-      "julie.kafka.state.consumer.retries";
   public static final String JULIE_INSTANCE_ID = "julie.instance.id";
 
   public static final String MANAGED_BY = "Managed by JulieOps";

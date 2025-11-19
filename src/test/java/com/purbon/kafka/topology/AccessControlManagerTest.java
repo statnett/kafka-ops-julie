@@ -270,58 +270,7 @@ public class AccessControlManagerTest {
     doReturn(new ArrayList<TopologyAclBinding>())
         .when(aclsBuilder)
         .buildBindingsForSchemaRegistry(instance);
-    doReturn(new ArrayList<TopologyAclBinding>())
-        .when(aclsBuilder)
-        .setClusterLevelRole(anyString(), anyString(), eq(Component.SCHEMA_REGISTRY));
     verify(aclsBuilder, times(1)).buildBindingsForSchemaRegistry(instance);
-    verify(aclsBuilder, times(1))
-        .setClusterLevelRole("SecurityAdmin", "User:foo", Component.SCHEMA_REGISTRY);
-    verify(aclsBuilder, times(1))
-        .setClusterLevelRole("ClusterAdmin", "User:bar", Component.SCHEMA_REGISTRY);
-  }
-
-  @Test
-  public void newKafkaClusterRBACCreation() throws IOException {
-    Project project = new ProjectImpl();
-    Topology topology = new TopologyImpl();
-    topology.addProject(project);
-    Platform platform = new Platform();
-    Kafka kafka = new Kafka();
-    Map<String, List<User>> rbac = new HashMap<>();
-    rbac.put("Operator", singletonList(new User("User:foo")));
-    rbac.put("ClusterAdmin", singletonList(new User("User:bar")));
-    kafka.setRbac(Optional.of(rbac));
-    platform.setKafka(kafka);
-    topology.setPlatform(platform);
-    accessControlManager.updatePlan(topology, plan);
-    doReturn(new ArrayList<TopologyAclBinding>())
-        .when(aclsBuilder)
-        .setClusterLevelRole(anyString(), anyString(), eq(Component.KAFKA));
-    verify(aclsBuilder, times(1)).setClusterLevelRole("Operator", "User:foo", Component.KAFKA);
-    verify(aclsBuilder, times(1)).setClusterLevelRole("ClusterAdmin", "User:bar", Component.KAFKA);
-  }
-
-  @Test
-  public void newKafkaConnectClusterRBACCreation() throws IOException {
-    Project project = new ProjectImpl();
-    Topology topology = new TopologyImpl();
-    topology.addProject(project);
-    Platform platform = new Platform();
-    KafkaConnect connect = new KafkaConnect();
-    Map<String, List<User>> rbac = new HashMap<>();
-    rbac.put("Operator", singletonList(new User("User:foo")));
-    rbac.put("ClusterAdmin", singletonList(new User("User:bar")));
-    connect.setRbac(Optional.of(rbac));
-    platform.setKafkaConnect(connect);
-    topology.setPlatform(platform);
-    accessControlManager.updatePlan(topology, plan);
-    doReturn(new ArrayList<TopologyAclBinding>())
-        .when(aclsBuilder)
-        .setClusterLevelRole(anyString(), anyString(), eq(Component.KAFKA_CONNECT));
-    verify(aclsBuilder, times(1))
-        .setClusterLevelRole("Operator", "User:foo", Component.KAFKA_CONNECT);
-    verify(aclsBuilder, times(1))
-        .setClusterLevelRole("ClusterAdmin", "User:bar", Component.KAFKA_CONNECT);
   }
 
   @Test

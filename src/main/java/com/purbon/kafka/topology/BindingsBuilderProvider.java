@@ -1,6 +1,5 @@
 package com.purbon.kafka.topology;
 
-import com.purbon.kafka.topology.model.Component;
 import com.purbon.kafka.topology.model.JulieRoleAcl;
 import com.purbon.kafka.topology.model.users.Connector;
 import com.purbon.kafka.topology.model.users.Consumer;
@@ -48,11 +47,6 @@ public interface BindingsBuilderProvider {
 
   default List<TopologyAclBinding> setConnectorAuthorization(
       String principal, List<String> connectors) {
-    return Collections.emptyList();
-  }
-
-  default List<TopologyAclBinding> setClusterLevelRole(
-      String role, String principal, Component component) {
     return Collections.emptyList();
   }
 

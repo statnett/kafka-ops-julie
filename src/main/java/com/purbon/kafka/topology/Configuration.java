@@ -168,16 +168,6 @@ public class Configuration {
     }
   }
 
-  private void raiseIfNull(String... keys) throws ConfigurationException {
-    try {
-      for (String key : keys) {
-        getString(key);
-      }
-    } catch (Exception ex) {
-      throw new ConfigurationException(ex.getMessage());
-    }
-  }
-
   public String getProperty(String key) {
     return getString(key);
   }
@@ -285,14 +275,6 @@ public class Configuration {
     return config.getBoolean(OPTIMIZED_ACLS_CONFIG);
   }
 
-  public String getConfluentCloudEnv() {
-    return getString(CCLOUD_ENV_CONFIG);
-  }
-
-  public boolean enabledExperimental() {
-    return config.getBoolean(TOPOLOGY_EXPERIMENTAL_ENABLED_CONFIG);
-  }
-
   public boolean useConfluentCloud() {
     return config.hasPath(CCLOUD_ENV_CONFIG);
   }
@@ -377,10 +359,6 @@ public class Configuration {
         && config.getBoolean(PROJECTS_WARN_IF_NO_TOPICS);
   }
 
-  public boolean enabledPrincipalTranslation() {
-    return config.getBoolean(TOPOLOGY_PRINCIPAL_TRANSLATION_ENABLED_CONFIG);
-  }
-
   public boolean fetchStateFromTheCluster() {
     return config.getBoolean(TOPOLOGY_STATE_FROM_CLUSTER);
   }
@@ -448,14 +426,6 @@ public class Configuration {
   public Optional<String> getSslKeyStorePassword() {
     try {
       return Optional.of(getString(SSL_KEYSTORE_PASSWORD));
-    } catch (ConfigException.Missing missingEx) {
-      return Optional.empty();
-    }
-  }
-
-  public Optional<String> getSslKeyPassword() {
-    try {
-      return Optional.of(getString(SSL_KEY_PASSWORD));
     } catch (ConfigException.Missing missingEx) {
       return Optional.empty();
     }
@@ -604,10 +574,6 @@ public class Configuration {
 
   public Integer getKafkaBackendChunkSize() {
     return config.getInt(JULIE_KAFKA_STATE_CHUNK_SIZE);
-  }
-
-  public Integer getKafkaBackendConsumerRetries() {
-    return config.getInt(JULIE_KAFKA_STATE_CONSUMER_RETRIES);
   }
 
   public BasicAuth getConfluentCloudClusterAuth() {
