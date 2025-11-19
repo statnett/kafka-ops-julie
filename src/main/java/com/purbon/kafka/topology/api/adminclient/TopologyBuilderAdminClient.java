@@ -59,7 +59,6 @@ public class TopologyBuilderAdminClient {
   }
 
   public void healthCheck() throws IOException {
-
     try {
       adminClient.describeCluster().nodes().get();
     } catch (Exception ex) {
@@ -79,21 +78,18 @@ public class TopologyBuilderAdminClient {
 
   public void updateTopicConfig(TopicConfigUpdatePlan configUpdatePlan) {
     Set<AlterConfigOp> configChanges = new HashSet<>();
-
     configUpdatePlan
         .getNewConfigValues()
         .forEach(
             (configKey, configValue) ->
                 configChanges.add(
                     new AlterConfigOp(new ConfigEntry(configKey, configValue), OpType.SET)));
-
     configUpdatePlan
         .getUpdatedConfigValues()
         .forEach(
             (configKey, configValue) ->
                 configChanges.add(
                     new AlterConfigOp(new ConfigEntry(configKey, configValue), OpType.SET)));
-
     configUpdatePlan
         .getDeletedConfigValues()
         .forEach(
@@ -135,21 +131,18 @@ public class TopologyBuilderAdminClient {
 
   public void clearAcls(TopologyAclBinding aclBinding) throws IOException {
     Collection<AclBindingFilter> filters = new ArrayList<>();
-
     LOGGER.debug("clearAcl = " + aclBinding);
     ResourcePatternFilter resourceFilter =
         new ResourcePatternFilter(
             ResourceType.valueOf(aclBinding.getResourceType()),
             aclBinding.getResourceName(),
             PatternType.valueOf(aclBinding.getPattern()));
-
     AccessControlEntryFilter accessControlEntryFilter =
         new AccessControlEntryFilter(
             aclBinding.getPrincipal(),
             aclBinding.getHost(),
             AclOperation.valueOf(aclBinding.getOperation()),
             AclPermissionType.ANY);
-
     AclBindingFilter filter = new AclBindingFilter(resourceFilter, accessControlEntryFilter);
     filters.add(filter);
     clearAcls(filters);
@@ -167,7 +160,6 @@ public class TopologyBuilderAdminClient {
   public Config getActualTopicConfig(String topic) {
     ConfigResource resource = new ConfigResource(Type.TOPIC, topic);
     Collection<ConfigResource> resources = Collections.singletonList(resource);
-
     Map<ConfigResource, Config> configs;
     try {
       configs = adminClient.describeConfigs(resources).all().get();
@@ -175,7 +167,6 @@ public class TopologyBuilderAdminClient {
       LOGGER.error(ex);
       throw new RuntimeException(ex);
     }
-
     return configs.get(resource);
   }
 
@@ -211,7 +202,6 @@ public class TopologyBuilderAdminClient {
 
   public Map<String, Collection<AclBinding>> fetchAclsList() {
     Map<String, Collection<AclBinding>> acls = new HashMap<>();
-
     try {
       Collection<AclBinding> list = adminClient.describeAcls(AclBindingFilter.ANY).values().get();
       list.forEach(

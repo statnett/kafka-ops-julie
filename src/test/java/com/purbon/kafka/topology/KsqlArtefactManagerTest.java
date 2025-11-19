@@ -34,15 +34,11 @@ public class KsqlArtefactManagerTest {
 
   @Before
   public void before() {
-
     Map<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
     cliOps.put(CLIENT_CONFIG_OPTION, "/fooBar");
-
     Properties props = new Properties();
-
     config = new Configuration(cliOps, props);
-
     parser = new TopologySerdes(config, new PlanMap());
   }
 
@@ -50,17 +46,13 @@ public class KsqlArtefactManagerTest {
   public void testArtefactGenerationOrder() {
     String topologyFileName = "/descriptor-ksql-multiple.yaml";
     String topologyFilePath = TestUtils.getResourceFilename(topologyFileName);
-
     Topology topology = parser.deserialise(TestUtils.getResourceFile(topologyFileName));
-
     KSqlArtefactManager m = new KSqlArtefactManager(client, config, topologyFilePath);
-
     var artefacts = m.parseNewArtefacts(topology);
     assertThat(
             artefacts.removeIf(
                 x -> x.getClass().getAnnotation(TypeArtefact.class).name().equals("VARS")))
         .isTrue();
-
     assertThat(artefacts).hasSize(4);
     var ksqlArtefacts = topology.getProjects().get(0).getKsqlArtefacts();
     int i = 0;
@@ -78,24 +70,17 @@ public class KsqlArtefactManagerTest {
   public void testArtefactsForDeletionOrder() {
     String topologyFileName = "/descriptor-ksql-multiple.yaml";
     String topologyFilePath = TestUtils.getResourceFilename(topologyFileName);
-
     Topology topology = parser.deserialise(TestUtils.getResourceFile(topologyFileName));
-
     KSqlArtefactManager m = new KSqlArtefactManager(client, config, topologyFilePath);
-
     var artefacts = m.parseNewArtefacts(topology);
     assertThat(
             artefacts.removeIf(
                 x -> x.getClass().getAnnotation(TypeArtefact.class).name().equals("VARS")))
         .isTrue();
-
     System.out.println(artefacts);
-
     var toDelete = m.findArtefactsToBeDeleted(artefacts, Collections.emptySet());
     System.out.println(toDelete);
-
     assertThat(toDelete).hasSize(4);
-
     int j = toDelete.size() - 1;
     for (Artefact artefact : artefacts) {
       assertThat(artefact).isEqualTo(toDelete.get(j));

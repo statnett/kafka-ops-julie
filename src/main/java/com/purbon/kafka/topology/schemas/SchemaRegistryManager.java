@@ -16,6 +16,7 @@ public class SchemaRegistryManager {
   private static final Logger LOGGER = LogManager.getLogger(SchemaRegistryManager.class);
 
   static class SchemaRegistryManagerException extends RuntimeException {
+
     public SchemaRegistryManagerException(String message) {
       super(message);
     }
@@ -80,7 +81,6 @@ public class SchemaRegistryManager {
   protected int save(String subjectName, String schemaType, String schemaString) {
     final Optional<ParsedSchema> maybeSchema =
         schemaRegistryClient.parseSchema(schemaType, schemaString, Collections.emptyList());
-
     final ParsedSchema parsedSchema =
         maybeSchema.orElseThrow(
             () -> {
@@ -90,7 +90,6 @@ public class SchemaRegistryManager {
                       subjectName, schemaType);
               return new SchemaRegistryManagerException(msg);
             });
-
     try {
       return schemaRegistryClient.register(subjectName, parsedSchema);
     } catch (Exception e) {

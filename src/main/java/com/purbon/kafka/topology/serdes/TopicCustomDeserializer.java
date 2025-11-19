@@ -65,16 +65,12 @@ public class TopicCustomDeserializer extends StdDeserializer<Topic> {
   public Topic deserialize(JsonParser parser, DeserializationContext context) throws IOException {
     JsonNode rootNode = parser.getCodec().readTree(parser);
     validateRequiresKeys(rootNode, "name");
-
     String name = rootNode.get("name").asText();
     List<Consumer> consumers = getUsers(parser, rootNode, "consumers", Consumer.class);
     List<Producer> producers = getUsers(parser, rootNode, "producers", Producer.class);
-
     Optional<JsonNode> optionalDataTypeNode = Optional.ofNullable(rootNode.get("dataType"));
     Optional<String> optionalDataType = optionalDataTypeNode.map(JsonNode::asText);
-
     Map<String, String> config = getMap(rootNode.get("config"));
-
     Optional<JsonNode> optionalPlanLabel = Optional.ofNullable(rootNode.get("plan"));
     if (optionalPlanLabel.isPresent() && plans.size() == 0) {
       throw new IOException("A plan definition is required if the topology uses them");
@@ -91,15 +87,12 @@ public class TopicCustomDeserializer extends StdDeserializer<Topic> {
           }
         });
     Topic topic = new Topic(name, producers, consumers, optionalDataType, config, this.config);
-
     Optional<SubjectNameStrategy> subjectNameStrategy =
         Optional.ofNullable(rootNode.get("subject.name.strategy"))
             .map(JsonNode::asText)
             .map(SubjectNameStrategy::valueOfLabel);
     topic.setSubjectNameStrategy(subjectNameStrategy);
-
     List<TopicSchemas> schemas = new ArrayList<>();
-
     if (rootNode.get("schemas") != null) {
       JsonNode schemasNode = rootNode.get("schemas");
       Iterator<JsonNode> it =
@@ -107,12 +100,10 @@ public class TopicCustomDeserializer extends StdDeserializer<Topic> {
               ? schemasNode.elements()
               : singletonList(schemasNode).iterator();
       Iterable<JsonNode> iterable = () -> it;
-
       List<Either<ValidationException, TopicSchemas>> listOfResultsOrErrors =
           StreamSupport.stream(iterable.spliterator(), true)
               .map(validateAndBuildSchemas(topic))
               .toList();
-
       List<ValidationException> errors =
           listOfResultsOrErrors.stream()
               .filter(Either::isLeft)
@@ -122,7 +113,6 @@ public class TopicCustomDeserializer extends StdDeserializer<Topic> {
       if (!errors.isEmpty()) {
         throw new IOException(errors.get(0));
       }
-
       schemas =
           listOfResultsOrErrors.stream()
               .filter(Either::isRight)
@@ -130,18 +120,14 @@ public class TopicCustomDeserializer extends StdDeserializer<Topic> {
               .map(Optional::get)
               .collect(Collectors.toList());
     }
-
     if (schemas.size() > 1 && topic.getSubjectNameStrategy().equals(TOPIC_NAME_STRATEGY)) {
       throw new IOException(
           String.format(
               "%s is not a valid strategy when registering multiple schemas", TOPIC_NAME_STRATEGY));
     }
-
     topic.setSchemas(schemas);
-
     Map<String, String> metadata = getMap(rootNode.get("metadata"));
     topic.setMetadata(metadata);
-
     LOGGER.debug(
         String.format("Topic %s with config %s has been created", topic.getName(), config));
     return topic;

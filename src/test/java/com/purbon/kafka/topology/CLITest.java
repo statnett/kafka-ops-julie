@@ -35,15 +35,12 @@ public class CLITest {
           "--topology", "descriptor.yaml",
           "--clientConfig", "topology-builder-sasl-plain.properties"
         };
-
     doNothing().when(cli).processTopology(eq("descriptor.yaml"), eq("default"), anyMap());
-
     Map<String, String> config = getDefaultMap();
     config.put(BROKERS_OPTION, "localhost:9092");
     config.put(CLIENT_CONFIG_OPTION, "topology-builder-sasl-plain.properties");
     config.put(OVERRIDING_CLIENT_CONFIG_OPTION, null);
     cli.run(args);
-
     verify(cli, times(1)).processTopology(eq("descriptor.yaml"), eq("default"), eq(config));
   }
 
@@ -56,16 +53,13 @@ public class CLITest {
           "--clientConfig", "topology-builder-sasl-plain.properties",
           "--dryRun"
         };
-
     doNothing().when(cli).processTopology(eq("descriptor.yaml"), eq("default"), anyMap());
-
     Map<String, String> config = getDefaultMap();
     config.put(BROKERS_OPTION, "localhost:9092");
     config.put(DRY_RUN_OPTION, "true");
     config.put(CLIENT_CONFIG_OPTION, "topology-builder-sasl-plain.properties");
     config.put(OVERRIDING_CLIENT_CONFIG_OPTION, null);
     cli.run(args);
-
     verify(cli, times(1)).processTopology(eq("descriptor.yaml"), eq("default"), eq(config));
   }
 

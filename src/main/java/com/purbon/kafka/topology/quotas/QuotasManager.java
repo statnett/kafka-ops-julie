@@ -36,7 +36,6 @@ public class QuotasManager implements ExecutionPlanUpdater {
                   Collectors.toMap(
                       entry -> entry.getKey().entries().get(ClientQuotaEntity.USER),
                       Map.Entry::getValue));
-
       Set<String> usersWithQuotasInTopology = new HashSet<>();
       for (Topology topology : topologies.values()) {
         topology
@@ -82,7 +81,6 @@ public class QuotasManager implements ExecutionPlanUpdater {
         return true;
       }
     }
-
     Double producerByteRate = currentQuotasForPrincipal.get("producer_byte_rate");
     if (quota.getProducer_byte_rate().isEmpty() && producerByteRate != null
         || producerByteRate == null && quota.getProducer_byte_rate().isPresent()) {
@@ -92,7 +90,6 @@ public class QuotasManager implements ExecutionPlanUpdater {
         return true;
       }
     }
-
     Double requestPercentage = currentQuotasForPrincipal.get("request_percentage");
     if (quota.getRequest_percentage().isEmpty() && requestPercentage != null
         || requestPercentage == null && quota.getRequest_percentage().isPresent()) {
@@ -102,7 +99,6 @@ public class QuotasManager implements ExecutionPlanUpdater {
         return true;
       }
     }
-
     return false;
   }
 

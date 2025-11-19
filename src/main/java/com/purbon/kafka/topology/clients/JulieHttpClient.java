@@ -84,12 +84,9 @@ public class JulieHttpClient {
       return HttpClient.newBuilder().build();
     }
     Configuration config = configOptional.get();
-
     SSLContext sslContext;
-
     try {
       sslContext = SSLContext.getInstance("TLS");
-
       if (areKeyStoreConfigured(config)) {
         var keyManagers = getKeyManagersFromKeyStore(config);
         var trustManagers = getTrustManagersFromTrustStore(config);
@@ -98,7 +95,6 @@ public class JulieHttpClient {
         LOGGER.debug("Keystore and Trusstore not configured, connection will be using plain HTTP");
         sslContext = SSLContext.getDefault();
       }
-
     } catch (KeyManagementException
         | NoSuchAlgorithmException
         | CertificateException
@@ -108,7 +104,6 @@ public class JulieHttpClient {
       LOGGER.error(e);
       throw new IOException(e);
     }
-
     return HttpClient.newBuilder().sslContext(sslContext).build();
   }
 
@@ -268,7 +263,6 @@ public class JulieHttpClient {
       int count,
       HttpResponse<String> response,
       Throwable throwable) {
-
     if (shouldRetry(response, throwable, count)) {
       System.out.println("shouldRetry: count=" + count);
       return httpClient

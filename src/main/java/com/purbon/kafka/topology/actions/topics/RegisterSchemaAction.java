@@ -38,7 +38,6 @@ public class RegisterSchemaAction extends BaseAction {
 
   private void registerSchemas(Topic topic, String fullTopicName) throws IOException {
     LOGGER.debug(String.format("Register schemas for topic %s", fullTopicName));
-
     for (TopicSchemas schema : topic.getSchemas()) {
       registerSchemaIfExists(schema.getKeySubject(), topic);
       registerSchemaIfExists(schema.getValueSubject(), topic);

@@ -64,7 +64,6 @@ public class TopologySerdes {
       } else {
         mapper = new ObjectMapper(new YAMLFactory());
       }
-
       SimpleModule module = new SimpleModule();
       module.addDeserializer(Topology.class, new TopologyCustomDeserializer(config));
       module.addDeserializer(Topic.class, new TopicCustomDeserializer(config, plans));

@@ -23,12 +23,9 @@ public class CreateTopicActionTest {
   public void shouldComposeDetailedViewOfProperties() {
     Topic t = new Topic("foo");
     t.setConfig(Collections.singletonMap("foo", "bar"));
-
     TestTopologyBuilder builder = TestTopologyBuilder.createProject().addTopic(t);
-
     Topology topology = builder.buildTopology();
     var topic = topology.getProjects().get(0).getTopics().get(0);
-
     var action = new CreateTopicAction(adminClient, topic, topic.toString());
     var refs = action.refs();
     assertThat(refs).hasSize(1);

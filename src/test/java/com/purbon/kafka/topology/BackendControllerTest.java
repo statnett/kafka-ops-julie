@@ -33,7 +33,6 @@ public class BackendControllerTest {
 
   @Test
   public void testClusterStateRecovery() throws IOException {
-
     BackendController backend = new BackendController(fileStateProcessor);
     when(fileStateProcessor.load()).thenReturn(new BackendState());
     backend.load();
@@ -42,7 +41,6 @@ public class BackendControllerTest {
 
   @Test
   public void testClusterStateSize() {
-
     BackendController backend = new BackendController(fileStateProcessor);
     TopologyAclBinding binding =
         TopologyAclBinding.build(
@@ -53,17 +51,13 @@ public class BackendControllerTest {
             "principal",
             "LITERAL",
             AclPermissionType.ALLOW.name());
-
     backend.addBindings(Collections.singletonList(binding));
-
     assertEquals(1, backend.size());
   }
 
   @Test
   public void testStoreBindingsAndServiceAccounts() throws IOException {
-
     BackendController backend = new BackendController(fileStateProcessor);
-
     TopologyAclBinding binding =
         TopologyAclBinding.build(
             ResourceType.CLUSTER.name(),
@@ -73,28 +67,22 @@ public class BackendControllerTest {
             "principal",
             "LITERAL",
             AclPermissionType.ALLOW.name());
-
     ServiceAccount serviceAccount = new ServiceAccount("1", "name", "description");
-
     backend.addBindings(Collections.singletonList(binding));
     backend.addServiceAccounts(Collections.singleton(serviceAccount));
-
     backend.flushAndClose();
-
     verify(fileStateProcessor, times(1)).save(any(BackendState.class));
   }
 
   @Test
   public void testStoreBindingsAndTopics() throws IOException {
     BackendController backend = new BackendController(fileStateProcessor);
-
     Topic topic = new Topic("foo");
     Project project = new ProjectImpl("project");
     project.addTopic(topic);
     Topology topology = new TopologyImpl();
     topology.setContext("context");
     topology.addProject(project);
-
     TopologyAclBinding binding =
         TopologyAclBinding.build(
             ResourceType.CLUSTER.name(),
@@ -104,10 +92,8 @@ public class BackendControllerTest {
             "principal",
             "LITERAL",
             AclPermissionType.ALLOW.name());
-
     backend.addBindings(Collections.singletonList(binding));
     backend.addTopics(Collections.singleton(topic.getName()));
-
     backend.flushAndClose();
     verify(fileStateProcessor, times(1)).save(any(BackendState.class));
   }

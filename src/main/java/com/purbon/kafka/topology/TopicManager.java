@@ -57,11 +57,9 @@ public class TopicManager implements ExecutionPlanUpdater {
 
   @Override
   public void updatePlan(ExecutionPlan plan, Map<String, Topology> topologies) throws IOException {
-
     internalTopicPrefixes = config.getKafkaInternalTopicPrefixes(topologies.values());
     Set<String> currentTopics = loadActualClusterStateIfAvailable(plan);
     Map<String, Topic> topics = new HashMap<>();
-
     Set<Action> createTopicActions = new HashSet<>();
     Set<Action> updateTopicConfigActions = new HashSet<>();
     for (Topology topology : topologies.values()) {
@@ -82,14 +80,11 @@ public class TopicManager implements ExecutionPlanUpdater {
             topics.put(topicName, topic);
           });
     }
-
     createTopicActions.forEach(plan::add); // Do createActions before update actions
     updateTopicConfigActions.forEach(plan::add);
-
     topics.forEach(
         (topicName, topic) ->
             plan.add(new RegisterSchemaAction(schemaRegistryManager, topic, topicName)));
-
     if (config.isAllowDeleteTopics()) {
       // Handle topic delete: Topics in the initial list, but not present anymore after a
       // full topic sync should be deleted
@@ -97,7 +92,6 @@ public class TopicManager implements ExecutionPlanUpdater {
           currentTopics.stream()
               .filter(topic -> !topics.containsKey(topic) && !isAnInternalTopics(topic))
               .collect(Collectors.toList());
-
       if (!topicsToBeDeleted.isEmpty()) {
         LOGGER.debug("Topic to be deleted: " + StringUtils.join(topicsToBeDeleted, ","));
         plan.add(new DeleteTopics(adminClient, topicsToBeDeleted));
@@ -110,10 +104,8 @@ public class TopicManager implements ExecutionPlanUpdater {
         topology.getProjects().stream()
             .flatMap(project -> project.getTopics().stream())
             .filter(this::matchesPrefixList);
-
     Stream<Topic> specialTopics =
         topology.getSpecialTopics().stream().filter(this::matchesPrefixList);
-
     return Stream.concat(topics, specialTopics)
         .collect(Collectors.toMap(Topic::toString, topic -> topic));
   }
@@ -127,7 +119,6 @@ public class TopicManager implements ExecutionPlanUpdater {
         config.fetchTopicStateFromTheCluster()
             ? adminClient.listApplicationTopics()
             : plan.getTopics();
-
     listOfTopics =
         listOfTopics.stream().filter(this::matchesPrefixList).collect(Collectors.toSet());
     if (!listOfTopics.isEmpty()) {
@@ -135,16 +126,13 @@ public class TopicManager implements ExecutionPlanUpdater {
           "Full list of managed topics in the cluster: "
               + StringUtils.join(new ArrayList<>(listOfTopics), ","));
     }
-
     if (!config.shouldVerifyRemoteState()) {
       OnceOnlyWarningLogger.getInstance().logRemoteStateVerificationDisabledWarning();
     }
-
     if (config.shouldVerifyRemoteState() && !config.fetchStateFromTheCluster()) {
       // verify that the remote state does not contain different topics than the local state
       detectDivergencesInTheRemoteCluster(plan);
     }
-
     return listOfTopics;
   }
 
@@ -158,7 +146,6 @@ public class TopicManager implements ExecutionPlanUpdater {
         plan.getTopics().stream()
             .filter(localTopic -> !remoteTopics.contains(localTopic))
             .collect(Collectors.toList());
-
     if (!delta.isEmpty()) {
       String errorMessage =
           "Your remote state has changed since the last execution, this topics: "

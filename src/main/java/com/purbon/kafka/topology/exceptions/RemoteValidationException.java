@@ -7,6 +7,7 @@ import java.io.IOException;
  * discrepancies between local state and the remote state (someone delete a topic outside JulieOps)
  */
 public class RemoteValidationException extends IOException {
+
   public RemoteValidationException(String msg) {
     super(msg);
   }

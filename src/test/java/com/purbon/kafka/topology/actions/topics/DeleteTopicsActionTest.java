@@ -23,14 +23,10 @@ public class DeleteTopicsActionTest {
   public void shouldComposeDetailedViewOfProperties() {
     Topic t = new Topic("foo");
     t.setConfig(Collections.singletonMap("foo", "bar"));
-
     TestTopologyBuilder builder = TestTopologyBuilder.createProject().addTopic(t);
-
     Topology topology = builder.buildTopology();
     var topic = topology.getProjects().get(0).getTopics().get(0);
-
     var action = new DeleteTopics(adminClient, Collections.singletonList(topic.toString()));
-
     var refs = action.refs();
     assertThat(refs).hasSize(1);
     var ref = refs.get(0);

@@ -30,7 +30,6 @@ public class DefaultBackendIT {
 
   @Test
   public void saveAndRestoreBindingsAndAccountsTest() throws IOException {
-
     TopologyAclBinding binding =
         TopologyAclBinding.build(
             ResourceType.CLUSTER.name(),
@@ -40,20 +39,15 @@ public class DefaultBackendIT {
             "principal",
             "LITERAL",
             AclPermissionType.ALLOW.name());
-
     ServiceAccount serviceAccount = new ServiceAccount("1", "name", "description");
     ServiceAccount serviceAccount2 = new ServiceAccount("2", "name2", "description2");
-
     Set<ServiceAccount> accounts = new HashSet<>(Arrays.asList(serviceAccount, serviceAccount2));
-
     backend.addBindings(Collections.singletonList(binding));
     backend.addServiceAccounts(accounts);
     backend.flushAndClose();
-
     // reopen a new connection
     backend = new BackendController();
     backend.load();
-
     assertThat(backend.getBindings()).isNotNull();
     assertThat(backend.getBindings()).isEqualTo(Collections.singleton(binding));
     assertThat(backend.getServiceAccounts()).isNotNull();
@@ -62,7 +56,6 @@ public class DefaultBackendIT {
 
   @Test
   public void saveAndRestoreBindingsWithNoAccounts() throws IOException {
-
     TopologyAclBinding binding =
         TopologyAclBinding.build(
             ResourceType.CLUSTER.name(),
@@ -72,14 +65,11 @@ public class DefaultBackendIT {
             "principal",
             "LITERAL",
             AclPermissionType.ALLOW.name());
-
     backend.addBindings(Collections.singletonList(binding));
     backend.flushAndClose();
-
     // reopen a new connection
     backend = new BackendController();
     backend.load();
-
     assertThat(backend.getBindings()).isNotNull();
     assertThat(backend.getBindings()).isEqualTo(Collections.singleton(binding));
     assertThat(backend.getServiceAccounts()).isNotNull();

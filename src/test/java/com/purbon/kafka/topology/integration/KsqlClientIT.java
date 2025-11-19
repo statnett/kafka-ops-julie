@@ -36,10 +36,8 @@ public class KsqlClientIT {
 
   @Test
   public void testStreamTableCreateAndDelete() throws IOException {
-
     KsqlApiClient client =
         new KsqlApiClient(KsqlClientConfig.builder().setServer(ksqlContainer.getUrl()).build());
-
     String streamName = "riderLocations";
     client.addSessionVars(Collections.singletonMap("partitions", "1"));
     String sql =
@@ -47,17 +45,12 @@ public class KsqlClientIT {
             + streamName
             + " (profileId VARCHAR, latitude DOUBLE, longitude DOUBLE)\n"
             + "  WITH (kafka_topic='locations', value_format='json', partitions=${partitions});";
-
     client.add(sql);
-
     List<String> queries = client.list();
     assertThat(queries).hasSize(1);
-
     client.delete(streamName, STREAM_TYPE);
-
     queries = client.list();
     assertThat(queries).hasSize(0);
-
     String tableName = "users";
     sql =
         "CREATE TABLE "
@@ -72,14 +65,10 @@ public class KsqlClientIT {
             + "     KEY_FORMAT='KAFKA', PARTITIONS=${partitions}, REPLICAS=1,"
             + "     VALUE_FORMAT = 'JSON'\n"
             + "   );";
-
     client.add(sql);
-
     queries = client.list();
     assertThat(queries).hasSize(1);
-
     client.delete(tableName, TABLE_TYPE);
-
     queries = client.list();
     assertThat(queries).hasSize(0);
   }

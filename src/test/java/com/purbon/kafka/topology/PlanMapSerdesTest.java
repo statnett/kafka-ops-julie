@@ -28,18 +28,13 @@ public class PlanMapSerdesTest {
     Map<String, String> config = new HashMap<>();
     config.put("foo", "bar");
     config.put("bar", "3");
-
     Plan plan1 = new Plan("gold", config);
     Plan plan2 = new Plan("silver", config);
-
     Map<String, Plan> plans = new HashMap<>();
     plans.put("gold", plan1);
     plans.put("silver", plan2);
-
     PlanMap map = new PlanMap(plans);
-
     String serValue = new PlanMapSerdes().serialise(map);
-
     assertThat(serValue).contains("alias: \"gold\"");
     assertThat(serValue).contains("alias: \"silver\"");
     assertThat(serValue).contains("config:");
@@ -48,16 +43,12 @@ public class PlanMapSerdesTest {
   @Test
   public void testHappyDeserialization() throws IOException {
     PlanMap plans = parser.deserialise(TestUtils.getResourceFile("/plans.yaml"));
-
     assertThat(plans).has(new Condition<>(list -> list.size() == 2, "Contains two elements"));
     assertThat(plans.get("gold").getAlias()).isEqualTo("gold");
-
     Map<String, String> config = new HashMap<>();
     config.put("foo", "bar");
     config.put("bar", "3");
-
     assertThat(plans.get("gold").getConfig()).isEqualTo(config);
-
     assertThat(plans.get("silver").getAlias()).isEqualTo("silver");
   }
 }

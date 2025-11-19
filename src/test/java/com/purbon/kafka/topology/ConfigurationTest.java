@@ -55,7 +55,6 @@ public class ConfigurationTest {
     project.addTopic(topic);
     topology.addProject(project);
     props.put(CONFLUENT_SCHEMA_REGISTRY_URL_CONFIG, "mock://");
-
     Configuration config = new Configuration(cliOps, props);
     config.validateWith(topology);
   }
@@ -69,9 +68,7 @@ public class ConfigurationTest {
     topic.setSchemas(Collections.singletonList(schema));
     project.addTopic(topic);
     topology.addProject(project);
-
     props.put(CONFLUENT_SCHEMA_REGISTRY_URL_CONFIG, "http://foo:8082");
-
     Configuration config = new Configuration(cliOps, props);
     config.validateWith(topology);
   }
@@ -83,9 +80,7 @@ public class ConfigurationTest {
     Topic topic = new Topic();
     project.addTopic(topic);
     topology.addProject(project);
-
     props.put(CONFLUENT_SCHEMA_REGISTRY_URL_CONFIG, "http://foo:8082");
-
     Configuration config = new Configuration(cliOps, props);
     config.validateWith(topology);
   }
@@ -97,7 +92,6 @@ public class ConfigurationTest {
     Topic topic = new Topic("topic", "json");
     project.addTopic(topic);
     topology.addProject(project);
-
     Configuration config = new Configuration(cliOps, props);
     config.validateWith(topology);
   }
@@ -109,10 +103,8 @@ public class ConfigurationTest {
     Topic topic = new Topic();
     project.addTopic(topic);
     topology.addProject(project);
-
     props.put(TOPIC_PREFIX_FORMAT_CONFIG, "{{foo}}{{topic}}");
     props.put(PROJECT_PREFIX_FORMAT_CONFIG, "{{foo}}");
-
     Configuration config = new Configuration(cliOps, props);
     config.validateWith(topology);
   }
@@ -124,9 +116,7 @@ public class ConfigurationTest {
     Topic topic = new Topic();
     project.addTopic(topic);
     topology.addProject(project);
-
     props.put(TOPIC_PREFIX_FORMAT_CONFIG, "{{foo}}{{topic}}");
-
     Configuration config = new Configuration(cliOps, props);
     config.validateWith(topology);
   }
@@ -138,9 +128,7 @@ public class ConfigurationTest {
     Topic topic = new Topic();
     project.addTopic(topic);
     topology.addProject(project);
-
     props.put(PROJECT_PREFIX_FORMAT_CONFIG, "{{foo}}{{topic}}");
-
     Configuration config = new Configuration(cliOps, props);
     config.validateWith(topology);
   }
@@ -152,9 +140,7 @@ public class ConfigurationTest {
     Topic topic = new Topic();
     project.addTopic(topic);
     topology.addProject(project);
-
     props.put(PROJECT_PREFIX_FORMAT_CONFIG, "{{banana}}");
-
     Configuration config = new Configuration(cliOps, props);
     config.validateWith(topology);
   }
@@ -163,9 +149,7 @@ public class ConfigurationTest {
   public void testKafkaInternalTopicExtendedPrefix() {
     String clientConfigFile =
         TestUtils.getResourceFilename("/config-internals-extended.properties");
-
     cliOps.put(CLIENT_CONFIG_OPTION, clientConfigFile);
-
     Configuration config = Configuration.build(cliOps);
     assertThat(config.getKafkaInternalTopicPrefixes())
         .isEqualTo(Arrays.asList("_", "topicA", "topicB"));
@@ -178,7 +162,6 @@ public class ConfigurationTest {
     props.put(PLATFORM_SERVER_KSQL_URL, "https://example.com:8083");
     Configuration config = new Configuration(cliOps, props);
     KsqlClientConfig ksqlClientConfig = config.getKSQLClientConfig();
-
     assertThat(ksqlClientConfig.getServer().getProtocol()).isEqualTo("https");
     assertThat(ksqlClientConfig.getServer().getHost()).isEqualTo("example.com");
     assertThat(ksqlClientConfig.getServer().getPort()).isEqualTo(8083);
@@ -190,7 +173,6 @@ public class ConfigurationTest {
     cliOps.put(CLIENT_CONFIG_OPTION, clientConfigFile);
     props.put(PLATFORM_SERVER_KSQL_URL, "example.com:8083");
     Configuration config = new Configuration(cliOps, props);
-
     assertThatThrownBy(config::getKSQLClientConfig)
         .hasMessageContaining("example.com:8083")
         .isInstanceOf(IllegalArgumentException.class);
@@ -198,25 +180,21 @@ public class ConfigurationTest {
 
   @Test
   public void testJulieRolesFetch() throws IOException {
-
     String rolesFile = TestUtils.getResourceFilename("/roles.yaml");
     props.put(JULIE_ROLES, rolesFile);
     Configuration config = new Configuration(cliOps, props);
-
     var roles = config.getJulieRoles();
     assertThat(roles).isNotNull();
     assertThat(roles.getRoles()).hasSize(2);
     for (JulieRole role : roles.getRoles()) {
       assertThat(role.getName()).isIn("app", "other");
     }
-
     JulieRole role = roles.get("app");
     List<String> resources =
         role.getAcls().stream().map(JulieRoleAcl::getResourceType).collect(Collectors.toList());
     assertThat(resources).contains("Topic", "Group");
     assertThat(role.getName()).isEqualTo("app");
     assertThat(role.getAcls()).hasSize(4);
-
     role = roles.get("other");
     resources =
         role.getAcls().stream().map(JulieRoleAcl::getResourceType).collect(Collectors.toList());
@@ -257,9 +235,7 @@ public class ConfigurationTest {
   @Test
   public void testKafkaInternalTopicDefaultPrefix() {
     String clientConfigFile = TestUtils.getResourceFilename("/client-config.properties");
-
     cliOps.put(CLIENT_CONFIG_OPTION, clientConfigFile);
-
     Configuration config = Configuration.build(cliOps);
     assertThat(config.getKafkaInternalTopicPrefixes()).isEqualTo(Collections.singletonList("_"));
   }
@@ -267,10 +243,8 @@ public class ConfigurationTest {
   @Test
   public void shouldAddStreamsApplicationIdAsInternalTopics() {
     Configuration config = new Configuration(cliOps, props);
-
     var topology =
         TestTopologyBuilder.createProject().addKStream("foo", "applicationId").buildTopology();
-
     var internals = config.getKafkaInternalTopicPrefixes(Collections.singletonList(topology));
     assertThat(internals).contains("applicationId");
     assertThat(internals).contains("_");
@@ -279,9 +253,7 @@ public class ConfigurationTest {
   @Test
   public void shouldAddStreamsProjectPrefixAsInternalTopics() {
     Configuration config = new Configuration(cliOps, props);
-
     var topology = TestTopologyBuilder.createProject().addKStream("foo").buildTopology();
-
     var internals = config.getKafkaInternalTopicPrefixes(Collections.singletonList(topology));
     assertThat(internals).contains("ctx.project.");
     assertThat(internals).contains("_");
@@ -291,7 +263,6 @@ public class ConfigurationTest {
   public void shouldFetchAConfigSubsetSuccessfully() {
     props.put(JULIE_AUDIT_APPENDER_CLASS, "foo.class");
     props.put(AUDIT_APPENDER_KAFKA_TOPIC, "log");
-
     Configuration config = new Configuration(cliOps, props);
     Properties props = config.asProperties("julie.audit");
     assertThat(props).hasSize(5);

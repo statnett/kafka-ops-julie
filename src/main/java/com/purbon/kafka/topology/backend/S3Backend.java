@@ -68,7 +68,6 @@ public class S3Backend implements Backend {
   private String getRemoteStateContent(String key) throws IOException {
     GetObjectRequest request =
         GetObjectRequest.builder().key(key).bucket(config.getS3Bucket()).build();
-
     try {
       ResponseBytes<GetObjectResponse> objectBytes = s3.getObjectAsBytes(request);
       return objectBytes.asString(StandardCharsets.UTF_8);

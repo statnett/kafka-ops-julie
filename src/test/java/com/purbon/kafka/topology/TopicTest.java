@@ -40,18 +40,13 @@ public class TopicTest {
 
   @Test
   public void buildTopicNameWithOtherDataPointsTest() {
-
     Topology topology = new TopologyImpl();
     topology.setContext("team");
-
     topology.addOther("other-f", "other");
     topology.addOther("another-f", "another");
-
     Project project = new ProjectImpl("project");
     topology.addProject(project);
-
     topology.setProjects(Collections.singletonList(project));
-
     Topic topic = new Topic("topic");
     project.addTopic(topic);
     String fullName = topic.toString();
@@ -68,54 +63,40 @@ public class TopicTest {
 
   @Test
   public void buildTopicNameFormatWithCustomSeparator() {
-
     Map<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
     cliOps.put(CLIENT_CONFIG_OPTION, "/fooBar");
-
     Properties props = new Properties();
     props.put(TOPIC_PREFIX_SEPARATOR_CONFIG, "_");
     Configuration config = new Configuration(cliOps, props);
-
     Topology topology = new TopologyImpl();
     topology.setContext("team");
-
     topology.addOther("other-f", "other");
     topology.addOther("another-f", "another");
-
     Project project = new ProjectImpl("project", config);
     topology.setProjects(Collections.singletonList(project));
-
     Topic topic = new Topic("topic", config);
     project.addTopic(topic);
-
     String fullName = topic.toString();
     Assert.assertEquals("team_other_another_project_topic", fullName);
   }
 
   @Test
   public void buildTopicNameFormatWithCustomPattern() {
-
     Map<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
     cliOps.put(CLIENT_CONFIG_OPTION, "/fooBar");
-
     Properties props = new Properties();
     props.put(TOPIC_PREFIX_FORMAT_CONFIG, "{{otherf}}.{{context}}.{{project}}.{{topic}}");
     Configuration config = new Configuration(cliOps, props);
-
     Topology topology = new TopologyImpl();
     topology.setContext("team");
-
     topology.addOther("otherf", "other");
     topology.addOther("anotherf", "another");
-
     Project project = new ProjectImpl("project", config);
     topology.setProjects(Collections.singletonList(project));
-
     Topic topic = new Topic("topic", config);
     project.addTopic(topic);
-
     String fullName = topic.toString();
     Assert.assertEquals("other.team.project.topic", fullName);
   }

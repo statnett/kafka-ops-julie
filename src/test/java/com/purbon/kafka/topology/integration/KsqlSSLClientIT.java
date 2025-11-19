@@ -51,25 +51,18 @@ public class KsqlSSLClientIT {
             .setTrustStorePassword("ksqldb")
             .build();
     KsqlApiClient client = new KsqlApiClient(config);
-
     String streamName = "riderLocations";
-
     String sql =
         "CREATE STREAM "
             + streamName
             + " (profileId VARCHAR, latitude DOUBLE, longitude DOUBLE)\n"
             + "  WITH (kafka_topic='locations', value_format='json', partitions=1);";
-
     client.add(sql);
-
     List<String> queries = client.list();
     assertThat(queries).hasSize(1);
-
     client.delete(streamName, STREAM_TYPE);
-
     queries = client.list();
     assertThat(queries).hasSize(0);
-
     String tableName = "users";
     sql =
         "CREATE TABLE "
@@ -84,14 +77,10 @@ public class KsqlSSLClientIT {
             + "     KEY_FORMAT='KAFKA', PARTITIONS=2, REPLICAS=1,"
             + "     VALUE_FORMAT = 'JSON'\n"
             + "   );";
-
     client.add(sql);
-
     queries = client.list();
     assertThat(queries).hasSize(1);
-
     client.delete(tableName, TABLE_TYPE);
-
     queries = client.list();
     assertThat(queries).hasSize(0);
   }

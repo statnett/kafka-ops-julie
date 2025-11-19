@@ -69,29 +69,24 @@ public final class JulieOpsAuxiliary {
         throw new IllegalStateException("Duplicate key");
       }
     }
-
     if (clients.isEmpty()) {
       LOGGER.debug(
           "No KafkaConnect clients configured for JulieOps to use, please verify your config file");
     }
-
     return new KafkaConnectArtefactManager(clients, config, topologyFileOrDir);
   }
 
   public static KSqlArtefactManager configureKSqlArtefactManager(
       Configuration config, String topologyFileOrDir) {
-
     Map<String, KsqlApiClient> clients = new HashMap<>();
     if (config.hasKSQLServer()) {
       KsqlApiClient client = new KsqlApiClient(config.getKSQLClientConfig());
       clients.put("default", client);
     }
-
     if (clients.isEmpty()) {
       LOGGER.debug(
           "No KSQL clients configured for JulieOps to use, please verify your config file");
     }
-
     return new KSqlArtefactManager(clients, config, topologyFileOrDir);
   }
 

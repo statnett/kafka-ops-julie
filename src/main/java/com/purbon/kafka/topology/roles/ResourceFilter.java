@@ -38,7 +38,6 @@ public class ResourceFilter {
         || hasSubjectNamePrefixFilter()) {
       return matchesTopicOrSubjectOrGroupPrefix(topologyAclBinding, resourceName);
     }
-
     return true; // should include everything if not properly excluded earlier.
   }
 

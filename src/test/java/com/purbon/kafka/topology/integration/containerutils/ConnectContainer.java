@@ -24,10 +24,8 @@ public class ConnectContainer extends GenericContainer<ConnectContainer> {
       String truststore,
       String keystore) {
     super(dockerImageName);
-
     String kafkaHost = kafka.getNetworkAliases().get(1);
     withExposedPorts(CONNECT_PORT, CONNECT_SSL_PORT);
-
     withEnv("CONNECT_BOOTSTRAP_SERVERS", "SASL_PLAINTEXT://" + kafkaHost + ":" + 9091);
     withEnv("CONNECT_REST_PORT", String.valueOf(CONNECT_SSL_PORT));
     withEnv("CONNECT_GROUP_ID", "kc");
@@ -44,11 +42,9 @@ public class ConnectContainer extends GenericContainer<ConnectContainer> {
     withEnv(
         "CONNECT_LISTENERS",
         "http://0.0.0.0:" + CONNECT_PORT + ", https://0.0.0.0:" + CONNECT_SSL_PORT);
-
     withEnv("CONNECT_SASL_JAAS_CONFIG", saslConfig());
     withEnv("CONNECT_SASL_MECHANISM", "PLAIN");
     withEnv("CONNECT_SECURITY_PROTOCOL", "SASL_PLAINTEXT");
-
     withEnv("CONNECT_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM", "HTTPS");
     withEnv(
         "CONNECT_LISTENERS_HTTPS_SSL_TRUSTSTORE_LOCATION",
@@ -59,15 +55,12 @@ public class ConnectContainer extends GenericContainer<ConnectContainer> {
         "/etc/kafka-connect/secrets/server.keystore");
     withEnv("CONNECT_LISTENERS_HTTPS_SSL_KEYSTORE_PASSWORD", "ksqldb");
     withEnv("CONNECT_LISTENERS_HTTPS_SSL_KEY_PASSWORD", "ksqldb");
-
     this.withClasspathResourceMapping(
             truststore, "/etc/kafka-connect/secrets/server.truststore", BindMode.READ_ONLY)
         .withClasspathResourceMapping(
             keystore, "/etc/kafka-connect/secrets/server.keystore", BindMode.READ_ONLY);
-
     withNetworkAliases("connect");
     withNetwork(kafka.getNetwork());
-
     waitingFor((new HttpWaitStrategy()).forPath("/").forPort(CONNECT_PORT));
   }
 

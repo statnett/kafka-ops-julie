@@ -17,7 +17,6 @@ final class BackendHelper {
   static TopologyAclBinding buildAclBinding(String line) throws IOException {
     // 'TOPIC', 'topicB', '*', 'READ', 'User:Connect1', 'LITERAL'
     Matcher matches = regexp.matcher(line);
-
     if (matches.groupCount() != 6 || !matches.matches()) {
       throw new IOException(("line (" + line + ") does not match"));
     }

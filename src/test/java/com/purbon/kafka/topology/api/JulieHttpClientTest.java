@@ -33,10 +33,8 @@ public class JulieHttpClientTest {
     cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
     props = new Properties();
-
     props.put(JULIE_HTTP_BACKOFF_TIME_MS, 0);
     Configuration config = new Configuration(cliOps, props);
-
     client = new PTHttpClient(wireMockRule.baseUrl(), Optional.of(config));
   }
 
@@ -53,38 +51,31 @@ public class JulieHttpClientTest {
 
   @Test
   public void shouldRunTheRetryFlowForRetrievableErrorCodes() throws IOException {
-
     cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
     props = new Properties();
-
     props.put(JULIE_HTTP_BACKOFF_TIME_MS, 0);
     props.put(JULIE_HTTP_RETRY_TIMES, 5);
     Configuration config = new Configuration(cliOps, props);
-
     client = new PTHttpClient(wireMockRule.baseUrl(), Optional.of(config));
-
     stubFor(
         get(urlEqualTo("/some/thing"))
             .inScenario("retrievable")
             .whenScenarioStateIs(STARTED)
             .willReturn(aResponse().withStatus(429))
             .willSetStateTo("retry1"));
-
     stubFor(
         get(urlEqualTo("/some/thing"))
             .inScenario("retrievable")
             .whenScenarioStateIs("retry1")
             .willReturn(aResponse().withStatus(503))
             .willSetStateTo("retry2"));
-
     stubFor(
         get(urlEqualTo("/some/thing"))
             .inScenario("retrievable")
             .whenScenarioStateIs("retry2")
             .willReturn(
                 aResponse().withHeader("Content-type", "text/plain").withBody("Hello world!")));
-
     assertThat(client.doGet("/some/thing").getStatus()).isEqualTo(200);
   }
 }

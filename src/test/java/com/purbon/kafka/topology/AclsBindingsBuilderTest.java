@@ -46,9 +46,7 @@ public class AclsBindingsBuilderTest {
 
   @Test
   public void testConsumerAclsBuilder() {
-
     Consumer consumer = new Consumer("User:foo");
-
     List<TopologyAclBinding> aclBindings =
         builder.buildLiteralBindingsForConsumers(Collections.singleton(consumer), "bar");
     assertThat(aclBindings.size()).isEqualTo(3);
@@ -63,9 +61,7 @@ public class AclsBindingsBuilderTest {
 
   @Test
   public void testConsumerAclsBuilderWithGroupPrefix() {
-
     Consumer consumer = new Consumer("User:foo", "foo*");
-
     List<TopologyAclBinding> aclBindings =
         builder.buildLiteralBindingsForConsumers(Collections.singleton(consumer), "bar");
     assertThat(aclBindings.size()).isEqualTo(3);
@@ -100,10 +96,8 @@ public class AclsBindingsBuilderTest {
         new KStream("User:foo", topics, emptyList(), Optional.of("app1"), Optional.of(true));
     List<TopologyAclBinding> aclBindings = builder.buildBindingsForKStream(producer, "app1");
     assertThat(aclBindings.size()).isEqualTo(5);
-
     assertThat(aclBindings)
         .contains(buildTopicLevelAcl("User:foo", "bar", PatternType.LITERAL, AclOperation.READ));
-
     assertThat(aclBindings)
         .contains(
             buildTransactionIdLevelAcl(
@@ -111,7 +105,6 @@ public class AclsBindingsBuilderTest {
                 producer.getApplicationId().get(),
                 PatternType.PREFIXED,
                 AclOperation.DESCRIBE));
-
     assertThat(aclBindings)
         .contains(
             buildTransactionIdLevelAcl(
@@ -127,13 +120,11 @@ public class AclsBindingsBuilderTest {
     List<TopologyAclBinding> aclBindings =
         builder.buildLiteralBindingsForProducers(Collections.singleton(producer), "bar");
     assertThat(aclBindings.size()).isEqualTo(5);
-
     assertThat(aclBindings)
         .contains(buildTopicLevelAcl("User:foo", "bar", PatternType.LITERAL, AclOperation.WRITE));
     assertThat(aclBindings)
         .contains(
             buildTopicLevelAcl("User:foo", "bar", PatternType.LITERAL, AclOperation.DESCRIBE));
-
     assertThat(aclBindings)
         .contains(
             buildTransactionIdLevelAcl(
@@ -141,7 +132,6 @@ public class AclsBindingsBuilderTest {
                 producer.getTransactionId().get(),
                 PatternType.LITERAL,
                 AclOperation.DESCRIBE));
-
     assertThat(aclBindings)
         .contains(
             buildTransactionIdLevelAcl(
@@ -149,7 +139,6 @@ public class AclsBindingsBuilderTest {
                 producer.getTransactionId().get(),
                 PatternType.LITERAL,
                 AclOperation.WRITE));
-
     assertThat(aclBindings)
         .contains(buildClusterLevelAcl(producer.getPrincipal(), AclOperation.IDEMPOTENT_WRITE));
   }
@@ -160,23 +149,19 @@ public class AclsBindingsBuilderTest {
     List<TopologyAclBinding> aclBindings =
         builder.buildLiteralBindingsForProducers(Collections.singleton(producer), "bar");
     assertThat(aclBindings.size()).isEqualTo(5);
-
     assertThat(aclBindings)
         .contains(buildTopicLevelAcl("User:foo", "bar", PatternType.LITERAL, AclOperation.WRITE));
     assertThat(aclBindings)
         .contains(
             buildTopicLevelAcl("User:foo", "bar", PatternType.LITERAL, AclOperation.DESCRIBE));
-
     assertThat(aclBindings)
         .contains(
             buildTransactionIdLevelAcl(
                 "User:foo", "foo", PatternType.PREFIXED, AclOperation.DESCRIBE));
-
     assertThat(aclBindings)
         .contains(
             buildTransactionIdLevelAcl(
                 "User:foo", "foo", PatternType.PREFIXED, AclOperation.WRITE));
-
     assertThat(aclBindings)
         .contains(buildClusterLevelAcl(producer.getPrincipal(), AclOperation.IDEMPOTENT_WRITE));
   }
@@ -187,13 +172,11 @@ public class AclsBindingsBuilderTest {
     List<TopologyAclBinding> aclBindings =
         builder.buildLiteralBindingsForProducers(Collections.singleton(producer), "bar");
     assertThat(aclBindings.size()).isEqualTo(3);
-
     assertThat(aclBindings)
         .contains(buildTopicLevelAcl("User:foo", "bar", PatternType.LITERAL, AclOperation.WRITE));
     assertThat(aclBindings)
         .contains(
             buildTopicLevelAcl("User:foo", "bar", PatternType.LITERAL, AclOperation.DESCRIBE));
-
     assertThat(aclBindings)
         .contains(buildClusterLevelAcl(producer.getPrincipal(), AclOperation.IDEMPOTENT_WRITE));
   }
@@ -205,9 +188,7 @@ public class AclsBindingsBuilderTest {
     String connectorWriteTopic = "topicA";
     topicsMap.put(DynamicUser.WRITE_TOPICS, singletonList(connectorWriteTopic));
     connector.setTopics(topicsMap);
-
     List<TopologyAclBinding> bindings = builder.buildBindingsForConnect(connector, "-");
-
     List<TopologyAclBinding> shouldContainBindings = createConnectorDefaultAclBindings(connector);
     shouldContainBindings.add(buildClusterLevelAcl(connector.getPrincipal(), AclOperation.CREATE));
     shouldContainBindings.add(
@@ -216,7 +197,6 @@ public class AclsBindingsBuilderTest {
             connectorWriteTopic,
             PatternType.LITERAL,
             AclOperation.WRITE));
-
     assertThat(bindings).containsExactlyInAnyOrderElementsOf(shouldContainBindings);
   }
 
@@ -225,15 +205,12 @@ public class AclsBindingsBuilderTest {
     Connector connector = new Connector("User:foo");
     String connectorReadTopic = "topicA";
     connector.setTopics(singletonMap(DynamicUser.READ_TOPICS, singletonList(connectorReadTopic)));
-
     List<TopologyAclBinding> bindings = builder.buildBindingsForConnect(connector, "-");
-
     List<TopologyAclBinding> shouldContainBindings = createConnectorDefaultAclBindings(connector);
     shouldContainBindings.add(buildClusterLevelAcl(connector.getPrincipal(), AclOperation.CREATE));
     shouldContainBindings.add(
         buildTopicLevelAcl(
             connector.getPrincipal(), connectorReadTopic, PatternType.LITERAL, AclOperation.READ));
-
     assertThat(bindings).containsExactlyInAnyOrderElementsOf(shouldContainBindings);
   }
 
@@ -242,15 +219,12 @@ public class AclsBindingsBuilderTest {
     Properties configMap = config.asProperties();
     configMap.put(CONNECTOR_ALLOW_TOPIC_CREATE, false);
     builder = new AclsBindingsBuilder(new Configuration(emptyMap(), configMap));
-
     Connector connector = new Connector("User:foo");
     HashMap<String, List<String>> topicsMap = new HashMap<>();
     String connectorWriteTopic = "topicA";
     topicsMap.put(DynamicUser.WRITE_TOPICS, singletonList(connectorWriteTopic));
     connector.setTopics(topicsMap);
-
     List<TopologyAclBinding> bindings = builder.buildBindingsForConnect(connector, "-");
-
     List<TopologyAclBinding> shouldContainBindings = createConnectorDefaultAclBindings(connector);
     shouldContainBindings.add(
         buildTopicLevelAcl(
@@ -258,7 +232,6 @@ public class AclsBindingsBuilderTest {
             connectorWriteTopic,
             PatternType.LITERAL,
             AclOperation.WRITE));
-
     assertThat(bindings).containsExactlyInAnyOrderElementsOf(shouldContainBindings);
   }
 
@@ -316,9 +289,7 @@ public class AclsBindingsBuilderTest {
     topics.put(KStream.WRITE_TOPICS, singletonList("bar"));
     KStream stream =
         new KStream("User:foo", topics, List.of(new User("observer1"), new User("observer2")));
-
     List<TopologyAclBinding> bindings = builder.buildBindingsForKStream(stream, "prefix");
-
     assertThat(bindings.size()).isEqualTo(10);
     assertThat(bindings)
         .contains(

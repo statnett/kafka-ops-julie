@@ -65,12 +65,9 @@ public class ConnectApiClientIT {
   @Test
   public void testAddRetrieveAndDeleteConnector() throws IOException {
     client.add(connectorName, connectorConfig);
-
     List<String> connectors = client.list();
     assertThat(connectors).contains(connectorName);
-
     client.delete(connectorName);
-
     connectors = client.list();
     assertThat(connectors).isEmpty();
   }
@@ -78,10 +75,8 @@ public class ConnectApiClientIT {
   @Test
   public void testGetClusterState() throws IOException {
     client.add(connectorName, connectorConfig);
-
     ObjectMapper mapper = new ObjectMapper();
     JsonNode config = mapper.readTree(connectorConfig);
-
     Collection<? extends Artefact> state = client.getClusterState();
     assertThat(state).hasSize(1);
     Artefact artefact = state.iterator().next();
@@ -90,9 +85,7 @@ public class ConnectApiClientIT {
     assertThat(connector.getName()).isEqualTo(connectorName);
     assertThat(connector.getPath()).isEmpty();
     assertThat(connector.getHash()).isEqualTo(Integer.toHexString(config.hashCode()));
-
     client.delete(connectorName);
-
     List<String> connectors = client.list();
     assertThat(connectors).isEmpty();
   }
@@ -101,13 +94,10 @@ public class ConnectApiClientIT {
   public void testAddStartStopConnector() throws IOException, InterruptedException {
     client.add(connectorName, connectorConfig);
     Thread.sleep(1000);
-
     String status = client.status(connectorName);
     assertThat(status).isEqualTo("RUNNING");
-
     client.pause(connectorName);
     Thread.sleep(1000);
-
     status = client.status(connectorName);
     assertThat(status).isEqualTo("PAUSED");
   }

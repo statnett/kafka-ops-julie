@@ -19,14 +19,11 @@ public class CreateAccountsTest {
 
   @Test
   public void shouldComposeDetailedViewOfProperties() {
-
     var accounts = new HashSet<ServiceAccount>();
     accounts.add(new ServiceAccount("1", "name", "description"));
     accounts.add(new ServiceAccount("1", "eman", "noitpircsed"));
-
     var action = new CreateAccounts(provider, accounts);
     var refs = action.refs();
-
     assertThat(refs).hasSize(2);
     assertThat(refs)
         .contains(

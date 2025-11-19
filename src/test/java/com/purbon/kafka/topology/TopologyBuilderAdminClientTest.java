@@ -53,16 +53,12 @@ public class TopologyBuilderAdminClientTest {
     final SimpleAclsProvider aclsProvider = new SimpleAclsProvider(adminClient);
     final AclsBindingsBuilder bindingsBuilder = new AclsBindingsBuilder(config);
     accessControlManager = new AccessControlManager(aclsProvider, bindingsBuilder);
-
     plan = ExecutionPlan.init(backendController, System.out);
-
     doNothing().when(backendController).addBindings(ArgumentMatchers.anyList());
     doNothing().when(backendController).flushAndClose();
-
     doReturn("foo").when(config).getConfluentCommandTopic();
     doReturn("foo").when(config).getConfluentMetricsTopic();
     doReturn("foo").when(config).getConfluentMonitoringTopic();
-
     doReturn(new Object()).when(kafkaFuture).get();
     doReturn(kafkaFuture).when(createAclsResult).all();
     doReturn(createAclsResult).when(kafkaAdminClient).createAcls(anyCollection());
@@ -74,16 +70,12 @@ public class TopologyBuilderAdminClientTest {
     consumers.add(new Consumer("User:app1"));
     Project project = new ProjectImpl();
     project.setConsumers(consumers);
-
     Topic topicA = new Topic("topicA");
     project.addTopic(topicA);
-
     Topology topology = new TopologyImpl();
     topology.addProject(project);
-
     accessControlManager.updatePlan(topology, plan);
     plan.run();
-
     verify(kafkaAdminClient, times(1)).createAcls(anyCollection());
   }
 
@@ -93,23 +85,18 @@ public class TopologyBuilderAdminClientTest {
     producers.add(new Producer("User:app1"));
     Project project = new ProjectImpl();
     project.setProducers(producers);
-
     Topic topicA = new Topic("topicA");
     project.addTopic(topicA);
-
     Topology topology = new TopologyImpl();
     topology.addProject(project);
-
     accessControlManager.updatePlan(topology, plan);
     plan.run();
-
     verify(kafkaAdminClient, times(1)).createAcls(anyCollection());
   }
 
   @Test
   public void newKafkaStreamsAppACLsCreation() throws IOException {
     Project project = new ProjectImpl();
-
     KStream app = new KStream();
     app.setPrincipal("User:App0");
     HashMap<String, List<String>> topics = new HashMap<>();
@@ -117,13 +104,10 @@ public class TopologyBuilderAdminClientTest {
     topics.put(KStream.WRITE_TOPICS, Arrays.asList("topicC", "topicD"));
     app.setTopics(topics);
     project.setStreams(Collections.singletonList(app));
-
     Topology topology = new TopologyImpl();
     topology.addProject(project);
-
     accessControlManager.updatePlan(topology, plan);
     plan.run();
-
     verify(kafkaAdminClient, times(1)).createAcls(anyCollection());
   }
 
@@ -132,25 +116,19 @@ public class TopologyBuilderAdminClientTest {
     Project project = new ProjectImpl();
     Topology topology = new TopologyImpl();
     topology.addProject(project);
-
     Platform platform = new Platform();
     SchemaRegistry sr = new SchemaRegistry();
-
     SchemaRegistryInstance instance = new SchemaRegistryInstance();
     instance.setPrincipal("User:foo");
     sr.setInstances(Collections.singletonList(instance));
-
     Map<String, List<User>> rbac = new HashMap<>();
     rbac.put("SecurityAdmin", Collections.singletonList(new User("User:foo")));
     rbac.put("ClusterAdmin", Collections.singletonList(new User("User:bar")));
     sr.setRbac(Optional.of(rbac));
-
     platform.setSchemaRegistry(sr);
     topology.setPlatform(platform);
-
     accessControlManager.updatePlan(topology, plan);
     plan.run();
-
     verify(kafkaAdminClient, times(1)).createAcls(anyCollection());
   }
 
@@ -159,7 +137,6 @@ public class TopologyBuilderAdminClientTest {
     Project project = new ProjectImpl();
     Topology topology = new TopologyImpl();
     topology.addProject(project);
-
     Platform platform = new Platform();
     ControlCenter c3 = new ControlCenter();
     ControlCenterInstance instance = new ControlCenterInstance();
@@ -168,31 +145,24 @@ public class TopologyBuilderAdminClientTest {
     c3.setInstances(Collections.singletonList(instance));
     platform.setControlCenter(c3);
     topology.setPlatform(platform);
-
     accessControlManager.updatePlan(topology, plan);
     plan.run();
-
     verify(kafkaAdminClient, times(1)).createAcls(anyCollection());
   }
 
   @Test
   public void newKafkaConnectACLsCreation() throws IOException {
     Project project = new ProjectImpl();
-
     Connector connector1 = new Connector();
     connector1.setPrincipal("User:Connect1");
     HashMap<String, List<String>> topics = new HashMap<>();
     topics.put(Connector.READ_TOPICS, Arrays.asList("topicA", "topicB"));
     connector1.setTopics(topics);
-
     project.setConnectors(Collections.singletonList(connector1));
-
     Topology topology = new TopologyImpl();
     topology.addProject(project);
-
     accessControlManager.updatePlan(topology, plan);
     plan.run();
-
     verify(kafkaAdminClient, times(1)).createAcls(anyCollection());
   }
 }

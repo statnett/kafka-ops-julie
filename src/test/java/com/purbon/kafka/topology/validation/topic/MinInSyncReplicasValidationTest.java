@@ -14,7 +14,6 @@ public class MinInSyncReplicasValidationTest {
     Map<String, String> config = new HashMap<>();
     config.put("replication.factor", "3");
     config.put("min.insync.replicas", "3");
-
     Topic topic = new Topic("topic", config);
     MinInSyncReplicasValidation validation = new MinInSyncReplicasValidation();
     validation.valid(topic);
@@ -26,7 +25,6 @@ public class MinInSyncReplicasValidationTest {
     Map<String, String> config = new HashMap<>();
     config.put("replication.factor", "3");
     config.put("min.insync.replicas", "1");
-
     Topic topic = new Topic("topic", config);
     MinInSyncReplicasValidation validation = new MinInSyncReplicasValidation();
     validation.valid(topic);
@@ -37,7 +35,6 @@ public class MinInSyncReplicasValidationTest {
     Map<String, String> config = new HashMap<>();
     config.put("replication.factor", "3");
     config.put("min.insync.replicas", "2");
-
     Topic topic = new Topic("topic", config);
     MinInSyncReplicasValidation validation = new MinInSyncReplicasValidation();
     validation.valid(topic);
@@ -48,7 +45,6 @@ public class MinInSyncReplicasValidationTest {
       throws ValidationException, ConfigurationException {
     Map<String, String> config = new HashMap<>();
     config.put("replication.factor", "3");
-
     Topic topic = new Topic("topic", config);
     MinInSyncReplicasValidation validation = new MinInSyncReplicasValidation();
     validation.valid(topic);

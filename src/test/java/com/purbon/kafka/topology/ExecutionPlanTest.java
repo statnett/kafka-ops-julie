@@ -74,11 +74,8 @@ public class ExecutionPlanTest {
             AclPermissionType.ALLOW.name());
     Set<TopologyAclBinding> bindings = new HashSet<>(Arrays.asList(binding1, binding2));
     CreateBindings addBindingsAction = new CreateBindings(aclsProvider, bindings);
-
     plan.add(addBindingsAction);
-
     plan.run();
-
     verify(aclsProvider, times(1)).createBindings(bindings);
     assertEquals(2, backendController.size());
   }
@@ -105,27 +102,18 @@ public class ExecutionPlanTest {
             AclPermissionType.ALLOW.name());
     Set<TopologyAclBinding> bindings = new HashSet<>(Arrays.asList(binding1, binding2));
     CreateBindings addBindingsAction = new CreateBindings(aclsProvider, bindings);
-
     plan.add(addBindingsAction);
-
     plan.run();
-
     verify(aclsProvider, times(1)).createBindings(bindings);
     assertEquals(2, backendController.size());
-
     BackendController backendController = new BackendController();
     ExecutionPlan plan = ExecutionPlan.init(backendController, mockPrintStream);
-
     bindings = new HashSet<>(singletonList(binding2));
     ClearBindings clearBindingsAction = new ClearBindings(aclsProvider, bindings);
-
     plan.add(clearBindingsAction);
-
     plan.run();
-
     verify(aclsProvider, times(1)).clearBindings(bindings);
     assertEquals(1, backendController.size());
-
     backendController = new BackendController();
     backendController.load();
     assertEquals(1, backendController.size());
@@ -137,18 +125,13 @@ public class ExecutionPlanTest {
     Topology topology = buildTopologyForTest();
     Topic topicFoo = topology.getProjects().get(0).getTopics().get(0);
     Topic topicBar = topology.getProjects().get(0).getTopics().get(1);
-
     CreateTopicAction addTopicAction1 =
         new CreateTopicAction(adminClient, topicFoo, topicFoo.toString());
-
     CreateTopicAction addTopicAction2 =
         new CreateTopicAction(adminClient, topicBar, topicBar.toString());
-
     plan.add(addTopicAction1);
     plan.add(addTopicAction2);
-
     plan.run();
-
     verify(adminClient, times(1)).createTopic(topicFoo, topicFoo.toString());
     verify(adminClient, times(1)).createTopic(topicBar, topicBar.toString());
     assertEquals(2, backendController.size());
@@ -159,31 +142,22 @@ public class ExecutionPlanTest {
     Topology topology = buildTopologyForTest();
     Topic topicFoo = topology.getProjects().get(0).getTopics().get(0);
     Topic topicBar = topology.getProjects().get(0).getTopics().get(1);
-
     CreateTopicAction addTopicAction1 =
         new CreateTopicAction(adminClient, topicFoo, topicFoo.toString());
-
     CreateTopicAction addTopicAction2 =
         new CreateTopicAction(adminClient, topicBar, topicBar.toString());
-
     plan.add(addTopicAction1);
     plan.add(addTopicAction2);
-
     plan.run();
-
     verify(adminClient, times(1)).createTopic(topicFoo, topicFoo.toString());
     verify(adminClient, times(1)).createTopic(topicBar, topicBar.toString());
     assertEquals(2, backendController.size());
-
     BackendController backendController = new BackendController();
     ExecutionPlan plan = ExecutionPlan.init(backendController, mockPrintStream);
-
     DeleteTopics deleteTopicsAction =
         new DeleteTopics(adminClient, singletonList(topicFoo.toString()));
     plan.add(deleteTopicsAction);
-
     plan.run();
-
     verify(adminClient, times(1)).deleteTopics(singletonList(topicFoo.toString()));
     assertEquals(1, backendController.size());
   }
@@ -193,7 +167,6 @@ public class ExecutionPlanTest {
     topology.setContext("context");
     Project project = new ProjectImpl("project");
     topology.setProjects(singletonList(project));
-
     Topic topic = new Topic("foo");
     Topic topicBar = new Topic("bar");
     project.setTopics(Arrays.asList(topic, topicBar));

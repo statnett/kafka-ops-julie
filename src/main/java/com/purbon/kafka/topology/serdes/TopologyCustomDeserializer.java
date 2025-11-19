@@ -92,7 +92,6 @@ public class TopologyCustomDeserializer extends StdDeserializer<Topology> {
   @Override
   public Topology deserialize(JsonParser parser, DeserializationContext context)
       throws IOException {
-
     JsonNode rootNode = parser.getCodec().readTree(parser);
     validateRequiresKeys(rootNode, CONTEXT_KEY);
     if (rootNode.get(PROJECTS_KEY) == null) {
@@ -102,11 +101,9 @@ public class TopologyCustomDeserializer extends StdDeserializer<Topology> {
               + rootNode.get(CONTEXT_KEY).asText()
               + ", this might be a required field, be aware.");
     }
-
     Topology topology = new TopologyImpl();
     List<String> excludeAttributes =
         Arrays.asList(PROJECTS_KEY, CONTEXT_KEY, PLATFORM_KEY, SPECIAL_TOPICS_NODE);
-
     Iterator<String> fieldNames = rootNode.fieldNames();
     while (fieldNames.hasNext()) {
       String fieldName = fieldNames.next();
@@ -115,7 +112,6 @@ public class TopologyCustomDeserializer extends StdDeserializer<Topology> {
       }
     }
     topology.setContext(rootNode.get(CONTEXT_KEY).asText());
-
     JsonNode platformNode = rootNode.get(PLATFORM_KEY);
     Platform platform = new Platform();
     if (platformNode != null && !platformNode.isEmpty()) {
@@ -132,12 +128,10 @@ public class TopologyCustomDeserializer extends StdDeserializer<Topology> {
     } else {
       LOGGER.debug("No platform components defined in the topology.");
     }
-
     topology.setPlatform(platform);
     if (rootNode.get(PROJECTS_KEY) != null) {
       parseProjects(parser, rootNode.get(PROJECTS_KEY), topology, config)
           .forEach(topology::addProject);
-
       // validate the generated full topics names for valid encoding
       for (Project project : topology.getProjects()) {
         for (Topic topic : project.getTopics()) {
@@ -145,7 +139,6 @@ public class TopologyCustomDeserializer extends StdDeserializer<Topology> {
         }
       }
     }
-
     JsonNode specialTopicsNode = rootNode.get(SPECIAL_TOPICS_NODE);
     if (specialTopicsNode != null && !specialTopicsNode.isEmpty()) {
       for (int i = 0; i < specialTopicsNode.size(); i++) {
@@ -154,7 +147,6 @@ public class TopologyCustomDeserializer extends StdDeserializer<Topology> {
         topology.addSpecialTopic(topic);
       }
     }
-
     return topology;
   }
 
@@ -187,14 +179,12 @@ public class TopologyCustomDeserializer extends StdDeserializer<Topology> {
   private Project parseProject(
       JsonParser parser, JsonNode rootNode, Topology topology, Configuration config)
       throws IOException {
-
     Iterable<String> it = rootNode::fieldNames;
     List<String> keys =
         StreamSupport.stream(it.spliterator(), false)
             .filter(key -> !Arrays.asList(TOPICS_KEY, NAME_KEY).contains(key))
             .toList();
     Map<String, JsonNode> rootNodes = Maps.asMap(new HashSet<>(keys), rootNode::get);
-
     Map<String, PlatformSystem> mapOfValues = new HashMap<>();
     for (String key : rootNodes.keySet()) {
       JsonNode keyNode = rootNodes.get(key);
@@ -228,7 +218,6 @@ public class TopologyCustomDeserializer extends StdDeserializer<Topology> {
         optionalPlatformSystem.ifPresent(ps -> mapOfValues.put(key, ps));
       }
     }
-
     ProjectImpl project =
         new ProjectImpl(
             rootNode.get(NAME_KEY).asText(),
@@ -240,9 +229,7 @@ public class TopologyCustomDeserializer extends StdDeserializer<Topology> {
             Optional.ofNullable(mapOfValues.get(KSQL_KEY)),
             filterOthers(mapOfValues),
             config);
-
     project.setPrefixContextAndOrder(topology.asFullContext(), topology.getOrder());
-
     var topicsNode = rootNode.get(TOPICS_KEY);
     if (topicsNode == null) {
       if (config.isWarnIfProjectsWithoutTopics()) {
@@ -275,7 +262,6 @@ public class TopologyCustomDeserializer extends StdDeserializer<Topology> {
                 }
               });
     }
-
     return project;
   }
 
@@ -284,7 +270,6 @@ public class TopologyCustomDeserializer extends StdDeserializer<Topology> {
     return name -> {
       var foundInAllowList = allowList.stream().anyMatch(e -> e.matcher(name).matches());
       var foundInDenyList = denyList.stream().anyMatch(e -> e.matcher(name).matches());
-
       var isAllowedOrEmpty = allowList.isEmpty() || foundInAllowList;
       var isNotDeniedOrEmpty = denyList.isEmpty() || !foundInDenyList;
       return isAllowedOrEmpty && isNotDeniedOrEmpty;
@@ -322,7 +307,6 @@ public class TopologyCustomDeserializer extends StdDeserializer<Topology> {
 
   private Optional<PlatformSystem> doKafkaConnectElements(JsonParser parser, JsonNode node)
       throws IOException {
-
     JsonNode acNode = node;
     if (node.has(ACCESS_CONTROL)) {
       acNode = node.get(ACCESS_CONTROL);
@@ -361,18 +345,15 @@ public class TopologyCustomDeserializer extends StdDeserializer<Topology> {
 
   private Optional<PlatformSystem> doKSqlElements(JsonParser parser, JsonNode node)
       throws JsonProcessingException {
-
     JsonNode acNode = node;
     if (node.has(ACCESS_CONTROL)) {
       acNode = node.get(ACCESS_CONTROL);
     }
-
     List<KSqlApp> ksqls =
         new JsonSerdesUtils<KSqlApp>().parseApplicationUser(parser, acNode, KSqlApp.class);
     List<KsqlStreamArtefact> streamArtefacts = new ArrayList<>();
     List<KsqlTableArtefact> tableArtefacts = new ArrayList<>();
     KsqlVarsArtefact varsArtefacts = new KsqlVarsArtefact(Collections.emptyMap());
-
     if (node.has(ARTEFACTS) || node.has(ARTIFACTS)) {
       String key = node.has(ARTEFACTS) ? ARTEFACTS : ARTIFACTS;
       JsonNode artefactsNode = node.get(key);
@@ -382,21 +363,18 @@ public class TopologyCustomDeserializer extends StdDeserializer<Topology> {
                 .parseApplicationUser(
                     parser, artefactsNode.get(STREAMS_NODE), KsqlStreamArtefact.class);
       }
-
       if (artefactsNode.has(TABLES_NODE)) {
         tableArtefacts =
             new JsonSerdesUtils<KsqlTableArtefact>()
                 .parseApplicationUser(
                     parser, artefactsNode.get(TABLES_NODE), KsqlTableArtefact.class);
       }
-
       if (artefactsNode.has(VARS_NODE)) {
         artefactsNode.get(VARS_NODE);
         varsArtefacts.setSessionVars(
             parser.getCodec().treeToValue(artefactsNode.get(VARS_NODE), Map.class));
       }
     }
-
     return Optional.of(
         new PlatformSystem(
             ksqls, new KsqlArtefacts(streamArtefacts, tableArtefacts, varsArtefacts)));
@@ -413,7 +391,6 @@ public class TopologyCustomDeserializer extends StdDeserializer<Topology> {
                       ks.getTopics().putIfAbsent(KStream.WRITE_TOPICS, Collections.emptyList());
                     })
                 .collect(Collectors.toList());
-
     for (KStream ks : streams) {
       var topics = ks.getTopics();
       if (topics.get(KStream.WRITE_TOPICS).isEmpty() && config.isWarnIfReadOnlyStreams()) {

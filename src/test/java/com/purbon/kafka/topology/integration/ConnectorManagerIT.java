@@ -65,9 +65,7 @@ public class ConnectorManagerIT {
     props.put(TOPOLOGY_TOPIC_STATE_FROM_CLUSTER, "false");
     props.put(ALLOW_DELETE_CONNECT_ARTEFACTS, "true");
     props.put(PLATFORM_SERVERS_CONNECT + ".0", "connector0:" + connectContainer.getHttpsUrl());
-
     File file = TestUtils.getResourceFile("/descriptor-connector.yaml");
-
     testCreateAndUpdatePath(props, file);
   }
 
@@ -79,9 +77,7 @@ public class ConnectorManagerIT {
     props.put(TOPOLOGY_TOPIC_STATE_FROM_CLUSTER, "false");
     props.put(ALLOW_DELETE_CONNECT_ARTEFACTS, "true");
     props.put(PLATFORM_SERVERS_CONNECT + ".0", "connector0:" + connectContainer.getHttpsUrl());
-
     File file = TestUtils.getResourceFile("/descriptor-connector.yaml");
-
     testCreateAndUpdatePath(props, file);
   }
 
@@ -94,39 +90,28 @@ public class ConnectorManagerIT {
     props.put(JULIE_VERIFY_STATE_SYNC, true);
     props.put(ALLOW_DELETE_TOPICS, "true");
     props.put(PLATFORM_SERVERS_CONNECT + ".0", "connector0:" + connectContainer.getHttpsUrl());
-
     File file = TestUtils.getResourceFile("/descriptor-connector.yaml");
-
     testDeleteRemoteButNotLocal(props, file);
   }
 
   private void testCreateAndUpdatePath(Properties props, File file)
       throws IOException, InterruptedException {
-
     var topology = initTopology(props, file);
-
     connectorManager.updatePlan(topology, plan);
     plan.run();
     // we should wait a bit until the connector starts downstream
     Thread.sleep(1000);
-
     List<String> connectors = client.list();
-
     assertThat(connectors).hasSize(2);
     assertThat(connectors).contains("source-jdbc", "sink-jdbc");
-
     topology.getProjects().get(0).getConnectorArtefacts().getConnectors().remove(0);
     assertThat(topology.getProjects().get(0).getConnectorArtefacts().getConnectors()).hasSize(1);
-
     ExecutionPlan newPlan = ExecutionPlan.init(new BackendController(), System.out);
-
     connectorManager.updatePlan(topology, newPlan);
     newPlan.run();
     // we should wait a bit until the connector starts downstream
     Thread.sleep(1000);
-
     connectors = client.list();
-
     assertThat(connectors).hasSize(1);
     assertThat(connectors).contains("sink-jdbc");
   }
@@ -142,13 +127,11 @@ public class ConnectorManagerIT {
   private Configuration prepareClientConfig(Properties props) {
     HashMap<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
-
     props.put(SSL_TRUSTSTORE_LOCATION, TestUtils.getResourceFile(TRUSTSTORE_JKS).getAbsolutePath());
     props.put(SSL_TRUSTSTORE_PASSWORD, "ksqldb");
     props.put(SSL_KEYSTORE_LOCATION, TestUtils.getResourceFile(KEYSTORE_JKS).getAbsolutePath());
     props.put(SSL_KEYSTORE_PASSWORD, "ksqldb");
     props.put(SSL_KEY_PASSWORD, "ksqldb");
-
     return new Configuration(cliOps, props);
   }
 
@@ -160,20 +143,15 @@ public class ConnectorManagerIT {
 
   private void testDeleteRemoteButNotLocal(Properties props, File file)
       throws IOException, InterruptedException {
-
     var topology = initTopology(props, file);
-
     connectorManager.updatePlan(topology, plan);
     plan.run();
     // we should wait a bit until the connector starts downstream
     Thread.sleep(1000);
-
     List<String> connectors = client.list();
     assertThat(connectors).hasSize(2);
     assertThat(connectors).contains("source-jdbc", "sink-jdbc");
-
     client.delete("source-jdbc");
-
     ExecutionPlan newPlan = ExecutionPlan.init(new BackendController(), System.out);
     connectorManager.updatePlan(topology, newPlan);
   }
@@ -184,34 +162,24 @@ public class ConnectorManagerIT {
     props.put(TOPOLOGY_TOPIC_STATE_FROM_CLUSTER, "false");
     props.put(ALLOW_DELETE_CONNECT_ARTEFACTS, "true");
     props.put(PLATFORM_SERVERS_CONNECT + ".0", "connector0:" + connectContainer.getHttpsUrl());
-
     File file = TestUtils.getResourceFile("/descriptor-connector-alone.yaml");
-
     var topology = initTopology(props, file);
-
     connectorManager.updatePlan(topology, plan);
-
     assertThat(plan.getActions()).hasSize(2);
-
     plan.run();
     // we should wait a bit until the connector starts downstream
     Thread.sleep(1000);
-
     ExecutionPlan noopPlan = ExecutionPlan.init(new BackendController(), System.out);
     connectorManager.updatePlan(topology, noopPlan);
     assertThat(noopPlan.getActions()).hasSize(0);
-
     file = TestUtils.getResourceFile("/descriptor-connector-alone-updated.yaml");
     topology = initTopology(props, file);
-
     ExecutionPlan updatePlan = ExecutionPlan.init(new BackendController(), System.out);
     connectorManager.updatePlan(topology, updatePlan);
     assertThat(updatePlan.getActions()).hasSize(1);
-
     updatePlan.run();
     // wait for changes to apply
     Thread.sleep(1000);
-
     ExecutionPlan noopPlan2 = ExecutionPlan.init(new BackendController(), System.out);
     connectorManager.updatePlan(topology, noopPlan2);
     assertThat(noopPlan2.getActions()).hasSize(0);

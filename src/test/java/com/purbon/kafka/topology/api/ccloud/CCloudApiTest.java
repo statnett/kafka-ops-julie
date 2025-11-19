@@ -36,7 +36,6 @@ public class CCloudApiTest {
 
   @Before
   public void before() throws IOException {
-
     Map<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
     Properties props = new Properties();
@@ -52,11 +51,9 @@ public class CCloudApiTest {
   @Test
   public void testAclCreateMethod() throws IOException {
     when(httpClient.baseUrl()).thenReturn("http://not.valid:9999");
-
     TopologyAclBinding binding =
         new TopologyAclBinding(
             "TOPIC", "foo", "*", "ALL", "User:foo", "LITERAL", AclPermissionType.ALLOW.name());
-
     apiClient.createAcl("clusterId", binding);
     var body =
         "{\"resource_type\":\"TOPIC\","
@@ -66,17 +63,14 @@ public class CCloudApiTest {
             + "\"host\":\"*\","
             + "\"operation\":\"ALL\","
             + "\"permission\":\"ALLOW\"}";
-
     verify(httpClient, times(1)).doPost("/kafka/v3/clusters/clusterId/acls", body);
   }
 
   @Test
   public void testAclDeleteMethod() throws IOException {
-
     TopologyAclBinding binding =
         new TopologyAclBinding(
             "TOPIC", "foo", "*", "ALL", "User:foo", "LITERAL", AclPermissionType.ALLOW.name());
-
     apiClient.deleteAcls("clusterId", binding);
     var url =
         "/kafka/v3/clusters/clusterId/acls?principal=User:foo&pattern_type=LITERAL&resource_type=TOPIC&host=*&permission=ALLOW&resource_name=foo&operation=ALL";
@@ -85,9 +79,7 @@ public class CCloudApiTest {
 
   @Test
   public void testCreateServiceAccount() throws IOException {
-
     var principal = "User:foo";
-
     var url = "/iam/v2/service-accounts";
     var body = "{\"display_name\":\"" + principal + "\",\"description\":\"" + MANAGED_BY + "\"}";
     var createResponse =
@@ -109,9 +101,7 @@ public class CCloudApiTest {
             + MANAGED_BY
             + "\"\n"
             + "}";
-
     when(httpClient.doPost(url, body)).thenReturn(createResponse);
-
     var sa = apiClient.createServiceAccount(principal);
     verify(httpClient, times(1)).doPost(url, body);
     assertThat(sa.getName()).isEqualTo(principal);
@@ -128,7 +118,6 @@ public class CCloudApiTest {
 
   @Test
   public void listServiceAccountsShouldAcceptPage() throws IOException {
-
     String body01 =
         "{\n"
             + "  \"api_version\": \"iam/v2\",\n"
@@ -157,12 +146,9 @@ public class CCloudApiTest {
             + "    }\n"
             + "  ]\n"
             + "}";
-
     Response response01 = new Response(null, 200, body01);
-
     when(httpClient.doGet(String.format("%s?page_size=%d", V2_IAM_SERVICE_ACCOUNTS_URL, 1)))
         .thenReturn(response01);
-
     String body02 =
         "{\n"
             + "  \"api_version\": \"iam/v2\",\n"
@@ -191,10 +177,8 @@ public class CCloudApiTest {
             + "  ]\n"
             + "}";
     Response response02 = new Response(null, 200, body02);
-
     when(httpClient.doGet("/iam/v2/service-accounts?page_token=UvmDWOB1iwfAIBPj6EYb"))
         .thenReturn(response02);
-
     Set<ServiceAccount> accounts = apiClient.listServiceAccounts();
     assertThat(accounts).hasSize(2);
   }

@@ -19,14 +19,11 @@ public class KafkaBackend implements Backend {
   public void configure(Configuration config) {
     isDryRun = config.isDryRun();
     final ByteArrayChunker chunker = new ByteArrayChunker(config.getKafkaBackendChunkSize());
-
     final KafkaBackendTopicCreator topicCreator = new KafkaBackendTopicCreator(config);
     topicCreator.configure();
     topicWasJustCreated = topicCreator.createStateTopicUnlessPresent();
-
     consumer = new KafkaBackendConsumer(config, chunker);
     consumer.configure();
-
     producer = new KafkaBackendProducer(config, chunker);
     producer.configure();
   }

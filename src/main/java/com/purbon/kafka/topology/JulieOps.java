@@ -76,16 +76,13 @@ public class JulieOps implements AutoCloseable {
 
   public static JulieOps build(String topologyFile, String plansFile, Map<String, String> config)
       throws Exception {
-
     verifyRequiredParameters(topologyFile, config);
     Configuration builderConfig = Configuration.build(config);
     TopologyBuilderAdminClient adminClient =
         new TopologyBuilderAdminClientBuilder(builderConfig).build();
     AccessControlProviderFactory factory =
         new AccessControlProviderFactory(builderConfig, adminClient);
-
     PrincipalProviderFactory principalProviderFactory = new PrincipalProviderFactory(builderConfig);
-
     return build(
         topologyFile,
         plansFile,
@@ -123,16 +120,13 @@ public class JulieOps implements AutoCloseable {
       BindingsBuilderProvider bindingsBuilderProvider,
       PrincipalProvider principalProvider)
       throws Exception {
-
     Map<String, Topology> topologies;
     if (plansFile.equals("default")) {
       topologies = TopologyObjectBuilder.build(topologyFileOrDir, config);
     } else {
       topologies = TopologyObjectBuilder.build(topologyFileOrDir, plansFile, config);
     }
-
     TopologyValidator validator = new TopologyValidator(config);
-
     for (Topology topology : topologies.values()) {
       List<String> validationResults = validator.validate(topology);
       if (!validationResults.isEmpty()) {
@@ -141,14 +135,11 @@ public class JulieOps implements AutoCloseable {
       }
       config.validateWith(topology);
     }
-
     AccessControlManager accessControlManager =
         new AccessControlManager(
             accessControlProvider, bindingsBuilderProvider, config.getJulieRoles(), config);
-
     RestService restService = new RestService(config.getConfluentSchemaRegistryUrl());
     Map<String, ?> schemaRegistryConfig = config.asMap();
-
     List<SchemaProvider> providers =
         Arrays.asList(
             new AvroSchemaProvider(), new JsonSchemaProvider(), new ProtobufSchemaProvider());
@@ -161,24 +152,17 @@ public class JulieOps implements AutoCloseable {
             null);
     SchemaRegistryManager schemaRegistryManager =
         new SchemaRegistryManager(schemaRegistryClient, topologyFileOrDir);
-
     TopicManager topicManager = new TopicManager(adminClient, schemaRegistryManager, config);
-
     PrincipalUpdateManager principalUpdateManager =
         new PrincipalUpdateManager(principalProvider, config);
     PrincipalDeleteManager principalDeleteManager =
         new PrincipalDeleteManager(principalProvider, config);
-
     KafkaConnectArtefactManager connectorManager =
         configureKConnectArtefactManager(config, topologyFileOrDir);
-
     KSqlArtefactManager kSqlArtefactManager =
         configureKSqlArtefactManager(config, topologyFileOrDir);
-
     QuotasManager quotasManager = new QuotasManager(adminClient, config);
-
     configureLogsInDebugMode(config);
-
     return new JulieOps(
         topologies,
         config,
@@ -198,7 +182,6 @@ public class JulieOps implements AutoCloseable {
         String.format(
             "Running topology builder with topicManager=[%s], accessControlManager=[%s], dryRun=[%s], isQuiet=[%s]",
             topicManager, accessControlManager, config.isDryRun(), config.isQuiet()));
-
     // Create users should always be first, so user exists when making acl link
     for (Topology topology : topologies.values()) {
       principalUpdateManager.updatePlan(topology, plan);
@@ -214,9 +197,7 @@ public class JulieOps implements AutoCloseable {
     for (Topology topology : topologies.values()) {
       principalDeleteManager.updatePlan(topology, plan);
     }
-
     plan.run(config.isDryRun());
-
     if (!config.isQuiet() && !config.isDryRun()) {
       topicManager.printCurrentState(System.out);
       accessControlManager.printCurrentState(System.out);

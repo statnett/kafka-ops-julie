@@ -65,7 +65,6 @@ public class AccessControlManager implements ExecutionPlanUpdater {
       aclBindingsResults.addAll(buildPlatformLevelActions(topology));
       aclBindingsResults.addAll(buildSpecialTopicsAcls(topology));
     }
-
     buildUpdateBindingsActions(aclBindingsResults, loadActualClusterStateIfAvailable(plan))
         .forEach(plan::add);
   }
@@ -79,17 +78,14 @@ public class AccessControlManager implements ExecutionPlanUpdater {
             .filter(resourceFilter::matchesManagedPrefixList)
             .filter(this::isNotInternalAcl)
             .collect(Collectors.toSet());
-
     if (!config.shouldVerifyRemoteState()) {
       OnceOnlyWarningLogger.getInstance().logRemoteStateVerificationDisabledWarning();
     }
-
     if (config.shouldVerifyRemoteState() && !config.fetchStateFromTheCluster()) {
       // should detect if there are divergences between the local cluster state and the current
       // status in the cluster
       detectDivergencesInTheRemoteCluster(plan);
     }
-
     return currentState;
   }
 
@@ -100,12 +96,10 @@ public class AccessControlManager implements ExecutionPlanUpdater {
       return;
     }
     var remoteAcls = providerBindings();
-
     var delta =
         plan.getBindings().stream()
             .filter(acl -> !remoteAcls.contains(acl))
             .collect(Collectors.toList());
-
     if (!delta.isEmpty()) {
       String errorMessage =
           "Your remote state has changed since the last execution, this ACL(s): "
@@ -135,7 +129,6 @@ public class AccessControlManager implements ExecutionPlanUpdater {
    */
   private List<AclBindingsResult> buildProjectAclBindings(Topology topology) {
     List<AclBindingsResult> aclBindingsResults = new ArrayList<>();
-
     for (Project project : topology.getProjects()) {
       if (config.shouldOptimizeAcls()) {
         aclBindingsResults.addAll(buildOptimizeConsumerAndProducerAcls(project));
@@ -160,7 +153,6 @@ public class AccessControlManager implements ExecutionPlanUpdater {
                         new ConnectorAuthorizationAclBindingsBuilder(bindingsBuilder, connector)
                             .getAclBindings()));
       }
-
       for (Schemas schemaAuthorization : project.getSchemas()) {
         aclBindingsResults.add(
             new SchemaAuthorizationAclBindingsBuilder(
@@ -168,7 +160,6 @@ public class AccessControlManager implements ExecutionPlanUpdater {
                         bindingsBuilder, schemaAuthorization, config, topicPrefix))
                 .getAclBindings());
       }
-
       for (Map.Entry<String, List<Other>> other : project.getOthers().entrySet()) {
         if (julieRoles.size() == 0) {
           throw new IllegalStateException(
@@ -199,7 +190,6 @@ public class AccessControlManager implements ExecutionPlanUpdater {
         new ProducerAclBindingsBuilder(
                 bindingsBuilder, project.getProducers(), project.namePrefix(), true)
             .getAclBindings());
-
     // When optimised, still need to add any topic level specific.
     aclBindingsResults.addAll(buildBasicUsersAcls(project, false));
     return aclBindingsResults;
@@ -221,7 +211,6 @@ public class AccessControlManager implements ExecutionPlanUpdater {
   private List<AclBindingsResult> buildBasicUsersAcls(
       Collection<Topic> topics, Project project, boolean includeProjectLevel) {
     List<AclBindingsResult> aclBindingsResults = new ArrayList<>();
-
     for (Topic topic : topics) {
       final String fullTopicName = topic.toString();
       Set<Consumer> consumers = new HashSet(topic.getConsumers());
@@ -260,9 +249,7 @@ public class AccessControlManager implements ExecutionPlanUpdater {
   private List<Action> buildUpdateBindingsActions(
       List<AclBindingsResult> aclBindingsResults, Set<TopologyAclBinding> bindings)
       throws IOException {
-
     List<Action> updateActions = new ArrayList<>();
-
     final List<String> errorMessages =
         aclBindingsResults.stream()
             .filter(AclBindingsResult::isError)
@@ -274,12 +261,10 @@ public class AccessControlManager implements ExecutionPlanUpdater {
       }
       throw new IOException(errorMessages.get(0));
     }
-
     Set<TopologyAclBinding> allFinalBindings =
         aclBindingsResults.stream()
             .flatMap(aboe -> aboe.getAclBindings().stream())
             .collect(Collectors.toSet());
-
     Set<TopologyAclBinding> bindingsToBeCreated =
         allFinalBindings.stream()
             .filter(Objects::nonNull)
@@ -288,12 +273,10 @@ public class AccessControlManager implements ExecutionPlanUpdater {
             // Diff of bindings, so we only create what is not already created in the cluster.
             .filter(binding -> !bindings.contains(binding))
             .collect(Collectors.toSet());
-
     if (!bindingsToBeCreated.isEmpty()) {
       CreateBindings createBindings = new CreateBindings(controlProvider, bindingsToBeCreated);
       updateActions.add(createBindings);
     }
-
     if (config.isAllowDeleteBindings()) {
       // clear acls that does not appear anymore in the new generated list,
       // but where previously created
@@ -313,13 +296,11 @@ public class AccessControlManager implements ExecutionPlanUpdater {
   private List<AclBindingsResult> buildPlatformLevelActions(final Topology topology) {
     List<AclBindingsResult> aclBindingsResults = new ArrayList<>();
     Platform platform = topology.getPlatform();
-
     // Set cluster level ACLs
     syncClusterLevelRbac(platform.getKafka().getRbac(), KAFKA, aclBindingsResults);
     syncClusterLevelRbac(platform.getKafkaConnect().getRbac(), KAFKA_CONNECT, aclBindingsResults);
     syncClusterLevelRbac(
         platform.getSchemaRegistry().getRbac(), SCHEMA_REGISTRY, aclBindingsResults);
-
     // Set component level ACLs
     for (SchemaRegistryInstance schemaRegistry : platform.getSchemaRegistry().getInstances()) {
       aclBindingsResults.add(
@@ -329,12 +310,10 @@ public class AccessControlManager implements ExecutionPlanUpdater {
       aclBindingsResults.add(
           new ControlCenterAclBindingsBuilder(bindingsBuilder, controlCenter).getAclBindings());
     }
-
     for (KsqlServerInstance ksqlServer : platform.getKsqlServer().getInstances()) {
       aclBindingsResults.add(
           new KSqlServerAclBindingsBuilder(bindingsBuilder, ksqlServer).getAclBindings());
     }
-
     return aclBindingsResults;
   }
 

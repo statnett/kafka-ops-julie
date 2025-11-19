@@ -67,9 +67,7 @@ public class KsqlManagerIT {
     Properties props = new Properties();
     props.put(TOPOLOGY_TOPIC_STATE_FROM_CLUSTER, "false");
     props.put(ALLOW_DELETE_KSQL_ARTEFACTS, "true");
-
     File file = TestUtils.getResourceFile("/descriptor-ksql.yaml");
-
     testCreateAndUpdatePath(props, file);
   }
 
@@ -80,9 +78,7 @@ public class KsqlManagerIT {
     props.put(TOPOLOGY_TOPIC_STATE_FROM_CLUSTER, "false");
     props.put(ALLOW_DELETE_KSQL_ARTEFACTS, "true");
     props.put(PLATFORM_SERVER_KSQL_URL, "http://" + client.getServer());
-
     File file = TestUtils.getResourceFile("/descriptor-ksql.yaml");
-
     testCreateAndUpdatePath(props, file);
   }
 
@@ -95,60 +91,40 @@ public class KsqlManagerIT {
     props.put(JULIE_VERIFY_STATE_SYNC, true);
     props.put(ALLOW_DELETE_TOPICS, "true");
     props.put(PLATFORM_SERVER_KSQL_URL, "http://" + client.getServer());
-
     File file = TestUtils.getResourceFile("/descriptor-ksql.yaml");
-
     testDeleteRemoteButNotLocal(props, file);
   }
 
   public void testCreateAndUpdatePath(Properties props, File file) throws IOException {
-
     HashMap<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
-
     Configuration config = new Configuration(cliOps, props);
-
     Topology topology = parser.deserialise(file);
-
     KSqlArtefactManager kam = new KSqlArtefactManager(client, config, file.getAbsolutePath());
-
     kam.updatePlan(topology, plan);
     plan.run();
-
     List<String> streams = client.listStreams();
     assertThat(streams).hasSize(1);
     assertThat(streams.get(0)).contains("{\"path\":\"\",\"name\":\"RIDERLOCATIONS\"");
-
     topology.getProjects().get(0).getKsqlArtefacts().getStreams().remove(0);
-
     assertThat(topology.getProjects().get(0).getKsqlArtefacts().getStreams()).hasSize(0);
-
     ExecutionPlan newPlan = ExecutionPlan.init(new BackendController(), System.out);
-
     kam.updatePlan(topology, newPlan);
     newPlan.run();
-
     streams = client.listStreams();
     assertThat(streams).hasSize(0);
   }
 
   public void testDeleteRemoteButNotLocal(Properties props, File file) throws IOException {
-
     HashMap<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
-
     Configuration config = new Configuration(cliOps, props);
-
     Topology topology = parser.deserialise(file);
-
     KSqlArtefactManager kam = new KSqlArtefactManager(client, config, file.getAbsolutePath());
-
     kam.updatePlan(topology, plan);
     plan.run();
-
     var first = plan.getKSqlArtefacts().stream().findFirst().get();
     client.delete(first.getName(), "TABLE");
-
     ExecutionPlan newPlan = ExecutionPlan.init(new BackendController(), System.out);
     kam.updatePlan(topology, newPlan);
   }

@@ -15,7 +15,6 @@ public class PartitionNumberValidationTest {
     Map<String, String> config = new HashMap<>();
     config.put("replication.factor", "34");
     config.put("num.partitions", "123");
-
     Topic topic = new Topic("topic", config);
     PartitionNumberValidation validation = new PartitionNumberValidation((short) 35, "eq");
     validation.valid(topic);
@@ -27,7 +26,6 @@ public class PartitionNumberValidationTest {
     Map<String, String> config = new HashMap<>();
     config.put("replication.factor", "34");
     config.put("num.partitions", "123");
-
     Topic topic = new Topic("topic", config);
     PartitionNumberValidation validation = new PartitionNumberValidation((short) 124, "gte");
     validation.valid(topic);
@@ -39,7 +37,6 @@ public class PartitionNumberValidationTest {
     Map<String, String> config = new HashMap<>();
     config.put("replication.factor", "34");
     config.put("num.partitions", "123");
-
     Topic topic = new Topic("topic", config);
     PartitionNumberValidation validation = new PartitionNumberValidation((short) 15, "lte");
     validation.valid(topic);
@@ -51,7 +48,6 @@ public class PartitionNumberValidationTest {
     Map<String, String> config = new HashMap<>();
     config.put("replication.factor", "34");
     config.put("num.partitions", "123");
-
     Topic topic = new Topic("topic", config);
     PartitionNumberValidation validation = new PartitionNumberValidation((short) 125, "gt");
     validation.valid(topic);
@@ -63,7 +59,6 @@ public class PartitionNumberValidationTest {
     Map<String, String> config = new HashMap<>();
     config.put("replication.factor", "34");
     config.put("num.partitions", "123");
-
     Topic topic = new Topic("topic", config);
     PartitionNumberValidation validation = new PartitionNumberValidation((short) 33, "lt");
     validation.valid(topic);
@@ -75,7 +70,6 @@ public class PartitionNumberValidationTest {
     Map<String, String> config = new HashMap<>();
     config.put("replication.factor", "34");
     config.put("num.partitions", "123");
-
     Topic topic = new Topic("topic", config);
     PartitionNumberValidation validation = new PartitionNumberValidation((short) 123, "eq");
     validation.valid(topic);
@@ -87,7 +81,6 @@ public class PartitionNumberValidationTest {
     Map<String, String> config = new HashMap<>();
     config.put("replication.factor", "34");
     config.put("num.partitions", "123");
-
     Topic topic = new Topic("topic", config);
     PartitionNumberValidation validation = new PartitionNumberValidation((short) 34, "gte");
     validation.valid(topic);
@@ -99,7 +92,6 @@ public class PartitionNumberValidationTest {
     Map<String, String> config = new HashMap<>();
     config.put("replication.factor", "34");
     config.put("num.partitions", "123");
-
     Topic topic = new Topic("topic", config);
     PartitionNumberValidation validation = new PartitionNumberValidation((short) 123, "lte");
     validation.valid(topic);
@@ -111,7 +103,6 @@ public class PartitionNumberValidationTest {
     Map<String, String> config = new HashMap<>();
     config.put("replication.factor", "34");
     config.put("num.partitions", "123");
-
     Topic topic = new Topic("topic", config);
     PartitionNumberValidation validation = new PartitionNumberValidation((short) 122, "gt");
     validation.valid(topic);
@@ -123,7 +114,6 @@ public class PartitionNumberValidationTest {
     Map<String, String> config = new HashMap<>();
     config.put("replication.factor", "34");
     config.put("num.partitions", "123");
-
     Topic topic = new Topic("topic", config);
     PartitionNumberValidation validation = new PartitionNumberValidation((short) 124, "lt");
     validation.valid(topic);

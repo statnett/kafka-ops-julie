@@ -24,7 +24,6 @@ public class TopologyValidator {
   }
 
   public List<String> validate(Topology topology) {
-
     Stream<Either<Boolean, ValidationException>> streamOfTopologyResults =
         validations().stream()
             .filter(p -> p instanceof TopologyValidation)
@@ -38,17 +37,14 @@ public class TopologyValidator {
                     return Either.Right(validationError);
                   }
                 });
-
     List<TopicValidation> listOfTopicValidations =
         validations().stream()
             .filter(p -> p instanceof TopicValidation)
             .map(validation -> (TopicValidation) validation)
             .toList();
-
     Stream<Topic> streamOfTopics =
         topology.getProjects().stream()
             .flatMap((Function<Project, Stream<Topic>>) project -> project.getTopics().stream());
-
     Stream<Either<Boolean, ValidationException>> streamOfTopicResults =
         streamOfTopics.flatMap(
             (Function<Topic, Stream<Either<Boolean, ValidationException>>>)
@@ -63,7 +59,6 @@ public class TopologyValidator {
                                 return Either.Right(ex);
                               }
                             }));
-
     return Stream.concat(streamOfTopologyResults, streamOfTopicResults)
         .filter(Either::isRight)
         .map(either -> either.getRight().get().getMessage())
@@ -83,7 +78,6 @@ public class TopologyValidator {
                               + "Please use the fully qualified class name and check your config.",
                           validationClass));
                 }
-
                 Object instance;
                 try {
                   Constructor<?> configurationConstructor =

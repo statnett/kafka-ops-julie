@@ -44,7 +44,6 @@ abstract class AbstractPrincipalManager implements ExecutionPlanUpdater {
       return;
     }
     provider.configure();
-
     Map<String, ServiceAccount> accounts = loadActualClusterStateIfAvailable(plan);
     for (Topology topology : topologies.values()) {
       List<String> principals = parseListOfPrincipals(topology);
@@ -94,12 +93,10 @@ abstract class AbstractPrincipalManager implements ExecutionPlanUpdater {
                   }
                   return users.stream();
                 });
-
     List<User> platformPrincipals = new ArrayList<>();
     Platform platform = topology.getPlatform();
     platformPrincipals.addAll(platform.getControlCenter().getInstances());
     platformPrincipals.addAll(platform.getSchemaRegistry().getInstances());
-
     return Stream.concat(projectPrincipals, platformPrincipals.stream())
         .map(User::getPrincipal)
         .filter(this::matchesPrefixList)

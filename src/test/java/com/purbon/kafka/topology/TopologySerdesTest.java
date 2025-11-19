@@ -43,9 +43,7 @@ public class TopologySerdesTest {
     props.put(PLATFORM_SERVERS_CONNECT + ".0", "connector0:foo");
     HashMap<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
-
     Configuration config = new Configuration(cliOps, props);
-
     parser = new TopologySerdes(config, new PlanMap());
   }
 
@@ -54,7 +52,6 @@ public class TopologySerdesTest {
     Topology topology =
         parser.deserialise(TestUtils.getResourceFile("/descriptor-with-metadata.yaml"));
     Project project = topology.getProjects().get(0);
-
     assertThat(project.getConsumers().get(0).getMetadata()).containsKey("system");
     assertThat(project.getProducers().get(0).getMetadata()).containsKey("contactInfo");
     assertThat(project.getStreams().get(0).getMetadata()).containsKey("system");
@@ -70,9 +67,7 @@ public class TopologySerdesTest {
   public void testStreamsParsingOnlyReadTopicsShouldNotParseAsNull() {
     Topology topology =
         parser.deserialise(TestUtils.getResourceFile("/descriptor-streams-only-read.yaml"));
-
     Project p = topology.getProjects().get(0);
-
     for (KStream s : p.getStreams()) {
       assertThat(s.getTopics().get(KStream.READ_TOPICS)).isNotNull();
       assertThat(s.getTopics().get(KStream.READ_TOPICS)).isInstanceOf(List.class);
@@ -93,10 +88,8 @@ public class TopologySerdesTest {
         parser.deserialise(TestUtils.getResourceFile("/descriptor-with-others.yml"));
     Project project = topology.getProjects().get(0);
     assertThat(project.namePrefix()).startsWith("contextOrg.source.foo.bar.zet");
-
     Topology anotherTopology = parser.deserialise(TestUtils.getResourceFile("/descriptor.yaml"));
     Project anotherProject = anotherTopology.getProjects().get(0);
-
     assertEquals("contextOrg.source.foo.", anotherProject.namePrefix());
   }
 
@@ -110,10 +103,8 @@ public class TopologySerdesTest {
     Topology topology = new TopologyImpl();
     topology.setContext("contextOrg");
     topology.setProjects(buildProjects());
-
     String topologyYamlString = parser.serialise(topology);
     Topology deserTopology = parser.deserialise(topologyYamlString);
-
     assertEquals(topology.getContext(), deserTopology.getContext());
     assertEquals(topology.getProjects().size(), deserTopology.getProjects().size());
   }
@@ -122,19 +113,15 @@ public class TopologySerdesTest {
   public void testTopicConfigSerdes() throws IOException {
     Topology topology = new TopologyImpl();
     topology.setContext("team");
-
     HashMap<String, String> topicConfig = new HashMap<>();
     topicConfig.put("num.partitions", "1");
     topicConfig.put("replication.factor", "1");
     Topic topic = new Topic("foo", topicConfig);
-
     HashMap<String, String> topicBarConfig = new HashMap<>();
     topicBarConfig.put("num.partitions", "1");
     topicBarConfig.put("replication.factor", "1");
     Topic topicBar = new Topic("bar", "avro", topicBarConfig);
-
     Project project = new ProjectImpl("foo");
-
     KStream kstreamApp = new KStream();
     kstreamApp.setPrincipal("App0");
     HashMap<String, List<String>> topics = new HashMap<>();
@@ -142,37 +129,28 @@ public class TopologySerdesTest {
     topics.put(KStream.WRITE_TOPICS, Arrays.asList("topicC", "topicD"));
     kstreamApp.setTopics(topics);
     project.setStreams(Collections.singletonList(kstreamApp));
-
     Connector connector1 = new Connector();
     connector1.setPrincipal("Connect1");
     HashMap<String, List<String>> topics1 = new HashMap<>();
     topics1.put(KStream.READ_TOPICS, Arrays.asList("topicA", "topicB"));
     connector1.setTopics(topics1);
-
     Connector connector2 = new Connector();
     connector2.setPrincipal("Connect2");
     HashMap<String, List<String>> topics2 = new HashMap<>();
     topics2.put(KStream.WRITE_TOPICS, Arrays.asList("topicC", "topicD"));
     connector2.setTopics(topics2);
     project.setConnectors(Arrays.asList(connector1, connector2));
-
     Consumer consumer0 = new Consumer("app0");
     Consumer consumer1 = new Consumer("app1");
     project.setConsumers(Arrays.asList(consumer0, consumer1));
-
     project.setTopics(Arrays.asList(topic, topicBar));
-
     Project project2 = new ProjectImpl("bar");
     project2.setTopics(Arrays.asList(topicBar));
-
     topology.setProjects(Arrays.asList(project, project2));
-
     String topologyYamlString = parser.serialise(topology);
     Topology deserTopology = parser.deserialise(topologyYamlString);
-
     Project serdesProject = deserTopology.getProjects().get(0);
     Topic serdesTopic = serdesProject.getTopics().get(0);
-
     assertEquals(topic.getName(), serdesTopic.getName());
     assertEquals(topic.partitionsCount(), serdesTopic.partitionsCount());
   }
@@ -180,29 +158,22 @@ public class TopologySerdesTest {
   @Test
   public void testTopicWithDataType() throws IOException {
     Project project = new ProjectImpl("foo");
-
     Topology topology = new TopologyImpl();
     topology.setContext("team");
     topology.addProject(project);
-
     HashMap<String, String> topicConfig = new HashMap<>();
     topicConfig.put("num.partitions", "3");
     topicConfig.put("replication.factor", "2");
     Topic topic = new Topic("foo", "json", topicConfig);
     project.addTopic(topic);
-
     Topic topic2 = new Topic("topic2", topicConfig);
     project.addTopic(topic2);
-
     String topologyYamlString = parser.serialise(topology);
     Topology deserTopology = parser.deserialise(topologyYamlString);
-
     Project serdesProject = deserTopology.getProjects().get(0);
     Topic serdesTopic = serdesProject.getTopics().get(0);
-
     assertEquals(topic.getDataType(), serdesTopic.getDataType());
     assertEquals(topic.getDataType().get(), serdesTopic.getDataType().get());
-
     Topic serdesTopic2 = serdesProject.getTopics().get(1);
     assertEquals(topic2.getDataType(), serdesTopic2.getDataType());
   }
@@ -220,24 +191,19 @@ public class TopologySerdesTest {
   @Test
   public void testCoreElementsProcessing() {
     Topology topology = parser.deserialise(TestUtils.getResourceFile("/descriptor.yaml"));
-
     assertThat(topology.getProjects()).hasSize(3);
-
     Project project = topology.getProjects().get(0);
     assertThat(project.getProducers()).hasSize(3);
     assertThat(project.getConsumers()).hasSize(2);
     assertThat(project.getStreams()).hasSize(1);
     assertThat(project.getConnectors()).hasSize(2);
     assertThat(project.getStreams().get(0).getObserverPrincipals()).hasSize(0);
-
     assertThat(project.getProducers().get(0).getIdempotence()).isEmpty();
     assertThat(project.getProducers().get(1).getTransactionId()).isEqualTo(Optional.of("1234"));
     assertThat(project.getProducers().get(2).getIdempotence()).isNotEmpty();
-
     List<Topic> topics = topology.getProjects().get(2).getTopics();
     assertThat(topics).hasSize(2);
     assertThat(topics.get(0).toString()).isEqualTo("contextOrg.source.baz.topicE");
-
     final List<KStream> streams = topology.getProjects().get(2).getStreams();
     assertThat(streams).hasSize(1);
     assertThat(streams.get(0).getObserverPrincipals()).hasSize(2);
@@ -250,11 +216,9 @@ public class TopologySerdesTest {
   @Test
   public void testStreamsApps() {
     Topology topology = parser.deserialise(TestUtils.getResourceFile("/descriptor.yaml"));
-
     Project project1 = topology.getProjects().get(0);
     assertThat(project1.getStreams()).hasSize(1);
     assertThat(project1.getStreams()).noneMatch(s -> s.getApplicationId().isPresent());
-
     Project project3 = topology.getProjects().get(2);
     assertThat(project3.getStreams()).hasSize(1);
     assertThat(project3.getStreams())
@@ -273,12 +237,10 @@ public class TopologySerdesTest {
     List<Topic> topics = project.getTopics();
     Optional<Topic> topicBar = topics.stream().filter(t -> t.getName().equals("bar")).findFirst();
     Optional<Topic> topicCat = topics.stream().filter(t -> t.getName().equals("cat")).findFirst();
-
     assertThat(topicBar).isPresent();
     assertThat(topicBar.get().getSchemas()).hasSize(1);
     assertThat(topicBar.get().getSchemas().get(0).getValueSubject().hasSchemaFile()).isTrue();
     assertThat(topicBar.get().getSubjectNameStrategy()).isEqualTo(TOPIC_NAME_STRATEGY);
-
     assertThat(topicCat).isPresent();
     assertThat(topicCat.get().getSchemas()).hasSize(2);
     assertThat(topicCat.get().getSchemas().get(0).getValueSubject().hasSchemaFile()).isTrue();
@@ -290,7 +252,6 @@ public class TopologySerdesTest {
   public void testOtherSerdes() {
     Topology topology = parser.deserialise(TestUtils.getResourceFile("/descriptor.yaml"));
     Project project = topology.getProjects().get(0);
-
     var others = project.getOthers();
     assertThat(others).hasSize(2);
     var foos = others.get("app");
@@ -305,17 +266,14 @@ public class TopologySerdesTest {
   public void testKsqlSerdes() {
     Topology topology = parser.deserialise(TestUtils.getResourceFile("/descriptor.yaml"));
     Project project = topology.getProjects().get(0);
-
     KSqlApp kSqlApp = project.getKSqls().get(0);
     assertThat(kSqlApp.getPrincipal()).isEqualTo("User:ksql0");
     assertThat(kSqlApp.getTopics().get("read")).hasSize(1);
     assertThat(kSqlApp.getTopics().get("write")).hasSize(1);
-
     KsqlArtefacts artefacts = project.getKsqlArtefacts();
     assertThat(artefacts.getStreams()).hasSize(1);
     KsqlStreamArtefact artefact = artefacts.getStreams().get(0);
     assertThat(artefact.getName()).isEqualTo("riderLocations");
-
     assertThat(artefacts.getTables()).hasSize(1);
     KsqlTableArtefact tableArtefact = artefacts.getTables().get(0);
     assertThat(tableArtefact.getName()).isEqualTo("users");
@@ -325,7 +283,6 @@ public class TopologySerdesTest {
   public void testKsqlWithVarsSerdes() {
     Topology topology = parser.deserialise(TestUtils.getResourceFile("/descriptor.yaml"));
     Project project = topology.getProjects().get(0);
-
     KsqlArtefacts artefacts = project.getKsqlArtefacts();
     assertThat(artefacts.getVars().getSessionVars()).hasSize(2);
     String firstVar = artefacts.getVars().getSessionVars().get("foo");
@@ -335,9 +292,7 @@ public class TopologySerdesTest {
   @Test
   public void testPlatformProcessing() {
     Topology topology = parser.deserialise(TestUtils.getResourceFile("/descriptor.yaml"));
-
     assertEquals("contextOrg", topology.getContext());
-
     List<SchemaRegistryInstance> listOfSR =
         topology.getPlatform().getSchemaRegistry().getInstances();
     assertEquals(2, listOfSR.size());
@@ -345,20 +300,15 @@ public class TopologySerdesTest {
     assertEquals("foo", listOfSR.get(0).topicString());
     assertEquals("bar", listOfSR.get(0).groupString());
     assertEquals("User:SchemaRegistry02", listOfSR.get(1).getPrincipal());
-
     List<ControlCenterInstance> listOfC3 = topology.getPlatform().getControlCenter().getInstances();
-
     assertEquals(1, listOfC3.size());
     assertEquals("User:ControlCenter", listOfC3.get(0).getPrincipal());
     assertEquals("controlcenter", listOfC3.get(0).getAppId());
-
     List<KsqlServerInstance> listOfKsql = topology.getPlatform().getKsqlServer().getInstances();
-
     assertEquals(2, listOfKsql.size());
     assertEquals("User:ksql", listOfKsql.get(0).getPrincipal());
     assertEquals("ksql-server1", listOfKsql.get(0).getKsqlDbId());
     assertEquals("User:foo", listOfKsql.get(0).getOwner());
-
     assertEquals("User:ksql", listOfKsql.get(1).getPrincipal());
     assertEquals("ksql-server2", listOfKsql.get(1).getKsqlDbId());
     assertEquals("User:foo", listOfKsql.get(1).getOwner());
@@ -368,7 +318,6 @@ public class TopologySerdesTest {
   public void testOnlyTopics() {
     Topology topology =
         parser.deserialise(TestUtils.getResourceFile("/descriptor-only-topics.yaml"));
-
     assertEquals("contextOrg", topology.getContext());
     assertTrue(topology.getProjects().get(0).getConnectors().isEmpty());
     assertTrue(topology.getProjects().get(0).getProducers().isEmpty());
@@ -379,7 +328,6 @@ public class TopologySerdesTest {
   public void testOnlyConnectors() {
     Topology topology =
         parser.deserialise(TestUtils.getResourceFile("/descriptor-connector-alone.yaml"));
-
     var project = topology.getProjects().get(0);
     assertEquals("context", topology.getContext());
     assertTrue(project.getConnectors().isEmpty());
@@ -402,7 +350,6 @@ public class TopologySerdesTest {
     Topology topology =
         parser.deserialise(TestUtils.getResourceFile("/backwards-comp-descriptor.yaml"));
     Project fooProject = topology.getProjects().get(0);
-
     assertEquals("foo", fooProject.getName());
     assertEquals(2, fooProject.getConnectors().size());
     assertEquals("User:Connect1", fooProject.getConnectors().get(0).getPrincipal());
@@ -414,20 +361,14 @@ public class TopologySerdesTest {
     Map<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
     cliOps.put(CLIENT_CONFIG_OPTION, "/fooBar");
-
     Properties props = new Properties();
     props.put(TOPIC_PREFIX_SEPARATOR_CONFIG, "_");
     Configuration config = new Configuration(cliOps, props);
-
     TopologySerdes parser = new TopologySerdes(config, new PlanMap());
-
     Topology topology =
         parser.deserialise(TestUtils.getResourceFile("/descriptor-only-topics.yaml"));
-
     assertEquals("contextOrg", topology.getContext());
-
     Project p = topology.getProjects().get(0);
-
     assertEquals(2, p.getTopics().size());
     assertEquals("contextOrg_source_foo_foo", p.getTopics().get(0).toString());
     assertEquals("contextOrg_source_foo_bar_avro", p.getTopics().get(1).toString());
@@ -438,20 +379,14 @@ public class TopologySerdesTest {
     Map<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
     cliOps.put(CLIENT_CONFIG_OPTION, "/fooBar");
-
     Properties props = new Properties();
     props.put(TOPIC_PREFIX_FORMAT_CONFIG, "{{source}}.{{context}}.{{project}}.{{topic}}");
     Configuration config = new Configuration(cliOps, props);
-
     TopologySerdes parser = new TopologySerdes(config, new PlanMap());
-
     Topology topology =
         parser.deserialise(TestUtils.getResourceFile("/descriptor-only-topics.yaml"));
-
     assertEquals("contextOrg", topology.getContext());
-
     Project p = topology.getProjects().get(0);
-
     assertEquals(2, p.getTopics().size());
     assertEquals("source.contextOrg.foo.foo", p.getTopics().get(0).toString());
     assertEquals("source.contextOrg.foo.bar", p.getTopics().get(1).toString());
@@ -462,22 +397,16 @@ public class TopologySerdesTest {
     Map<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
     cliOps.put(CLIENT_CONFIG_OPTION, "/fooBar");
-
     Properties props = new Properties();
     props.put(
         TOPIC_PREFIX_FORMAT_CONFIG,
         "{{context}}.{{project}}.{{topic}}{% if dataType is defined %}.{{dataType}}{% endif %}");
     Configuration config = new Configuration(cliOps, props);
-
     TopologySerdes parser = new TopologySerdes(config, new PlanMap());
-
     Topology topology =
         parser.deserialise(TestUtils.getResourceFile("/descriptor-only-topics-datatype.yaml"));
-
     assertEquals("context", topology.getContext());
-
     Project p = topology.getProjects().get(0);
-
     assertEquals(2, p.getTopics().size());
     assertEquals("context.foo.foo", p.getTopics().get(0).toString());
     assertEquals("context.foo.bar.avro", p.getTopics().get(1).toString());
@@ -488,18 +417,13 @@ public class TopologySerdesTest {
     Map<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
     cliOps.put(CLIENT_CONFIG_OPTION, "/fooBar");
-
     Properties props = new Properties();
     props.put(TOPOLOGY_DLQ_TOPICS_GENERATE, "true");
-
     Configuration config = new Configuration(cliOps, props);
-
     TopologySerdes parser = new TopologySerdes(config, new PlanMap());
-
     Topology topology =
         parser.deserialise(TestUtils.getResourceFile("/descriptor-only-topics.yaml"));
     Project p = topology.getProjects().get(0);
-
     assertThat(p.getTopics()).hasSize(4);
     assertEquals("contextOrg.source.foo.foo", p.getTopics().get(0).toString());
     assertEquals("contextOrg.source.foo.foo.dlq", p.getTopics().get(1).toString());
@@ -512,19 +436,14 @@ public class TopologySerdesTest {
     Map<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
     cliOps.put(CLIENT_CONFIG_OPTION, "/fooBar");
-
     Properties props = new Properties();
     props.put(TOPOLOGY_DLQ_TOPICS_GENERATE, "true");
     props.put(TOPOLOGY_DQL_TOPICS_DENY_LIST + ".0", "contextOrg.source.foo.bar.avro");
-
     Configuration config = new Configuration(cliOps, props);
-
     TopologySerdes parser = new TopologySerdes(config, new PlanMap());
-
     Topology topology =
         parser.deserialise(TestUtils.getResourceFile("/descriptor-only-topics.yaml"));
     Project p = topology.getProjects().get(0);
-
     assertThat(p.getTopics()).hasSize(3);
     assertEquals("contextOrg.source.foo.foo", p.getTopics().get(0).toString());
     assertEquals("contextOrg.source.foo.foo.dlq", p.getTopics().get(1).toString());
@@ -536,19 +455,14 @@ public class TopologySerdesTest {
     Map<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
     cliOps.put(CLIENT_CONFIG_OPTION, "/fooBar");
-
     Properties props = new Properties();
     props.put(TOPOLOGY_DLQ_TOPICS_GENERATE, "true");
     props.put(TOPOLOGY_DQL_TOPICS_DENY_LIST + ".0", "^.*source.foo.foo$");
-
     Configuration config = new Configuration(cliOps, props);
-
     TopologySerdes parser = new TopologySerdes(config, new PlanMap());
-
     Topology topology =
         parser.deserialise(TestUtils.getResourceFile("/descriptor-only-topics.yaml"));
     Project p = topology.getProjects().get(0);
-
     assertThat(p.getTopics()).hasSize(3);
     assertEquals("contextOrg.source.foo.foo", p.getTopics().get(0).toString());
     assertEquals("contextOrg.source.foo.bar.avro", p.getTopics().get(1).toString());
@@ -560,19 +474,14 @@ public class TopologySerdesTest {
     Map<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
     cliOps.put(CLIENT_CONFIG_OPTION, "/fooBar");
-
     Properties props = new Properties();
     props.put(TOPOLOGY_DLQ_TOPICS_GENERATE, "true");
     props.put(TOPOLOGY_DQL_TOPICS_DENY_LIST + ".0", "^.*source.foo.*$");
-
     Configuration config = new Configuration(cliOps, props);
-
     TopologySerdes parser = new TopologySerdes(config, new PlanMap());
-
     Topology topology =
         parser.deserialise(TestUtils.getResourceFile("/descriptor-only-topics.yaml"));
     Project p = topology.getProjects().get(0);
-
     assertThat(p.getTopics()).hasSize(2);
     assertEquals("contextOrg.source.foo.foo", p.getTopics().get(0).toString());
     assertEquals("contextOrg.source.foo.bar.avro", p.getTopics().get(1).toString());
@@ -583,20 +492,15 @@ public class TopologySerdesTest {
     Map<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
     cliOps.put(CLIENT_CONFIG_OPTION, "/fooBar");
-
     Properties props = new Properties();
     props.put(DLQ_TOPIC_PREFIX_FORMAT_CONFIG, "{{dlq}}.{{context}}.{{project}}");
     props.put(TOPOLOGY_DLQ_TOPICS_GENERATE, "true");
     props.put(TOPOLOGY_DQL_TOPICS_ALLOW_LIST + ".0", "contextOrg.source.foo.bar.avro");
-
     Configuration config = new Configuration(cliOps, props);
-
     TopologySerdes parser = new TopologySerdes(config, new PlanMap());
-
     Topology topology =
         parser.deserialise(TestUtils.getResourceFile("/descriptor-only-topics.yaml"));
     Project p = topology.getProjects().get(0);
-
     assertThat(p.getTopics()).hasSize(3);
     assertEquals("contextOrg.source.foo.foo", p.getTopics().get(0).toString());
     assertEquals("contextOrg.source.foo.bar.avro", p.getTopics().get(1).toString());
@@ -608,24 +512,17 @@ public class TopologySerdesTest {
     Map<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
     cliOps.put(CLIENT_CONFIG_OPTION, "/fooBar");
-
     Properties props = new Properties();
     props.put(TOPOLOGY_DLQ_TOPICS_GENERATE, "true");
     props.put(TOPOLOGY_DQL_TOPICS_ALLOW_LIST + ".0", "contextOrg.source.foo.bar.avro");
-
     Configuration config = new Configuration(cliOps, props);
-
     TopologySerdes parser = new TopologySerdes(config, new PlanMap());
-
     Topology topology =
         parser.deserialise(TestUtils.getResourceFile("/descriptor-only-topics.yaml"));
     Project p = topology.getProjects().get(0);
-
     assertThat(p.getTopics()).hasSize(3);
-
     Topic mainTopic = p.getTopics().get(1);
     Topic dlqTopic = p.getTopics().get(2);
-
     assertEquals("contextOrg.source.foo.bar.avro", mainTopic.toString());
     assertEquals("contextOrg.source.foo.bar.avro.dlq", dlqTopic.toString());
     assertThat(mainTopic.getConfig()).usingRecursiveComparison().isEqualTo(dlqTopic.getConfig());
@@ -636,19 +533,14 @@ public class TopologySerdesTest {
     Map<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
     cliOps.put(CLIENT_CONFIG_OPTION, "/fooBar");
-
     Properties props = new Properties();
     props.put(TOPOLOGY_DLQ_TOPICS_GENERATE, "true");
     props.put(TOPOLOGY_DQL_TOPICS_ALLOW_LIST + ".0", "contextOrg.source.foo.bar.avro");
-
     Configuration config = new Configuration(cliOps, props);
-
     TopologySerdes parser = new TopologySerdes(config, new PlanMap());
-
     Topology topology =
         parser.deserialise(TestUtils.getResourceFile("/descriptor-only-topics.yaml"));
     Project p = topology.getProjects().get(0);
-
     assertThat(p.getTopics()).hasSize(3);
     assertEquals("contextOrg.source.foo.foo", p.getTopics().get(0).toString());
     assertEquals("contextOrg.source.foo.bar.avro", p.getTopics().get(1).toString());
@@ -660,27 +552,20 @@ public class TopologySerdesTest {
     Map<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
     cliOps.put(CLIENT_CONFIG_OPTION, "/fooBar");
-
     Properties props = new Properties();
     props.put(TOPOLOGY_DLQ_TOPICS_GENERATE, "true");
     props.put(TOPOLOGY_DQL_TOPICS_ALLOW_LIST + ".0", "contextOrg.source.foo.bar.avro");
     props.put(TOPOLOGY_DQL_TOPICS_DENY_LIST + ".0", "contextOrg.source.bar.bar.avro");
-
     Configuration config = new Configuration(cliOps, props);
-
     TopologySerdes parser = new TopologySerdes(config, new PlanMap());
-
     Topology topology =
         parser.deserialise(TestUtils.getResourceFile("/descriptor-only-topics.yaml"));
     Project p = topology.getProjects().get(0);
-
     assertThat(p.getTopics()).hasSize(3);
     assertEquals("contextOrg.source.foo.foo", p.getTopics().get(0).toString());
     assertEquals("contextOrg.source.foo.bar.avro", p.getTopics().get(1).toString());
     assertEquals("contextOrg.source.foo.bar.avro.dlq", p.getTopics().get(2).toString());
-
     p = topology.getProjects().get(1);
-
     assertThat(p.getTopics()).hasSize(1);
     assertEquals("contextOrg.source.bar.bar.avro", p.getTopics().get(0).toString());
   }
@@ -694,7 +579,6 @@ public class TopologySerdesTest {
   public void testJsonDescriptorFileSerdes() {
     TopologySerdes parser = new TopologySerdes(new Configuration(), FileType.JSON, new PlanMap());
     Topology topology = parser.deserialise(TestUtils.getResourceFile("/descriptor.json"));
-
     assertEquals(1, topology.getProjects().size());
     assertEquals("foo", topology.getProjects().get(0).getName());
     assertEquals(2, topology.getProjects().get(0).getTopics().size());
@@ -703,26 +587,21 @@ public class TopologySerdesTest {
   @Test
   public void shouldParseSpecialTopics() {
     Topology topology = parser.deserialise(TestUtils.getResourceFile("/descriptor.yaml"));
-
     var topics = topology.getSpecialTopics();
     assertThat(topics).hasSize(2);
     var topicNames = topics.stream().map(Topic::getName).collect(Collectors.toList());
     assertThat(topicNames).contains("foo");
     assertThat(topicNames).contains("bar");
-
     Properties props = new Properties();
     props.put(PROJECT_PREFIX_FORMAT_CONFIG, "{{project}}");
     props.put(TOPIC_PREFIX_FORMAT_CONFIG, "{{project}}.{{topic}}");
     HashMap<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
-
     Configuration config = new Configuration(cliOps, props);
-
     TopologySerdes parser = new TopologySerdes(config, FileType.YAML, new PlanMap());
     topology = parser.deserialise(TestUtils.getResourceFile("/descriptor.yaml"));
     topics = topology.getSpecialTopics();
     assertThat(topics).hasSize(2);
-
     var topicFullNames = topics.stream().map(Topic::toString).collect(Collectors.toList());
     assertThat(topicFullNames).contains("foo");
     assertThat(topicFullNames).contains("bar");
@@ -733,7 +612,6 @@ public class TopologySerdesTest {
     project.setConsumers(buildConsumers());
     project.setProducers(buildProducers());
     project.setStreams(buildStreams());
-
     return Collections.singletonList(project);
   }
 
@@ -743,12 +621,10 @@ public class TopologySerdesTest {
     topics.put("read", Arrays.asList("topic1", "topic3"));
     topics.put("write", Arrays.asList("topic2", "topic4"));
     streams.add(new KStream("app3", topics, Collections.emptyList()));
-
     topics = new HashMap<>();
     topics.put("read", Arrays.asList("topic2", "topic4"));
     topics.put("write", Arrays.asList("topic5"));
     streams.add(new KStream("app4", topics, Collections.emptyList()));
-
     return streams;
   }
 

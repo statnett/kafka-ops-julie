@@ -70,10 +70,8 @@ public class AccessControlManagerIT {
     topologyAdminClient = new TopologyBuilderAdminClient(kafkaAdminClient);
     ContainerTestUtils.clearAclsAndTopics(container);
     TestUtils.deleteStateFile();
-
     this.cs = new BackendController();
     this.plan = ExecutionPlan.init(cs, System.out);
-
     aclsProvider = new SimpleAclsProvider(topologyAdminClient);
     bindingsBuilder = new AclsBindingsBuilder(config);
     accessControlManager = new AccessControlManager(aclsProvider, bindingsBuilder);
@@ -81,69 +79,51 @@ public class AccessControlManagerIT {
 
   @Test
   public void aclsRemoval() throws ExecutionException, InterruptedException, IOException {
-
     Properties props = new Properties();
     props.put(ALLOW_DELETE_BINDINGS, true);
-
     HashMap<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
-
     Configuration config = new Configuration(cliOps, props);
-
     accessControlManager = new AccessControlManager(aclsProvider, bindingsBuilder, config);
-
     // Crate an ACL outside the control of the state manager.
     List<TopologyAclBinding> bindings =
         bindingsBuilder.buildLiteralBindingsForProducers(
             Collections.singleton(new Producer("User:foo")), "bar");
     aclsProvider.createBindings(new HashSet<>(bindings));
-
     List<Consumer> consumers = new ArrayList<>();
     consumers.add(new Consumer("User:testAclsRemovalUser1"));
     consumers.add(new Consumer("User:testAclsRemovalUser2"));
-
     Project project = new ProjectImpl("project");
     project.setConsumers(consumers);
     Topic topicA = new Topic("topicA");
     project.addTopic(topicA);
-
     Topology topology = new TopologyImpl();
     topology.setContext("integration-test");
     topology.addOther("source", "testAclsRemoval");
     topology.addProject(project);
-
     accessControlManager.updatePlan(topology, plan);
     plan.run();
-
     assertEquals(6, cs.size());
     verifyAclsOfSize(
         ContainerTestUtils.NUM_JULIE_INITIAL_ACLS
             + 8); // Total of 3 acls per consumer + 2 for the producer
-
     consumers.remove(1);
     project.setConsumers(consumers);
-
     plan.getActions().clear();
     accessControlManager.updatePlan(topology, plan);
     plan.run();
-
     assertEquals(3, cs.size());
     verifyAclsOfSize(ContainerTestUtils.NUM_JULIE_INITIAL_ACLS + 5);
   }
 
   @Test
   public void aclsRemovedTest() throws IOException, ExecutionException, InterruptedException {
-
     Properties props = new Properties();
     props.put(ALLOW_DELETE_BINDINGS, true);
-
     HashMap<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
-
     Configuration config = new Configuration(cliOps, props);
-
     accessControlManager = new AccessControlManager(aclsProvider, bindingsBuilder, config);
-
     Topology topology =
         buildTopologyForConsumers(
             "aclsRemovedTest-Integration",
@@ -151,76 +131,57 @@ public class AccessControlManagerIT {
             "topicA",
             "User:testAclsRemovalUser1",
             "User:testAclsRemovalUser2");
-
     accessControlManager.updatePlan(topology, plan);
     plan.run();
     assertEquals(6, cs.size());
-
     // Reset the execution flow to be only with one consumer. Acls expected should be three.
-
     BackendController cs = new BackendController();
     ExecutionPlan plan = ExecutionPlan.init(cs, System.out);
-
     topology =
         buildTopologyForConsumers(
             "aclsRemovedTest-Integration", "", "topicA", "User:testAclsRemovalUser1");
-
     accessControlManager.updatePlan(topology, plan);
     plan.run();
-
     assertEquals(3, cs.size());
     verifyAclsOfSize(ContainerTestUtils.NUM_JULIE_INITIAL_ACLS + 3);
   }
 
   @Test
   public void consumerAclsCreation() throws ExecutionException, InterruptedException, IOException {
-
     List<Consumer> consumers = new ArrayList<>();
     consumers.add(new Consumer("User:app1"));
-
     Project project = new ProjectImpl("project");
     project.setConsumers(consumers);
     Topic topicA = new Topic("topicA");
     project.addTopic(topicA);
-
     Topology topology = new TopologyImpl();
     topology.setContext("integration-test");
     topology.addOther("source", "testConsumerAclsCreation");
     topology.addProject(project);
-
     accessControlManager.updatePlan(topology, plan);
     plan.run(false);
-
     verifyConsumerAcls(consumers);
   }
 
   @Test(expected = IOException.class)
   public void shouldDetectChangesInTheRemoteClusterBetweenRuns() throws IOException {
-
     Properties props = new Properties();
     props.put(ALLOW_DELETE_BINDINGS, true);
     props.put(JULIE_VERIFY_STATE_SYNC, true);
     props.put(ALLOW_DELETE_TOPICS, true);
-
     HashMap<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
-
     Configuration config = new Configuration(cliOps, props);
-
     accessControlManager = new AccessControlManager(aclsProvider, bindingsBuilder, config);
-
     TopologyBuilderAdminClient adminClient = new TopologyBuilderAdminClient(kafkaAdminClient);
-
     var topology =
         TestTopologyBuilder.createProject(config)
             .addTopic("topic1")
             .addTopic("topic2")
             .addConsumer("User:foo")
             .buildTopology();
-
     accessControlManager.updatePlan(topology, plan);
     plan.run();
-
     var binding =
         TopologyAclBinding.build(
             "TOPIC",
@@ -231,85 +192,68 @@ public class AccessControlManagerIT {
             "LITERAL",
             AclPermissionType.ALLOW.name());
     adminClient.clearAcls(binding);
-
     accessControlManager.updatePlan(topology, plan);
   }
 
   @Test
   public void producerAclsCreation() throws ExecutionException, InterruptedException, IOException {
-
     List<Producer> producers = new ArrayList<>();
     Producer producer = new Producer("User:Producer1");
     producers.add(producer);
-
     Project project = new ProjectImpl("project");
     project.setProducers(producers);
     Topic topicA = new Topic("topicA");
     project.addTopic(topicA);
-
     Topology topology = new TopologyImpl();
     topology.setContext("integration-test");
     topology.addOther("source", "producerAclsCreation");
     topology.addProject(project);
-
     accessControlManager.updatePlan(topology, plan);
     plan.run(false);
-
     verifyProducerAcls(producers, 2);
   }
 
   @Test
   public void producerWithTxAclsCreation()
       throws ExecutionException, InterruptedException, IOException {
-
     List<Producer> producers = new ArrayList<>();
     Producer producer = new Producer("User:Producer12", "1234", true);
     producers.add(producer);
-
     Project project = new ProjectImpl("project");
     project.setProducers(producers);
     Topic topicA = new Topic("topicA");
     project.addTopic(topicA);
-
     Topology topology = new TopologyImpl();
     topology.setContext("integration-test");
     topology.addOther("source", "producerAclsCreation");
     topology.addProject(project);
-
     accessControlManager.updatePlan(topology, plan);
     plan.run(false);
-
     verifyProducerAcls(producers, 5);
   }
 
   @Test
   public void producerWithIdempotenceAclsCreation()
       throws ExecutionException, InterruptedException, IOException {
-
     List<Producer> producers = new ArrayList<>();
     Producer producer = new Producer("User:Producer13", null, true);
     producers.add(producer);
-
     Project project = new ProjectImpl("project");
     project.setProducers(producers);
     Topic topicA = new Topic("topicA2");
     project.addTopic(topicA);
-
     Topology topology = new TopologyImpl();
     topology.setContext("integration-test");
     topology.addOther("source", "producerAclsCreation");
     topology.addProject(project);
-
     accessControlManager.updatePlan(topology, plan);
     plan.run(false);
-
     verifyProducerAcls(producers, 3);
   }
 
   @Test
   public void kstreamsAclsCreation() throws ExecutionException, InterruptedException, IOException {
     Project project = new ProjectImpl();
-
     KStream app = new KStream();
     app.setPrincipal("User:App0");
     HashMap<String, List<String>> topics = new HashMap<>();
@@ -317,22 +261,18 @@ public class AccessControlManagerIT {
     topics.put(KStream.WRITE_TOPICS, Arrays.asList("topicC", "topicD"));
     app.setTopics(topics);
     project.setStreams(Collections.singletonList(app));
-
     Topology topology = new TopologyImpl();
     topology.setContext("integration-test");
     topology.addOther("source", "kstreamsAclsCreation");
     topology.addProject(project);
-
     accessControlManager.updatePlan(topology, plan);
     plan.run();
-
     verifyKStreamsAcls(app);
   }
 
   @Test
   public void ksqlAppAclsCreation() throws ExecutionException, InterruptedException, IOException {
     Project project = new ProjectImpl();
-
     KSqlApp app = new KSqlApp();
     HashMap<String, List<String>> topics = new HashMap<>();
     topics.put(KStream.READ_TOPICS, asList("topicA", "topicB"));
@@ -340,15 +280,12 @@ public class AccessControlManagerIT {
     app.setTopics(topics);
     app.setPrincipal("User:foo");
     project.setKSqls(singletonList(app));
-
     Topology topology = new TopologyImpl();
     topology.setContext("integration-test");
     topology.addOther("source", "ksqlAppAclsCreation");
     topology.addProject(project);
-
     accessControlManager.updatePlan(topology, plan);
     plan.run();
-
     verifyKSqlAppAcls(app);
   }
 
@@ -361,22 +298,16 @@ public class AccessControlManagerIT {
             .literalResource(ResourceType.TOPIC, "foo")
             .allow(AclOperation.ALL)
             .build();
-
     topologyAdminClient.createAcls(Collections.singleton(julieBinding));
     verifyAclsOfSize(ContainerTestUtils.NUM_JULIE_INITIAL_ACLS + 1);
-
     Properties props = new Properties();
     props.put(TOPOLOGY_STATE_FROM_CLUSTER, "true");
     props.put(JULIE_INTERNAL_PRINCIPAL, juliePrincipal);
     props.put(ALLOW_DELETE_BINDINGS, true);
-
     HashMap<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
-
     Configuration config = new Configuration(cliOps, props);
-
     accessControlManager = new AccessControlManager(aclsProvider, bindingsBuilder, config);
-
     Topology topology =
         buildTopologyForConsumers(
             "testAvoidHandlingInternalAclsForJulie-Integration",
@@ -406,7 +337,6 @@ public class AccessControlManagerIT {
     Topic topicA = new Topic(topic);
     project.addTopic(topicA);
     topology.addProject(project);
-
     return topology;
   }
 
@@ -414,46 +344,35 @@ public class AccessControlManagerIT {
   public void schemaRegistryAclsCreation()
       throws ExecutionException, InterruptedException, IOException {
     Project project = new ProjectImpl();
-
     Topology topology = new TopologyImpl();
     topology.setContext("integration-test");
     topology.addOther("source", "schemaRegistryAclsCreation");
     topology.addProject(project);
-
     Platform platform = new Platform();
     SchemaRegistry sr = new SchemaRegistry();
     SchemaRegistryInstance instance = new SchemaRegistryInstance();
     instance.setPrincipal("User:foo");
-
     SchemaRegistryInstance instance2 = new SchemaRegistryInstance();
     instance2.setPrincipal("User:banana");
-
     sr.setInstances(Arrays.asList(instance, instance2));
     platform.setSchemaRegistry(sr);
-
     topology.setPlatform(platform);
-
     accessControlManager.updatePlan(topology, plan);
     plan.run();
-
     verifySchemaRegistryAcls(platform);
   }
 
   @Test
   public void controlcenterAclsCreation()
       throws ExecutionException, InterruptedException, IOException {
-
     when(config.getConfluentCommandTopic()).thenReturn("foo");
     when(config.getConfluentMetricsTopic()).thenReturn("bar");
     when(config.getConfluentMonitoringTopic()).thenReturn("zet");
-
     Project project = new ProjectImpl();
-
     Topology topology = new TopologyImpl();
     topology.setContext("integration-test");
     topology.addOther("source", "controlcenterAclsCreation");
     topology.addProject(project);
-
     Platform platform = new Platform();
     ControlCenter c3 = new ControlCenter();
     ControlCenterInstance instance = new ControlCenterInstance();
@@ -461,34 +380,27 @@ public class AccessControlManagerIT {
     instance.setAppId("appid");
     c3.setInstances(Collections.singletonList(instance));
     platform.setControlCenter(c3);
-
     topology.setPlatform(platform);
-
     accessControlManager.updatePlan(topology, plan);
     plan.run();
-
     verifyControlCenterAcls(platform);
   }
 
   @Test
   public void connectAclsCreation() throws ExecutionException, InterruptedException, IOException {
     Project project = new ProjectImpl();
-
     Connector connector = new Connector();
     connector.setPrincipal("User:Connect");
     HashMap<String, List<String>> topics = new HashMap<>();
     topics.put(KStream.READ_TOPICS, Arrays.asList("topicA", "topicB"));
     connector.setTopics(topics);
     project.setConnectors(Collections.singletonList(connector));
-
     Topology topology = new TopologyImpl();
     topology.setContext("integration-test");
     topology.addOther("source", "connectAclsCreation");
     topology.addProject(project);
-
     accessControlManager.updatePlan(topology, plan);
     plan.run();
-
     verifyConnectAcls(connector);
   }
 
@@ -502,31 +414,22 @@ public class AccessControlManagerIT {
             .addConsumer("User:app1")
             .addOther("app", "User:app1", "foo")
             .buildTopology();
-
     Map<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
-
     Properties props = new Properties();
     props.put(JULIE_ROLES, TestUtils.getResourceFilename("/roles.yaml"));
-
     Configuration config = new Configuration(cliOps, props);
-
     accessControlManager =
         new AccessControlManager(
             aclsProvider, new AclsBindingsBuilder(config), config.getJulieRoles(), config);
-
     accessControlManager.updatePlan(topology, plan);
-
     plan.run();
-
     verifyAclsOfSize(ContainerTestUtils.NUM_JULIE_INITIAL_ACLS + 7);
   }
 
   private void verifyAclsOfSize(int size) throws ExecutionException, InterruptedException {
-
     Collection<AclBinding> acls =
         kafkaAdminClient.describeAcls(AclBindingFilter.ANY).values().get();
-
     assertEquals(size, acls.size());
   }
 
@@ -534,11 +437,9 @@ public class AccessControlManagerIT {
   public void mirrorMakerAclsCreation()
       throws ExecutionException, InterruptedException, IOException {
     Project project = new ProjectImpl("project");
-
     Topology topology = new TopologyImpl();
     topology.setContext("integration-test");
     topology.addOther("source", "testMirrorMakerAclsCreation");
-
     var mm = new Other();
     mm.setPrincipal("User:mm2");
     mm.setGroup(Optional.of("testgroup"));
@@ -548,31 +449,23 @@ public class AccessControlManagerIT {
     mm.setOtherField("targetPrefix", "test-mm.");
     mm.setOtherField("offsetSyncTopic", "mm2-offset-syncs.test-mm.internal");
     mm.setOtherField("checkpointsTopic", "test-mm.checkpoints.internal");
-
     var deny = new Other();
     deny.setPrincipal("User:mm2");
     deny.setGroup(Optional.of("testgroup"));
-
     project.setOthers(Map.of("mirrorMaker", List.of(mm), "denyTopic", List.of(deny)));
-
     topology.addProject(project);
-
     Properties props = new Properties();
     props.put(
         JULIE_ROLES,
         TestUtils.getResourceFilename("/roles-mirrormaker.yaml")
             + ","
             + TestUtils.getResourceFilename("/roles2.yaml"));
-
     Configuration config = new Configuration(Map.of(), props);
-
     accessControlManager =
         new AccessControlManager(
             aclsProvider, new AclsBindingsBuilder(config), config.getJulieRoles(), config);
-
     accessControlManager.updatePlan(topology, plan);
     plan.run(false);
-
     verifyMirrorMakerAcls(mm);
   }
 
@@ -587,25 +480,18 @@ public class AccessControlManagerIT {
             .addOther("app", "User:user1", "foo")
             .addOther("denyTopic", "User:user2", "foo")
             .buildTopology();
-
     Map<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
-
     Properties props = new Properties();
     String rolesFile = TestUtils.getResourceFilename("/roles.yaml");
     String roles2File = TestUtils.getResourceFilename("/roles2.yaml");
     props.put(JULIE_ROLES, rolesFile + "," + roles2File);
-
     Configuration config = new Configuration(cliOps, props);
-
     accessControlManager =
         new AccessControlManager(
             aclsProvider, new AclsBindingsBuilder(config), config.getJulieRoles(), config);
-
     accessControlManager.updatePlan(topology, plan);
-
     plan.run();
-
     // 8 =
     //  - 2 READ & DESCRIBE for User:app1 for topicA
     //  - 1 Prefixed ALL/ALLOW from "app" role for topic foo for User:user1
@@ -619,65 +505,47 @@ public class AccessControlManagerIT {
 
   private void verifyConnectAcls(Connector connector)
       throws ExecutionException, InterruptedException {
-
     ResourcePatternFilter resourceFilter =
         new ResourcePatternFilter(ResourceType.TOPIC, null, PatternType.ANY);
-
     AccessControlEntryFilter entryFilter =
         new AccessControlEntryFilter(
             connector.getPrincipal(), null, AclOperation.READ, AclPermissionType.ALLOW);
-
     AclBindingFilter filter = new AclBindingFilter(resourceFilter, entryFilter);
-
     Collection<AclBinding> acls = kafkaAdminClient.describeAcls(filter).values().get();
-
     assertEquals(5, acls.size());
-
     entryFilter =
         new AccessControlEntryFilter(
             connector.getPrincipal(), null, AclOperation.WRITE, AclPermissionType.ALLOW);
     filter = new AclBindingFilter(resourceFilter, entryFilter);
     acls = kafkaAdminClient.describeAcls(filter).values().get();
-
     assertEquals(3, acls.size());
-
     resourceFilter = new ResourcePatternFilter(ResourceType.GROUP, null, PatternType.ANY);
     entryFilter =
         new AccessControlEntryFilter(
             connector.getPrincipal(), null, AclOperation.READ, AclPermissionType.ALLOW);
     filter = new AclBindingFilter(resourceFilter, entryFilter);
     acls = kafkaAdminClient.describeAcls(filter).values().get();
-
     assertEquals(1, acls.size());
   }
 
   private void verifySchemaRegistryAcls(Platform platform)
       throws ExecutionException, InterruptedException {
-
     List<SchemaRegistryInstance> srs = platform.getSchemaRegistry().getInstances();
-
     for (SchemaRegistryInstance sr : srs) {
       ResourcePatternFilter resourceFilter =
           new ResourcePatternFilter(ResourceType.TOPIC, null, PatternType.ANY);
-
       AccessControlEntryFilter entryFilter =
           new AccessControlEntryFilter(
               sr.getPrincipal(), null, AclOperation.ANY, AclPermissionType.ALLOW);
-
       AclBindingFilter filter = new AclBindingFilter(resourceFilter, entryFilter);
-
       Collection<AclBinding> acls = kafkaAdminClient.describeAcls(filter).values().get();
-
       ResourcePatternFilter groupResourceFilter =
           new ResourcePatternFilter(ResourceType.GROUP, null, PatternType.ANY);
-
       AccessControlEntryFilter groupEntryFilter =
           new AccessControlEntryFilter(
               sr.getPrincipal(), null, AclOperation.ANY, AclPermissionType.ALLOW);
       AclBindingFilter groupFilter = new AclBindingFilter(groupResourceFilter, groupEntryFilter);
-
       Collection<AclBinding> groupAcls = kafkaAdminClient.describeAcls(groupFilter).values().get();
-
       assertEquals(6, acls.size());
       assertEquals(1, groupAcls.size());
     }
@@ -685,121 +553,84 @@ public class AccessControlManagerIT {
 
   private void verifyControlCenterAcls(Platform platform)
       throws ExecutionException, InterruptedException {
-
     List<ControlCenterInstance> c3List = platform.getControlCenter().getInstances();
-
     for (ControlCenterInstance c3 : c3List) {
       ResourcePatternFilter resourceFilter =
           new ResourcePatternFilter(ResourceType.TOPIC, null, PatternType.ANY);
-
       AccessControlEntryFilter entryFilter =
           new AccessControlEntryFilter(
               c3.getPrincipal(), null, AclOperation.ANY, AclPermissionType.ALLOW);
-
       AclBindingFilter filter = new AclBindingFilter(resourceFilter, entryFilter);
-
       Collection<AclBinding> acls = kafkaAdminClient.describeAcls(filter).values().get();
-
       assertEquals(17, acls.size());
     }
   }
 
   private void verifyKStreamsAcls(KStream app) throws ExecutionException, InterruptedException {
     ResourcePatternFilter resourceFilter = ResourcePatternFilter.ANY;
-
     AccessControlEntryFilter entryFilter =
         new AccessControlEntryFilter(
             app.getPrincipal(), null, AclOperation.WRITE, AclPermissionType.ALLOW);
-
     AclBindingFilter filter = new AclBindingFilter(resourceFilter, entryFilter);
-
     Collection<AclBinding> acls = kafkaAdminClient.describeAcls(filter).values().get();
-
     // two acls created for the write topics
     assertEquals(2, acls.size());
-
     entryFilter =
         new AccessControlEntryFilter(
             app.getPrincipal(), null, AclOperation.READ, AclPermissionType.ALLOW);
-
     filter = new AclBindingFilter(resourceFilter, entryFilter);
-
     acls = kafkaAdminClient.describeAcls(filter).values().get();
-
     // two acls created for the read topics
     assertEquals(3, acls.size());
-
     entryFilter =
         new AccessControlEntryFilter(
             app.getPrincipal(), null, AclOperation.ALL, AclPermissionType.ALLOW);
-
     filter = new AclBindingFilter(resourceFilter, entryFilter);
-
     acls = kafkaAdminClient.describeAcls(filter).values().get();
-
     // 1 acls created for the prefix internal topics
     assertEquals(1, acls.size());
   }
 
   private void verifyKSqlAppAcls(KSqlApp app) throws ExecutionException, InterruptedException {
     ResourcePatternFilter resourceFilter = ResourcePatternFilter.ANY;
-
     AccessControlEntryFilter entryFilter =
         new AccessControlEntryFilter(
             app.getPrincipal(), null, AclOperation.WRITE, AclPermissionType.ALLOW);
-
     AclBindingFilter filter = new AclBindingFilter(resourceFilter, entryFilter);
-
     Collection<AclBinding> acls = kafkaAdminClient.describeAcls(filter).values().get();
-
     // two acls created for the write topics
     assertEquals(2, acls.size());
-
     entryFilter =
         new AccessControlEntryFilter(
             app.getPrincipal(), null, AclOperation.READ, AclPermissionType.ALLOW);
-
     filter = new AclBindingFilter(resourceFilter, entryFilter);
-
     acls = kafkaAdminClient.describeAcls(filter).values().get();
-
     // two acls created for the read topics
     assertEquals(2, acls.size());
-
     entryFilter =
         new AccessControlEntryFilter(
             app.getPrincipal(), null, AclOperation.ALL, AclPermissionType.ALLOW);
-
     filter = new AclBindingFilter(resourceFilter, entryFilter);
-
     acls = kafkaAdminClient.describeAcls(filter).values().get();
-
     // 1 acls created for the prefix internal topics
     assertEquals(2, acls.size());
   }
 
   private void verifyProducerAcls(List<Producer> producers, int aclsCount)
       throws InterruptedException, ExecutionException {
-
     for (Producer producer : producers) {
       ResourcePatternFilter resourceFilter = ResourcePatternFilter.ANY;
       AccessControlEntryFilter entryFilter =
           new AccessControlEntryFilter(
               producer.getPrincipal(), null, AclOperation.ANY, AclPermissionType.ALLOW);
-
       AclBindingFilter filter = new AclBindingFilter(resourceFilter, entryFilter);
       Collection<AclBinding> acls = kafkaAdminClient.describeAcls(filter).values().get();
-
       assertEquals(aclsCount, acls.size());
-
       List<ResourceType> types =
           acls.stream().map(aclBinding -> aclBinding.pattern().resourceType()).toList();
-
       Assert.assertTrue(types.contains(ResourceType.TOPIC));
-
       List<AclOperation> ops =
           acls.stream().map(aclsBinding -> aclsBinding.entry().operation()).toList();
-
       Assert.assertTrue(ops.contains(AclOperation.DESCRIBE));
       Assert.assertTrue(ops.contains(AclOperation.WRITE));
     }
@@ -807,27 +638,20 @@ public class AccessControlManagerIT {
 
   private void verifyConsumerAcls(List<Consumer> consumers)
       throws InterruptedException, ExecutionException {
-
     for (Consumer consumer : consumers) {
       ResourcePatternFilter resourceFilter = ResourcePatternFilter.ANY;
       AccessControlEntryFilter entryFilter =
           new AccessControlEntryFilter(
               consumer.getPrincipal(), null, AclOperation.ANY, AclPermissionType.ALLOW);
-
       AclBindingFilter filter = new AclBindingFilter(resourceFilter, entryFilter);
       Collection<AclBinding> acls = kafkaAdminClient.describeAcls(filter).values().get();
-
       assertEquals(3, acls.size());
-
       List<ResourceType> types =
           acls.stream().map(aclBinding -> aclBinding.pattern().resourceType()).toList();
-
       Assert.assertTrue(types.contains(ResourceType.GROUP));
       Assert.assertTrue(types.contains(ResourceType.TOPIC));
-
       List<AclOperation> ops =
           acls.stream().map(aclsBinding -> aclsBinding.entry().operation()).toList();
-
       Assert.assertTrue(ops.contains(AclOperation.DESCRIBE));
       Assert.assertTrue(ops.contains(AclOperation.READ));
     }
@@ -835,47 +659,33 @@ public class AccessControlManagerIT {
 
   private void verifyMirrorMakerAcls(Other other) throws InterruptedException, ExecutionException {
     ResourcePatternFilter resourceFilter = ResourcePatternFilter.ANY;
-
     AccessControlEntryFilter entryFilter =
         new AccessControlEntryFilter(
             other.getPrincipal(), null, AclOperation.ALL, AclPermissionType.ALLOW);
-
     AccessControlEntryFilter anyFilter =
         new AccessControlEntryFilter(
             other.getPrincipal(), null, AclOperation.ALL, AclPermissionType.ANY);
-
     AclBindingFilter filter = new AclBindingFilter(resourceFilter, entryFilter);
     AclBindingFilter allAclFilter = new AclBindingFilter(resourceFilter, anyFilter);
-
     Collection<AclBinding> acls = kafkaAdminClient.describeAcls(filter).values().get();
     Collection<AclBinding> allAcls = kafkaAdminClient.describeAcls(allAclFilter).values().get();
-
     // 7 topics + 1 group with ALL operation
     assertEquals(8, acls.size());
     assertEquals(9, allAcls.size());
-
     entryFilter =
         new AccessControlEntryFilter(
             other.getPrincipal(), null, AclOperation.DESCRIBE, AclPermissionType.ALLOW);
-
     filter = new AclBindingFilter(resourceFilter, entryFilter);
-
     acls = kafkaAdminClient.describeAcls(filter).values().get();
-
     // 1 DESCRIBE permission for cluster
     assertEquals(1, acls.size());
-
     entryFilter =
         new AccessControlEntryFilter(
             other.getPrincipal(), null, AclOperation.DESCRIBE_CONFIGS, AclPermissionType.ALLOW);
-
     filter = new AclBindingFilter(resourceFilter, entryFilter);
-
     acls = kafkaAdminClient.describeAcls(filter).values().get();
-
     // 1 DESCRIBE_CONFIGS permission for cluster
     assertEquals(1, acls.size());
-
     var denyFilter =
         new AccessControlEntryFilter(
             other.getPrincipal(), null, AclOperation.ALL, AclPermissionType.DENY);

@@ -164,15 +164,12 @@ public class Topic implements Cloneable {
       sb.append(projectPrefix);
     }
     sb.append(getName());
-
     if (getDataType().isPresent()) {
       sb.append(appConfig.getTopicPrefixSeparator()).append(getDataType().get());
     }
-
     if (!dlqPrefix.isBlank()) {
       sb.append(appConfig.getTopicPrefixSeparator()).append(dlqPrefix);
     }
-
     return sb.toString();
   }
 

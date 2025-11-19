@@ -18,9 +18,7 @@ public class SyncArtefactActionTest {
 
   @Test
   public void shouldComposeDetailedViewOfProperties() {
-
     var artefact = new KafkaConnectArtefact("path", "label", "name", null);
-
     var action = new SyncArtefactAction(client, "/foo/bar", artefact);
     var refs = action.refs();
     assertThat(refs).hasSize(1);

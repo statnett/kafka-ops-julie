@@ -36,7 +36,6 @@ public final class TopologyObjectBuilder {
     PlanMap plans = buildPlans(plansFile);
     List<Topology> topologies = parseListOfTopologies(fileOrDir, config, plans);
     Map<String, Topology> collection = new HashMap<>();
-
     for (Topology topology : topologies) {
       String context = topology.getContext();
       if (!config.areMultipleContextPerDirEnabled()
@@ -51,7 +50,6 @@ public final class TopologyObjectBuilder {
         Topology mainTopology = collection.get(context);
         List<String> projectNames =
             mainTopology.getProjects().stream().map(p -> p.getName().toLowerCase()).toList();
-
         for (Project project : topology.getProjects()) {
           if (projectNames.contains(project.getName().toLowerCase())) {
             throw new IOException(
@@ -63,7 +61,6 @@ public final class TopologyObjectBuilder {
           }
           mainTopology.addProject(project);
         }
-
         for (String other : topology.getOrder()) {
           var topologyContext = topology.asFullContext();
           if (!mainTopology.getOrder().contains(other)) {
@@ -71,7 +68,6 @@ public final class TopologyObjectBuilder {
             mainTopology.addOther(other, value);
           }
         }
-
         var existingSpecial = mainTopology.getSpecialTopics().stream().map(Topic::getName).toList();
         for (Topic specialTopic : topology.getSpecialTopics()) {
           if (existingSpecial.contains(specialTopic.getName())) {
@@ -85,7 +81,6 @@ public final class TopologyObjectBuilder {
           }
           mainTopology.addSpecialTopic(specialTopic);
         }
-
         collection.put(context, mainTopology);
       }
     }

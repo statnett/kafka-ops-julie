@@ -36,21 +36,17 @@ public class KafkaBackendIT {
   @Before
   public void before() {
     ContainerTestUtils.clearAclsAndTopics(container);
-
     props = new Properties();
     props.put(JULIE_INSTANCE_ID, "1234");
     props.put(JULIE_KAFKA_STATE_CHUNK_SIZE, 16 /* small to enforce chunking */);
-
     Map<String, Object> saslConfig =
         ContainerTestUtils.getSaslConfig(
             container.getBootstrapServers(),
             ContainerTestUtils.JULIE_USERNAME,
             ContainerTestUtils.JULIE_PASSWORD);
     saslConfig.forEach((k, v) -> props.setProperty(k, String.valueOf(v)));
-
     cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, container.getBootstrapServers());
-
     config = new Configuration(cliOps, props);
   }
 
@@ -61,11 +57,9 @@ public class KafkaBackendIT {
 
   @Test
   public void testExpectedFlow() {
-
     KafkaBackend backend = new KafkaBackend();
     backend.configure(config);
     backend.load(); /* Just to check that initial load from empty topic does not fail. */
-
     TopologyAclBinding binding1 =
         TopologyAclBinding.build(
             ResourceType.TOPIC.name(),
@@ -87,13 +81,10 @@ public class KafkaBackendIT {
     Collection<TopologyAclBinding> bindings1 = Collections.singleton(binding1);
     Collection<TopologyAclBinding> bindings2 = Arrays.asList(binding1, binding2);
     Collection<TopologyAclBinding> bindings3 = Collections.singleton(binding2);
-
     saveBindings(bindings1);
     loadAndVerifyBindings(bindings1);
-
     saveBindings(bindings2);
     loadAndVerifyBindings(bindings2);
-
     saveBindings(bindings3);
     loadAndVerifyBindings(bindings3);
   }

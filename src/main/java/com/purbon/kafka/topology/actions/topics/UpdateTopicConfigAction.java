@@ -30,13 +30,11 @@ public class UpdateTopicConfigAction extends BaseAction {
   public void run() throws IOException {
     final Topic topic = topicConfigUpdatePlan.getTopic();
     final String fullTopicName = topicConfigUpdatePlan.getFullTopicName();
-
     LOGGER.debug(String.format("Update config for topic %s", fullTopicName));
     if (topicConfigUpdatePlan.isUpdatePartitionCount()) {
       LOGGER.debug(String.format("Update partition count of topic %s", fullTopicName));
       adminClient.updatePartitionCount(topic, fullTopicName);
     }
-
     adminClient.updateTopicConfig(topicConfigUpdatePlan);
   }
 
@@ -55,7 +53,6 @@ public class UpdateTopicConfigAction extends BaseAction {
     if (topicConfigUpdatePlan.isUpdatePartitionCount()) {
       changes.put("UpdatedPartitionCount", topicConfigUpdatePlan.getTopicPartitionCount());
     }
-
     Map<String, Object> map = new LinkedHashMap<>();
     map.put("Operation", getClass().getName());
     map.put("Topic", topicConfigUpdatePlan.getFullTopicName());

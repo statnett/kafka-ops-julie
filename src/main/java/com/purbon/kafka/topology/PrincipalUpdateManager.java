@@ -39,7 +39,6 @@ public class PrincipalUpdateManager extends AbstractPrincipalManager {
             .filter(wishPrincipal -> !accounts.containsKey(wishPrincipal))
             .map(principal -> new ServiceAccount("-1", principal, MANAGED_BY))
             .collect(Collectors.toSet());
-
     if (!principalsToBeCreated.isEmpty()) {
       plan.add(new CreateAccounts(provider, principalsToBeCreated));
     }

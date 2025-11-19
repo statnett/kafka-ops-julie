@@ -16,11 +16,8 @@ public class TopicConfigUpdatePlanBuilder {
   }
 
   public TopicConfigUpdatePlan createTopicConfigUpdatePlan(Topic topic, String fullTopicName) {
-
     Config currentKafkaConfigs = adminClient.getActualTopicConfig(fullTopicName);
-
     TopicConfigUpdatePlan topicConfigUpdatePlan = new TopicConfigUpdatePlan(topic);
-
     try {
       if (topic.partitionsCount() > adminClient.getPartitionCount(fullTopicName)) {
         topicConfigUpdatePlan.setUpdatePartitionCount(true);
@@ -28,12 +25,9 @@ public class TopicConfigUpdatePlanBuilder {
     } catch (IOException e) {
       throw new RuntimeException("Failed to get partition count for topic " + fullTopicName, e);
     }
-
     HashMap<String, String> topicConfigs = topic.getRawConfig();
-
     topicConfigUpdatePlan.addNewOrUpdatedConfigs(topicConfigs, currentKafkaConfigs);
     topicConfigUpdatePlan.addDeletedConfigs(topicConfigs, currentKafkaConfigs);
-
     return topicConfigUpdatePlan;
   }
 }

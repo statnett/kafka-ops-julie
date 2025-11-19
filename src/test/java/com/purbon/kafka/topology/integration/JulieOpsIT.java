@@ -31,31 +31,25 @@ public class JulieOpsIT {
 
   @Test(expected = IOException.class)
   public void testSetupKafkaTopologyBuilderWithWrongCredentialsHC() throws Exception {
-
     String fileOrDirPath = TestUtils.getResourceFilename("/descriptor.yaml");
     String clientConfigFile = TestUtils.getResourceFilename("/wrong-client-config.properties");
-
     Map<String, String> config = new HashMap<>();
     config.put(BROKERS_OPTION, container.getBootstrapServers());
     config.put(DRY_RUN_OPTION, "false");
     config.put(QUIET_OPTION, "true");
     config.put(CLIENT_CONFIG_OPTION, clientConfigFile);
-
     JulieOps.build(fileOrDirPath, config);
   }
 
   @Test
   public void testSetupKafkaTopologyBuilderWithGoodCredentialsHC() throws Exception {
-
     String fileOrDirPath = TestUtils.getResourceFilename("/descriptor.yaml");
     String clientConfigFile = TestUtils.getResourceFilename("/client-config.properties");
-
     Map<String, String> config = new HashMap<>();
     config.put(BROKERS_OPTION, container.getBootstrapServers());
     config.put(DRY_RUN_OPTION, "false");
     config.put(QUIET_OPTION, "true");
     config.put(CLIENT_CONFIG_OPTION, clientConfigFile);
-
     JulieOps.build(fileOrDirPath, config);
   }
 
@@ -63,21 +57,16 @@ public class JulieOpsIT {
   public void testSetupKafkaTopologyBuilderWithDir() throws Exception {
     String clientConfigFile = TestUtils.getResourceFilename("/client-config.properties");
     String fileOrDirPath = TestUtils.getResourceFilename("/dir");
-
     Map<String, String> config = new HashMap<>();
     config.put(BROKERS_OPTION, container.getBootstrapServers());
     config.put(DRY_RUN_OPTION, "false");
     config.put(QUIET_OPTION, "false");
     config.put(CLIENT_CONFIG_OPTION, clientConfigFile);
-
     var ops = JulieOps.build(fileOrDirPath, config);
     ops.run();
-
     AdminClient kafkaAdminClient =
         ContainerTestUtils.getSaslSuperUserAdminClient(container.getBootstrapServers());
-
     var topics = kafkaAdminClient.listTopics().names().get();
-
     assert topics.size() == 9;
     assert topics.contains("contextOrg.source.foo.bar.zet.zet.foo");
     assert topics.contains("contextOrg.source.foo.bar.zet.zet.bar.avro");

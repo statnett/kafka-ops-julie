@@ -14,7 +14,6 @@ public class ConfigurationKeyValidationTest {
     config.put("foo", "2");
     config.put(TopicConfig.COMPRESSION_TYPE_CONFIG, "gzip");
     Topic topic = new Topic("topic", config);
-
     ConfigurationKeyValidation validation = new ConfigurationKeyValidation();
     validation.valid(topic);
   }
@@ -24,7 +23,6 @@ public class ConfigurationKeyValidationTest {
     var config = new HashMap<String, String>();
     config.put(TopicConfig.COMPRESSION_TYPE_CONFIG, "gzip");
     Topic topic = new Topic("topic", config);
-
     ConfigurationKeyValidation validation = new ConfigurationKeyValidation();
     validation.valid(topic);
   }
@@ -34,7 +32,6 @@ public class ConfigurationKeyValidationTest {
     var config = new HashMap<String, String>();
     config.put("replication.factor", "3");
     Topic topic = new Topic("topic", config);
-
     ConfigurationKeyValidation validation = new ConfigurationKeyValidation();
     validation.valid(topic);
   }

@@ -108,7 +108,6 @@ public class AlternativeKafkaContainer extends GenericContainer<AlternativeKafka
                 .replaceAll(":" + KAFKA_PORT, ":" + getMappedPort(KAFKA_PORT))
                 .replaceAll("OTHER://0\\.0\\.0\\.0", "OTHER://kafka")
                 .replaceAll("0\\.0\\.0\\.0", getHost()));
-
     final String startupScript =
         overrideStartupScript(
             "#!/bin/bash\n"

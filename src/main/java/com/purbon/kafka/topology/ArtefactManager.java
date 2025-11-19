@@ -47,24 +47,19 @@ public abstract class ArtefactManager implements ExecutionPlanUpdater {
   @Override
   public void updatePlan(ExecutionPlan plan, Map<String, Topology> topologies) throws IOException {
     Collection<? extends Artefact> currentArtefacts = loadActualClusterStateIfAvailable(plan);
-
     Set<Artefact> artefacts = new HashSet<>();
-
     for (Topology topology : topologies.values()) {
       Set<? extends Artefact> entryArtefacts = parseNewArtefacts(topology);
-
       final var kSqlVarsArtefact =
           ((Optional<KsqlVarsArtefact>)
                   entryArtefacts.stream().filter(this::findKsqlVarsArtefact).findFirst())
               .orElseGet(() -> new KsqlVarsArtefact(Collections.emptyMap()));
       entryArtefacts.removeIf(this::findKsqlVarsArtefact);
-
       for (Artefact artefact : entryArtefacts) {
         Optional<? extends Artefact> existingArtefactOpt =
             currentArtefacts.stream().filter(ea -> ea.equals(artefact)).findAny();
         if (existingArtefactOpt.isEmpty()) {
           ArtefactClient client = selectClient(artefact);
-
           if (client == null) {
             throw new IOException(
                 "The Artefact "
@@ -89,10 +84,8 @@ public abstract class ArtefactManager implements ExecutionPlanUpdater {
         artefacts.add(artefact);
       }
     }
-
     if (isAllowDelete()) {
       List<? extends Artefact> toBeDeleted = findArtefactsToBeDeleted(currentArtefacts, artefacts);
-
       if (!toBeDeleted.isEmpty()) {
         LOGGER.debug("Artefacts to be deleted: " + StringUtils.join(toBeDeleted, ","));
         for (Artefact artefact : toBeDeleted) {
@@ -124,17 +117,14 @@ public abstract class ArtefactManager implements ExecutionPlanUpdater {
   protected Collection<? extends Artefact> loadActualClusterStateIfAvailable(ExecutionPlan plan)
       throws IOException {
     var currentState = config.fetchStateFromTheCluster() ? getClustersState() : getLocalState(plan);
-
     if (!config.shouldVerifyRemoteState()) {
       OnceOnlyWarningLogger.getInstance().logRemoteStateVerificationDisabledWarning();
     }
-
     if (config.shouldVerifyRemoteState() && !config.fetchStateFromTheCluster()) {
       // should detect if there are divergences between the local cluster state and the current
       // status in the cluster
       detectDivergencesInTheRemoteCluster(plan);
     }
-
     return currentState;
   }
 
@@ -144,12 +134,10 @@ public abstract class ArtefactManager implements ExecutionPlanUpdater {
       return;
     }
     var remoteArtefacts = getClustersState();
-
     var delta =
         getLocalState(plan).stream()
             .filter(localArtifact -> !remoteArtefacts.contains(localArtifact))
             .collect(Collectors.toList());
-
     if (!delta.isEmpty()) {
       String errorMessage =
           "Your remote state has changed since the last execution, these Artefact(s): "

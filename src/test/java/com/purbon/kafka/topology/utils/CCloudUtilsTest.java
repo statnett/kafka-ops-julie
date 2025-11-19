@@ -56,17 +56,13 @@ public class CCloudUtilsTest {
 
   private void testTranslationMechanism(CCloudUtils utils, String resourceId, String serviceName)
       throws IOException {
-
     var accounts = new HashSet<>();
     accounts.add(new ServiceAccount(resourceId, serviceName, "description", resourceId));
     doReturn(accounts).when(cCloudApi).listServiceAccounts();
-
     var accountsV1 = new HashSet<>();
     accountsV1.add(new ServiceAccountV1(12345L, "email", serviceName, resourceId));
     doReturn(accountsV1).when(cCloudApi).listServiceAccountsV1();
-
     var lookupTable = utils.initializeLookupTable(cCloudApi);
-
     TopologyAclBinding binding =
         TopologyAclBinding.build(
             ResourceType.CLUSTER.name(),
@@ -76,9 +72,7 @@ public class CCloudUtilsTest {
             serviceName,
             "pattern",
             AclPermissionType.ALLOW.name());
-
     var translatedBinding = utils.translateIfNecessary(binding, lookupTable);
-
     assertThat(translatedBinding.getPrincipal()).isEqualTo("User:12345");
   }
 

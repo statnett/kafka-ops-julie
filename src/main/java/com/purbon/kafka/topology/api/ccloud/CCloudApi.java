@@ -55,7 +55,6 @@ public class CCloudApi {
             new JulieHttpClient(ccloudApiBaseUrl, Optional.of(config)));
     this.clusterHttpClient.setBasicAuth(config.getConfluentCloudClusterAuth());
     this.ccloudApiHttpClient.setBasicAuth(config.getConfluentCloudCloudApiAuth());
-
     this.serviceAccountPageSize = config.getConfluentCloudServiceAccountQuerySize();
   }
 
@@ -100,7 +99,6 @@ public class CCloudApi {
     var requestJson = JSON.asString(request);
     LOGGER.debug("createServiceAccount request=" + requestJson);
     String responseBody = ccloudApiHttpClient.doPost(V2_IAM_SERVICE_ACCOUNTS_URL, requestJson);
-
     ServiceAccountResponse response =
         (ServiceAccountResponse) JSON.toObject(responseBody, ServiceAccountResponse.class);
     return new ServiceAccount(
@@ -114,7 +112,6 @@ public class CCloudApi {
     String url = V2_IAM_SERVICE_ACCOUNTS_URL;
     boolean finished;
     Set<ServiceAccount> accounts = new HashSet<>();
-
     do {
       ListServiceAccountResponse response = getListServiceAccounts(url, serviceAccountPageSize);
       for (ServiceAccountResponse serviceAccountResponse : response.getData()) {
@@ -127,7 +124,6 @@ public class CCloudApi {
                 resourceId);
         accounts.add(serviceAccount);
       }
-
       String nextUrl = response.getMetadata().getNext();
       finished = nextUrl == null;
       if (!finished) {

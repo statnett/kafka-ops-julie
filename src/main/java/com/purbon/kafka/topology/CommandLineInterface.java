@@ -121,9 +121,7 @@ public class CommandLineInterface {
   public void run(String[] args) throws Exception {
     printHelpOrVersion(args);
     CommandLine cmd = parseArgsOrExit(args);
-
     Map<String, String> config = parseConfig(cmd);
-
     processTopology(
         cmd.getOptionValue(TOPOLOGY_OPTION), cmd.getOptionValue(PLANS_OPTION, "default"), config);
     if (!cmd.hasOption(DRY_RUN_OPTION) && !cmd.hasOption(VALIDATE_OPTION)) {
@@ -153,9 +151,7 @@ public class CommandLineInterface {
   }
 
   private void printHelpOrVersion(String[] args) {
-
     List<String> listOfArgs = Arrays.asList(args);
-
     if (listOfArgs.contains("--" + HELP_OPTION)) {
       printHelp();
       exit(0);

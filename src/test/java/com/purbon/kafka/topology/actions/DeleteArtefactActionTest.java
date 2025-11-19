@@ -18,9 +18,7 @@ public class DeleteArtefactActionTest {
 
   @Test
   public void shouldComposeDetailedViewOfProperties() {
-
     var artefact = new KafkaConnectArtefact("path", "label", "name", null);
-
     var action = new DeleteArtefactAction(client, artefact);
     var refs = action.refs();
     assertThat(refs).hasSize(1);

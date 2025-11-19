@@ -49,7 +49,6 @@ public class Configuration {
     }
     ConfigFactory.invalidateCaches();
     Config config = ConfigFactory.load();
-
     String overridingConfigFile = cliParams.get(OVERRIDING_CLIENT_CONFIG_OPTION);
     if (overridingConfigFile != null) {
       Config overridingConfig = ConfigFactory.parseFile(new File(overridingConfigFile));
@@ -109,15 +108,11 @@ public class Configuration {
     if (hasSchemas(topology)) {
       raiseIfDefault(CONFLUENT_SCHEMA_REGISTRY_URL_CONFIG, "mock://");
     }
-
     validateBrokersConfig();
-
     boolean topicPrefixDefinedButNotProjectPrefix =
         !getTopicPrefixFormat().equals("default") && getProjectPrefixFormat().equals("default");
-
     boolean projectPrefixDefinedButNotTopicPrefix =
         getTopicPrefixFormat().equals("default") && !getProjectPrefixFormat().equals("default");
-
     if (topicPrefixDefinedButNotProjectPrefix || projectPrefixDefinedButNotTopicPrefix) {
       throw new ConfigurationException(
           TOPIC_PREFIX_FORMAT_CONFIG
@@ -125,12 +120,10 @@ public class Configuration {
               + PROJECT_PREFIX_FORMAT_CONFIG
               + " need to be defined together.");
     }
-
     if (!getTopicPrefixFormat().startsWith(getProjectPrefixFormat())) {
       throw new ConfigurationException(
           TOPIC_PREFIX_FORMAT_CONFIG + "should start by" + PROJECT_PREFIX_FORMAT_CONFIG);
     }
-
     Arrays.asList(TOPIC_MANAGED_PREFIXES, GROUP_MANAGED_PREFIXES, SERVICE_ACCOUNT_MANAGED_PREFIXES)
         .forEach(this::validateManagedPrefixes);
   }
@@ -153,7 +146,6 @@ public class Configuration {
     } catch (Exception ex) {
       existServersAsConfig = false;
     }
-
     if (cliParams.get(CommandLineInterface.BROKERS_OPTION) == null && !existServersAsConfig) {
       String msg =
           String.format(
@@ -516,7 +508,6 @@ public class Configuration {
               getProperty(PLATFORM_SERVER_KSQL_BASIC_AUTH_USER),
               getProperty(PLATFORM_SERVER_KSQL_BASIC_AUTH_PASSWORD)));
     }
-
     if (hasProperty(PLATFORM_SERVER_KSQL_VERIFY_HOST)) {
       ksqlConf.setVerifyHost(config.getBoolean(PLATFORM_SERVER_KSQL_VERIFY_HOST));
     }
@@ -598,7 +589,6 @@ public class Configuration {
       int leftLimit = 97; // letter 'a'
       int rightLimit = 122; // letter 'z'
       Random random = new Random();
-
       julieInstanceId =
           random
               .ints(leftLimit, rightLimit + 1)
