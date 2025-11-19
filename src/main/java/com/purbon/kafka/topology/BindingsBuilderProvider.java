@@ -2,12 +2,7 @@ package com.purbon.kafka.topology;
 
 import com.purbon.kafka.topology.model.Component;
 import com.purbon.kafka.topology.model.JulieRoleAcl;
-import com.purbon.kafka.topology.model.users.Connector;
-import com.purbon.kafka.topology.model.users.Consumer;
-import com.purbon.kafka.topology.model.users.KSqlApp;
-import com.purbon.kafka.topology.model.users.KStream;
-import com.purbon.kafka.topology.model.users.Other;
-import com.purbon.kafka.topology.model.users.Producer;
+import com.purbon.kafka.topology.model.users.*;
 import com.purbon.kafka.topology.model.users.platform.KsqlServerInstance;
 import com.purbon.kafka.topology.model.users.platform.SchemaRegistryInstance;
 import com.purbon.kafka.topology.roles.TopologyAclBinding;
@@ -70,4 +65,8 @@ public interface BindingsBuilderProvider {
 
   Collection<TopologyAclBinding> buildBindingsForJulieRole(
       Other other, String name, List<JulieRoleAcl> acls) throws IOException;
+
+  // TODO: uncertain whether this should be part of this interface as it causes
+  // it to be required in RBACBindingsBuilder as well as AclsBindingsBuilder
+  Collection<TopologyAclBinding> buildBindingForMirrorMaker2(MirrorMaker2 mm2);
 }
