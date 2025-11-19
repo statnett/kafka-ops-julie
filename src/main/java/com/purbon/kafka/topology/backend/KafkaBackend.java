@@ -8,8 +8,6 @@ import com.purbon.kafka.topology.backend.kafka.KafkaBackendTopicCreator;
 
 public class KafkaBackend implements Backend {
 
-  private ByteArrayChunker chunker;
-  private KafkaBackendTopicCreator topicCreator;
   private KafkaBackendConsumer consumer;
   private KafkaBackendProducer producer;
   private boolean isDryRun = false;
@@ -20,9 +18,9 @@ public class KafkaBackend implements Backend {
   @Override
   public void configure(Configuration config) {
     isDryRun = config.isDryRun();
-    chunker = new ByteArrayChunker(config.getKafkaBackendChunkSize());
+    final ByteArrayChunker chunker = new ByteArrayChunker(config.getKafkaBackendChunkSize());
 
-    topicCreator = new KafkaBackendTopicCreator(config);
+    final KafkaBackendTopicCreator topicCreator = new KafkaBackendTopicCreator(config);
     topicCreator.configure();
     topicWasJustCreated = topicCreator.createStateTopicUnlessPresent();
 

@@ -39,8 +39,6 @@ public class TopologyBuilderAdminClientTest {
 
   TopologyBuilderAdminClient adminClient;
 
-  private SimpleAclsProvider aclsProvider;
-  private AclsBindingsBuilder bindingsBuilder;
   private ExecutionPlan plan;
 
   @Mock BackendController backendController;
@@ -52,8 +50,8 @@ public class TopologyBuilderAdminClientTest {
   @Before
   public void setup() throws ExecutionException, InterruptedException, IOException {
     adminClient = new TopologyBuilderAdminClient(kafkaAdminClient);
-    aclsProvider = new SimpleAclsProvider(adminClient);
-    bindingsBuilder = new AclsBindingsBuilder(config);
+    final SimpleAclsProvider aclsProvider = new SimpleAclsProvider(adminClient);
+    final AclsBindingsBuilder bindingsBuilder = new AclsBindingsBuilder(config);
     accessControlManager = new AccessControlManager(aclsProvider, bindingsBuilder);
 
     plan = ExecutionPlan.init(backendController, System.out);
@@ -72,7 +70,6 @@ public class TopologyBuilderAdminClientTest {
 
   @Test
   public void newConsumerACLsCreation() throws IOException {
-
     List<Consumer> consumers = new ArrayList<>();
     consumers.add(new Consumer("User:app1"));
     Project project = new ProjectImpl();
@@ -92,7 +89,6 @@ public class TopologyBuilderAdminClientTest {
 
   @Test
   public void newProducerACLsCreation() throws IOException {
-
     List<Producer> producers = new ArrayList<>();
     producers.add(new Producer("User:app1"));
     Project project = new ProjectImpl();
@@ -112,7 +108,6 @@ public class TopologyBuilderAdminClientTest {
 
   @Test
   public void newKafkaStreamsAppACLsCreation() throws IOException {
-
     Project project = new ProjectImpl();
 
     KStream app = new KStream();
@@ -134,7 +129,6 @@ public class TopologyBuilderAdminClientTest {
 
   @Test
   public void newSchemaRegistryACLCreation() throws IOException {
-
     Project project = new ProjectImpl();
     Topology topology = new TopologyImpl();
     topology.addProject(project);
@@ -162,7 +156,6 @@ public class TopologyBuilderAdminClientTest {
 
   @Test
   public void newControlCenterACLCreation() throws IOException {
-
     Project project = new ProjectImpl();
     Topology topology = new TopologyImpl();
     topology.addProject(project);
@@ -184,7 +177,6 @@ public class TopologyBuilderAdminClientTest {
 
   @Test
   public void newKafkaConnectACLsCreation() throws IOException {
-
     Project project = new ProjectImpl();
 
     Connector connector1 = new Connector();

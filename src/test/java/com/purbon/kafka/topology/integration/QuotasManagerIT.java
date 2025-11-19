@@ -40,15 +40,12 @@ public class QuotasManagerIT {
 
   private TopologyBuilderAdminClient topologyAdminClient;
   private AccessControlManager accessControlManager;
-  private SimpleAclsProvider aclsProvider;
 
   private ExecutionPlan plan;
-  private BackendController cs;
 
   private Configuration config;
 
   private QuotasManager quotasManager;
-  private AclsBindingsBuilder bindingsBuilder;
 
   @BeforeClass
   public static void setup() {
@@ -80,12 +77,12 @@ public class QuotasManagerIT {
 
     config = new Configuration(cliOps, props);
 
-    this.cs = new BackendController();
-    this.plan = ExecutionPlan.init(cs, System.out);
+    final BackendController backendController = new BackendController();
+    this.plan = ExecutionPlan.init(backendController, System.out);
 
-    bindingsBuilder = new AclsBindingsBuilder(config);
+    final AclsBindingsBuilder bindingsBuilder = new AclsBindingsBuilder(config);
     quotasManager = new QuotasManager(topologyAdminClient, config);
-    aclsProvider = new SimpleAclsProvider(topologyAdminClient);
+    final SimpleAclsProvider aclsProvider = new SimpleAclsProvider(topologyAdminClient);
 
     accessControlManager = new AccessControlManager(aclsProvider, bindingsBuilder, config);
   }

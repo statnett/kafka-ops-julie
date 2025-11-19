@@ -46,11 +46,9 @@ public class TopicManagerTest {
   private TopicManager topicManager;
   private HashMap<String, String> cliOps;
   private Properties props;
-  private Configuration config;
 
   @Before
   public void setup() throws IOException {
-
     Files.deleteIfExists(Paths.get(".cluster-state"));
     backendController = new BackendController();
 
@@ -61,13 +59,12 @@ public class TopicManagerTest {
 
     plan = ExecutionPlan.init(backendController, System.out);
 
-    config = new Configuration(cliOps, props);
+    final Configuration config = new Configuration(cliOps, props);
     topicManager = new TopicManager(adminClient, schemaRegistryManager, config);
   }
 
   @Test
   public void newTopicCreationTest() throws IOException {
-
     Project project = new ProjectImpl("project");
     Topic topicA = new Topic("topicA");
     project.addTopic(topicA);
@@ -86,7 +83,6 @@ public class TopicManagerTest {
 
   @Test
   public void topicPartitionCountUpdateTest() throws IOException {
-
     Topology topology = new TopologyImpl();
     Project project = new ProjectImpl("project");
     topology.addProject(project);
@@ -131,7 +127,6 @@ public class TopicManagerTest {
 
   @Test
   public void topicDeleteTest() throws IOException {
-
     cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
 
@@ -178,7 +173,6 @@ public class TopicManagerTest {
 
   @Test
   public void topicDeleteWithConfiguredInternalTopicsTest() throws IOException {
-
     cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
 
@@ -217,7 +211,6 @@ public class TopicManagerTest {
 
   @Test
   public void topicDeleteWithConfiguredNoDelete() throws IOException {
-
     Properties props = new Properties();
     props.put(KAFKA_INTERNAL_TOPIC_PREFIXES + ".0", "foo.");
     props.put(KAFKA_INTERNAL_TOPIC_PREFIXES + ".1", "_");
@@ -251,7 +244,6 @@ public class TopicManagerTest {
 
   @Test
   public void topicDeleteWithConfiguredNoDeleteOnlyForTopics() throws IOException {
-
     Properties props = new Properties();
     props.put(ALLOW_DELETE_TOPICS, "true");
 
@@ -285,7 +277,6 @@ public class TopicManagerTest {
 
   @Test
   public void topicDeleteWithConfiguredNoDeleteOnlyForTopicsAllDisabled() throws IOException {
-
     Properties props = new Properties();
     props.put(ALLOW_DELETE_TOPICS, "false");
 
@@ -319,7 +310,6 @@ public class TopicManagerTest {
 
   @Test
   public void dryRunTest() throws IOException {
-
     plan = ExecutionPlan.init(backendController, outputStream);
     Project project = new ProjectImpl("project");
     Topic topicA = new Topic("topicA");
@@ -341,7 +331,6 @@ public class TopicManagerTest {
 
   @Test
   public void testToProcessOnlySelectedTopics() throws IOException {
-
     props.put(TOPIC_MANAGED_PREFIXES, Collections.singletonList("NamespaceA"));
     props.put(TOPIC_PREFIX_FORMAT_CONFIG, "{{topic}}");
     props.put(TOPOLOGY_TOPIC_STATE_FROM_CLUSTER, "true");
