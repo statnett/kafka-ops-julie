@@ -354,14 +354,11 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
       final String topic,
       final PatternType patternType,
       final AclOperation aclOperation) {
-    switch (patternType) {
-      case LITERAL:
-        return buildLiteralTopicLevelAcl(principal, topic, aclOperation);
-      case PREFIXED:
-        return buildPrefixedTopicLevelAcl(principal, topic, aclOperation);
-      default:
-        throw new RuntimeException("Unsupported pattern type: " + patternType);
-    }
+    return switch (patternType) {
+      case LITERAL -> buildLiteralTopicLevelAcl(principal, topic, aclOperation);
+      case PREFIXED -> buildPrefixedTopicLevelAcl(principal, topic, aclOperation);
+      default -> throw new RuntimeException("Unsupported pattern type: " + patternType);
+    };
   }
 
   private AclBinding buildLiteralTopicLevelAcl(String principal, String topic, AclOperation op) {
@@ -377,14 +374,11 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
       final String transactionId,
       final PatternType patternType,
       final AclOperation aclOperation) {
-    switch (patternType) {
-      case LITERAL:
-        return buildLiteralTransactionIdLevelAcl(principal, transactionId, aclOperation);
-      case PREFIXED:
-        return buildPrefixedTransactionIdLevelAcl(principal, transactionId, aclOperation);
-      default:
-        throw new RuntimeException("Unsupported pattern type: " + patternType);
-    }
+    return switch (patternType) {
+      case LITERAL -> buildLiteralTransactionIdLevelAcl(principal, transactionId, aclOperation);
+      case PREFIXED -> buildPrefixedTransactionIdLevelAcl(principal, transactionId, aclOperation);
+      default -> throw new RuntimeException("Unsupported pattern type: " + patternType);
+    };
   }
 
   private AclBinding buildLiteralTransactionIdLevelAcl(
@@ -408,14 +402,11 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
       final String group,
       final PatternType patternType,
       final AclOperation aclOperation) {
-    switch (patternType) {
-      case LITERAL:
-        return buildLiteralGroupLevelAcl(principal, group, aclOperation);
-      case PREFIXED:
-        return buildPrefixedGroupLevelAcl(principal, group, aclOperation);
-      default:
-        throw new RuntimeException("Unsupported pattern type: " + patternType);
-    }
+    return switch (patternType) {
+      case LITERAL -> buildLiteralGroupLevelAcl(principal, group, aclOperation);
+      case PREFIXED -> buildPrefixedGroupLevelAcl(principal, group, aclOperation);
+      default -> throw new RuntimeException("Unsupported pattern type: " + patternType);
+    };
   }
 
   private AclBinding buildLiteralGroupLevelAcl(String principal, String group, AclOperation op) {
