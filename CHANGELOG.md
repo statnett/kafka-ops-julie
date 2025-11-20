@@ -1,5 +1,20 @@
 # Changelog
 
+## [6.1.0](https://github.com/statnett/kafka-ops-julie/compare/v6.0.0...v6.1.0) (2025-11-20)
+
+
+### Features
+
+* remove support for Confluent Control Center ([#537](https://github.com/statnett/kafka-ops-julie/issues/537)) ([b95caae](https://github.com/statnett/kafka-ops-julie/commit/b95caae7e58dfde936425557a1ce9ff1e7996bb1))
+
+
+### Bug Fixes
+
+* **deps:** update dependency com.google.cloud:libraries-bom to v26.72.0 ([#529](https://github.com/statnett/kafka-ops-julie/issues/529)) ([019fb53](https://github.com/statnett/kafka-ops-julie/commit/019fb53f1b466d47312b4ccdd0dbf757c0a972a5))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.38.7 ([#525](https://github.com/statnett/kafka-ops-julie/issues/525)) ([f1422ee](https://github.com/statnett/kafka-ops-julie/commit/f1422eede360550db5190f811961d52876a11d99))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.38.8 ([#528](https://github.com/statnett/kafka-ops-julie/issues/528)) ([5634f24](https://github.com/statnett/kafka-ops-julie/commit/5634f240797da3db4e5bfb97bf5a956b84e41b58))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.39.0 ([#539](https://github.com/statnett/kafka-ops-julie/issues/539)) ([190aa6f](https://github.com/statnett/kafka-ops-julie/commit/190aa6f76850037ef5af9f6196630ac2d96929e3))
+
 ## [6.0.0](https://github.com/statnett/kafka-ops-julie/compare/v5.3.0...v6.0.0) (2025-11-14)
 
 
