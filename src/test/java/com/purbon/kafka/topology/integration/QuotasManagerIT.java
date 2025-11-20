@@ -168,7 +168,7 @@ public class QuotasManagerIT {
     plan.run();
     List<Action> actions = plan.getActions();
     assertEquals(1, actions.size());
-    Action action = actions.get(0);
+    Action action = actions.getFirst();
     assertTrue(action instanceof CreateQuotasAction);
     plan.getActions().clear();
     try {
@@ -208,7 +208,7 @@ public class QuotasManagerIT {
     plan.run();
     actions = plan.getActions();
     assertEquals(1, actions.size());
-    action = actions.get(0);
+    action = actions.getFirst();
     assertTrue(action instanceof DeleteQuotasAction);
   }
 

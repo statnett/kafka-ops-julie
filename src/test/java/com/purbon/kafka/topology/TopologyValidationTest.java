@@ -85,7 +85,8 @@ public class TopologyValidationTest {
     TopologyValidator validator = new TopologyValidator(config);
     List<String> results = validator.validate(topology);
     assertThat(results).hasSize(1);
-    assertThat(results.get(0)).isEqualTo("Project name does not follow the camelCase format: foo");
+    assertThat(results.getFirst())
+        .isEqualTo("Project name does not follow the camelCase format: foo");
   }
 
   @Test(expected = IllegalStateException.class)

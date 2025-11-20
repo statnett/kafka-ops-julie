@@ -90,7 +90,7 @@ public class TopologyObjectBuilderTest {
     String fileOrDirPath = TestUtils.getResourceFilename("/descriptor-only-conn.yaml");
     var topologies = TopologyObjectBuilder.build(fileOrDirPath, config);
     var topology = topologies.values().stream().findFirst().get();
-    var proj = topology.getProjects().get(0);
+    var proj = topology.getProjects().getFirst();
     assertThat(proj.getConnectorArtefacts().getConnectors()).hasSize(2);
   }
 
@@ -101,7 +101,7 @@ public class TopologyObjectBuilderTest {
     Map<String, Topology> topologies = TopologyObjectBuilder.build(descriptorFile, plansFile);
     var topology = topologies.values().stream().findFirst().get();
     assertThat(topology).isNotNull();
-    List<Topic> topics = topology.getProjects().get(0).getTopics();
+    List<Topic> topics = topology.getProjects().getFirst().getTopics();
     Map<String, Topic> map =
         topics.stream().collect(Collectors.toMap(Topic::getName, topic -> topic));
     // should include the config values from the plan into the topic config.

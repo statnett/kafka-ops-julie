@@ -25,11 +25,11 @@ public class DeleteTopicsActionTest {
     t.setConfig(Collections.singletonMap("foo", "bar"));
     TestTopologyBuilder builder = TestTopologyBuilder.createProject().addTopic(t);
     Topology topology = builder.buildTopology();
-    var topic = topology.getProjects().get(0).getTopics().get(0);
+    var topic = topology.getProjects().getFirst().getTopics().getFirst();
     var action = new DeleteTopics(adminClient, Collections.singletonList(topic.toString()));
     var refs = action.refs();
     assertThat(refs).hasSize(1);
-    var ref = refs.get(0);
+    var ref = refs.getFirst();
     assertThat(ref)
         .contains(
             "\"resource_name\" : \"rn://delete.topic/com.purbon.kafka.topology.actions.topics.DeleteTopics$1/ctx.project.foo\"");

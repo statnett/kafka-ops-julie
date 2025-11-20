@@ -257,7 +257,7 @@ public class AccessControlManager implements ExecutionPlanUpdater {
       for (String errorMessage : errorMessages) {
         LOGGER.error(errorMessage);
       }
-      throw new IOException(errorMessages.get(0));
+      throw new IOException(errorMessages.getFirst());
     }
     Set<TopologyAclBinding> allFinalBindings =
         aclBindingsResults.stream()

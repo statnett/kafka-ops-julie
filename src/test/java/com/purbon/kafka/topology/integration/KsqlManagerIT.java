@@ -105,9 +105,9 @@ public class KsqlManagerIT {
     plan.run();
     List<String> streams = client.listStreams();
     assertThat(streams).hasSize(1);
-    assertThat(streams.get(0)).contains("{\"path\":\"\",\"name\":\"RIDERLOCATIONS\"");
-    topology.getProjects().get(0).getKsqlArtefacts().getStreams().remove(0);
-    assertThat(topology.getProjects().get(0).getKsqlArtefacts().getStreams()).hasSize(0);
+    assertThat(streams.getFirst()).contains("{\"path\":\"\",\"name\":\"RIDERLOCATIONS\"");
+    topology.getProjects().getFirst().getKsqlArtefacts().getStreams().removeFirst();
+    assertThat(topology.getProjects().getFirst().getKsqlArtefacts().getStreams()).hasSize(0);
     ExecutionPlan newPlan = ExecutionPlan.init(new BackendController(), System.out);
     kam.updatePlan(topology, newPlan);
     newPlan.run();

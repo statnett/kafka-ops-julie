@@ -42,7 +42,7 @@ public class JulieRolesTest {
     assertThat(resources).contains("Topic", "Group", "Subject", "Connector");
     assertThat(role.getName()).isEqualTo("app");
     assertThat(role.getAcls()).hasSize(9);
-    assertThat(role.getAcls().get(0).getRole()).isEqualTo("ResourceOwner");
+    assertThat(role.getAcls().getFirst().getRole()).isEqualTo("ResourceOwner");
     role = roles.get("other");
     resources =
         role.getAcls().stream().map(JulieRoleAcl::getResourceType).collect(Collectors.toList());
@@ -52,13 +52,13 @@ public class JulieRolesTest {
     TopologySerdes topologySerdes =
         new TopologySerdes(new Configuration(), TopologySerdes.FileType.YAML, new PlanMap());
     Topology topology = topologySerdes.deserialise(TestUtils.getResourceFile("/descriptor.yaml"));
-    var project = topology.getProjects().get(0);
+    var project = topology.getProjects().getFirst();
     for (Map.Entry<String, List<Other>> entry : project.getOthers().entrySet()) {
       if (!entry.getKey().equals("app")) {
         continue;
       }
       role = roles.get(entry.getKey());
-      var other = entry.getValue().get(0);
+      var other = entry.getValue().getFirst();
       var acls =
           role.getAcls().stream()
               .map(
@@ -86,13 +86,13 @@ public class JulieRolesTest {
         new TopologySerdes(new Configuration(), TopologySerdes.FileType.YAML, new PlanMap());
     Topology topology =
         topologySerdes.deserialise(TestUtils.getResourceFile("/descriptor-mirrormaker.yaml"));
-    var project = topology.getProjects().get(0);
+    var project = topology.getProjects().getFirst();
     for (Map.Entry<String, List<Other>> entry : project.getOthers().entrySet()) {
       if (!entry.getKey().equals("app")) {
         continue;
       }
       var role = roles.get(entry.getKey());
-      var other = entry.getValue().get(0);
+      var other = entry.getValue().getFirst();
       var acls =
           role.getAcls().stream()
               .map(
@@ -168,7 +168,7 @@ public class JulieRolesTest {
           "mm2-offset-syncs.test-mm.internal",
           "test-mm.checkpoints.internal"
         };
-    var mirrorMaker = topology.getProjects().get(0).getOthers().get("mirrorMaker").get(0);
+    var mirrorMaker = topology.getProjects().getFirst().getOthers().get("mirrorMaker").getFirst();
     var topics = mirrorMaker.asMap().values();
     for (String t : expected) {
       Assert.assertTrue(topics.contains(t));

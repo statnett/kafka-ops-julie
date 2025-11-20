@@ -111,7 +111,7 @@ public class TopicCustomDeserializer extends StdDeserializer<Topic> {
               .map(Optional::get)
               .toList();
       if (!errors.isEmpty()) {
-        throw new IOException(errors.get(0));
+        throw new IOException(errors.getFirst());
       }
       schemas =
           listOfResultsOrErrors.stream()

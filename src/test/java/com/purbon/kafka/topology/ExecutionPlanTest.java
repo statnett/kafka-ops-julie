@@ -123,8 +123,8 @@ public class ExecutionPlanTest {
   @Test
   public void addTopicsTest() throws IOException {
     Topology topology = buildTopologyForTest();
-    Topic topicFoo = topology.getProjects().get(0).getTopics().get(0);
-    Topic topicBar = topology.getProjects().get(0).getTopics().get(1);
+    Topic topicFoo = topology.getProjects().getFirst().getTopics().get(0);
+    Topic topicBar = topology.getProjects().getFirst().getTopics().get(1);
     CreateTopicAction addTopicAction1 =
         new CreateTopicAction(adminClient, topicFoo, topicFoo.toString());
     CreateTopicAction addTopicAction2 =
@@ -140,8 +140,8 @@ public class ExecutionPlanTest {
   @Test
   public void deleteTopicsPreviouslyAddedTest() throws IOException {
     Topology topology = buildTopologyForTest();
-    Topic topicFoo = topology.getProjects().get(0).getTopics().get(0);
-    Topic topicBar = topology.getProjects().get(0).getTopics().get(1);
+    Topic topicFoo = topology.getProjects().getFirst().getTopics().get(0);
+    Topic topicBar = topology.getProjects().getFirst().getTopics().get(1);
     CreateTopicAction addTopicAction1 =
         new CreateTopicAction(adminClient, topicFoo, topicFoo.toString());
     CreateTopicAction addTopicAction2 =

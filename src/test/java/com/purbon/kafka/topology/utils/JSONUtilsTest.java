@@ -33,7 +33,7 @@ public class JSONUtilsTest {
   public void testToArrayDeserialisation() throws JsonProcessingException {
     String jsonAsString = " [\n \t\"1\", \"2\", \"3\"\n ]";
     List<String> jsonAsList = JSON.toArray(jsonAsString);
-    assertEquals("1", jsonAsList.get(0));
+    assertEquals("1", jsonAsList.getFirst());
     assertEquals(ArrayList.class, jsonAsList.getClass());
   }
 }

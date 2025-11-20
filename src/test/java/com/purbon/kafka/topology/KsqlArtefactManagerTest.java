@@ -54,7 +54,7 @@ public class KsqlArtefactManagerTest {
                 x -> x.getClass().getAnnotation(TypeArtefact.class).name().equals("VARS")))
         .isTrue();
     assertThat(artefacts).hasSize(4);
-    var ksqlArtefacts = topology.getProjects().get(0).getKsqlArtefacts();
+    var ksqlArtefacts = topology.getProjects().getFirst().getKsqlArtefacts();
     int i = 0;
     for (Artefact artefact : artefacts) {
       if (i < 2) {
