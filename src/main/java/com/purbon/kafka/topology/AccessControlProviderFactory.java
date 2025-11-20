@@ -25,27 +25,24 @@ public class AccessControlProviderFactory {
     String accessControlClassName = config.getAccessControlClassName();
     try {
       Class<?> clazz = Class.forName(accessControlClassName);
-      return switch (accessControlClassName) {
-        case ACCESS_CONTROL_DEFAULT_CLASS -> {
+      switch (accessControlClassName) {
+        case ACCESS_CONTROL_DEFAULT_CLASS:
           Constructor<?> aclsProviderConstructor =
               clazz.getConstructor(TopologyBuilderAdminClient.class);
-          yield (SimpleAclsProvider) aclsProviderConstructor.newInstance(builderAdminClient);
-        }
-        case CONFLUENT_CLOUD_CONTROL_CLASS -> {
+          return (SimpleAclsProvider) aclsProviderConstructor.newInstance(builderAdminClient);
+        case CONFLUENT_CLOUD_CONTROL_CLASS:
           Constructor<?> ccloudProviderConstructor =
               clazz.getConstructor(TopologyBuilderAdminClient.class, Configuration.class);
-          yield (CCloudAclsProvider)
+          return (CCloudAclsProvider)
               ccloudProviderConstructor.newInstance(builderAdminClient, config);
-        }
-        case CONFLUENT_HYBRID_CLOUD_CONTROL_CLASS -> {
+        case CONFLUENT_HYBRID_CLOUD_CONTROL_CLASS:
           Constructor<?> hybridCcloudProviderConstructor =
               clazz.getConstructor(TopologyBuilderAdminClient.class, Configuration.class);
-          yield (HybridCCloudAclsProvider)
+          return (HybridCCloudAclsProvider)
               hybridCcloudProviderConstructor.newInstance(builderAdminClient, config);
-        }
-        default ->
-            throw new IOException("Unknown access control provided. " + accessControlClassName);
-      };
+        default:
+          throw new IOException("Unknown access control provided. " + accessControlClassName);
+      }
     } catch (Exception ex) {
       throw new IOException(ex);
     }
