@@ -137,14 +137,11 @@ public class Topic implements Cloneable {
   }
 
   private String toString(String projectPrefix) {
-    switch (topicNamePattern) {
-      case "default":
-        return defaultTopicStructureString(projectPrefix);
-      case "name":
-        return name;
-      default:
-        return patternBasedTopicNameStructureString();
-    }
+    return switch (topicNamePattern) {
+      case "default" -> defaultTopicStructureString(projectPrefix);
+      case "name" -> name;
+      default -> patternBasedTopicNameStructureString();
+    };
   }
 
   private String patternBasedTopicNameStructureString() {
