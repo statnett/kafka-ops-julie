@@ -1,5 +1,14 @@
 # Changelog
 
+## [6.1.1](https://github.com/statnett/kafka-ops-julie/compare/v6.1.0...v6.1.1) (2025-11-22)
+
+
+### Bug Fixes
+
+* **deps:** update dependency redis.clients:jedis to v7.1.0 ([#543](https://github.com/statnett/kafka-ops-julie/issues/543)) ([449629d](https://github.com/statnett/kafka-ops-julie/commit/449629d49d1f1e1328505f2e508280ef6fea7be7))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.39.1 ([#546](https://github.com/statnett/kafka-ops-julie/issues/546)) ([b145ed9](https://github.com/statnett/kafka-ops-julie/commit/b145ed9eac890bfed6ee30787ad7d5d7b26e8d90))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.39.2 ([#547](https://github.com/statnett/kafka-ops-julie/issues/547)) ([f0ee0f6](https://github.com/statnett/kafka-ops-julie/commit/f0ee0f6c04499f4e53222725fa443de24b9297ec))
+
 ## [6.1.0](https://github.com/statnett/kafka-ops-julie/compare/v6.0.0...v6.1.0) (2025-11-20)
 
 
