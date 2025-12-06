@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.1.2](https://github.com/statnett/kafka-ops-julie/compare/v6.1.1...v6.1.2) (2025-12-06)
+
+
+### Bug Fixes
+
+* **deps:** update dependency software.amazon.awssdk:bom to v2.40.3 ([#559](https://github.com/statnett/kafka-ops-julie/issues/559)) ([9821479](https://github.com/statnett/kafka-ops-julie/commit/98214796e2d4a1d6591f992fd2159c5e24a7513c))
+
 ## [6.1.1](https://github.com/statnett/kafka-ops-julie/compare/v6.1.0...v6.1.1) (2025-12-04)
 
 
