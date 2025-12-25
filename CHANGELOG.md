@@ -1,5 +1,14 @@
 # Changelog
 
+## [6.1.3](https://github.com/statnett/kafka-ops-julie/compare/v6.1.2...v6.1.3) (2025-12-25)
+
+
+### Bug Fixes
+
+* **deps:** update dependency software.amazon.awssdk:bom to v2.40.12 ([#574](https://github.com/statnett/kafka-ops-julie/issues/574)) ([d8d3d20](https://github.com/statnett/kafka-ops-julie/commit/d8d3d209c5823af1189a32f593276b04d2e02c0d))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.40.14 ([#577](https://github.com/statnett/kafka-ops-julie/issues/577)) ([62bf309](https://github.com/statnett/kafka-ops-julie/commit/62bf3090af7f9f0651f2e62c40cf7d069fd1f339))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.40.15 ([#578](https://github.com/statnett/kafka-ops-julie/issues/578)) ([ecd35c4](https://github.com/statnett/kafka-ops-julie/commit/ecd35c445f191efaaaddaed57b79971a864ab6c6))
+
 ## [6.1.2](https://github.com/statnett/kafka-ops-julie/compare/v6.1.1...v6.1.2) (2025-12-18)
 
 
