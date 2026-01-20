@@ -212,7 +212,7 @@
     <commons.version>1.11.0</commons.version>
     <confluent.version>8.1.1</confluent.version>
     <gcp.java.sdk.version>26.74.0</gcp.java.sdk.version>
-    <jackson.version>2.20.1</jackson.version>
+    <jackson.version>2.21.0</jackson.version>
     <jedis.version>7.2.1</jedis.version>
     <jinjava.version>2.8.2</jinjava.version>
     <junit.version>4.13.2</junit.version>
