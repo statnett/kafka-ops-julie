@@ -214,7 +214,7 @@
     <gcp.java.sdk.version>26.75.0</gcp.java.sdk.version>
     <jackson.version>2.21.0</jackson.version>
     <jedis.version>7.2.1</jedis.version>
-    <jinjava.version>2.8.2</jinjava.version>
+    <jinjava.version>2.8.3</jinjava.version>
     <junit.version>4.13.2</junit.version>
     <ksqldb.client.version>8.1.1</ksqldb.client.version>
     <log4j.version>2.25.3</log4j.version>
