@@ -344,7 +344,7 @@ public class TopicManagerIT {
 
   private void verifyTopics(List<String> topics, int topicsCount, int internalTopicsCount)
       throws ExecutionException, InterruptedException {
-    // Retry logic to handle eventual consistency in Kafka metadata propagation
+    // Retry logic to handle the case when topic creation is not complete yet.
     int maxRetries = 10;
     int retryDelayMs = 500;
     Set<String> topicNames = null;
