@@ -3,8 +3,7 @@ package com.purbon.kafka.topology.integration;
 import static com.purbon.kafka.topology.CommandLineInterface.*;
 import static com.purbon.kafka.topology.Constants.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import com.purbon.kafka.topology.BackendController;
 import com.purbon.kafka.topology.Configuration;
@@ -360,11 +359,11 @@ public class TopicManagerIT {
       missingTopics =
           topics.stream()
               .filter(topic -> !finalTopicNames.contains(topic))
-              .collect(Collectors.toList());
+              .toList();
     }
 
     for (String topic : missingTopics) {
-      assertTrue("Topic " + topic + " not found", false);
+      fail("Topic " + topic + " not found");
     }
 
     int numInternalTopics = 0;
