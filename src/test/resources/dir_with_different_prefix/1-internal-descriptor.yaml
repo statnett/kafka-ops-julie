@@ -1,0 +1,15 @@
+---
+context: "ctx"
+source: "src"
+privacy: "internal"
+projects:
+  - name: "prj"
+    topics:
+      - name: "inbox"
+        config:
+          replication.factor: "1"
+          num.partitions: "10"
+    consumers:
+      - principal: "User:b_test"
+    producers:
+      - principal: "User:a_test"
