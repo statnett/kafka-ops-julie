@@ -92,6 +92,9 @@ public class AlternativeKafkaContainer extends GenericContainer<AlternativeKafka
     }
     beforeStartupPreparations();
     createStartupScript();
+    /* enable next line to get output from the container */
+    // followOutput(outputFrame ->
+    // System.out.println(outputFrame.getUtf8StringWithoutLineEnding()));
   }
 
   /** Subclasses may override. */
