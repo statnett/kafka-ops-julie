@@ -131,6 +131,8 @@ public final class Constants {
   public static final String JULIE_ENABLE_MULTIPLE_CONTEXT_PER_DIR =
       "julie.multiple.context.per.dir.enabled";
 
+  public static final String JULIE_PROJECT_NAMESPACE_ENABLED = "julie.project.namespaces.enabled";
+
   public static final String TOPOLOGY_VALIDATIONS_TOPIC_NAME_REGEXP =
       "validations.topic.name.regexp";
 

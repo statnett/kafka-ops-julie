@@ -18,6 +18,30 @@ import java.util.Map;
 
 public final class TopologyObjectBuilder {
 
+  private static final String PREFIX_SEPARATOR = ".";
+
+  /**
+   * Builds a unique key for a topology based on its full prefix. This includes the context and all
+   * other namespace fields (like source, privacy, etc.) in their declaration order.
+   *
+   * @param topology The topology to build a key for
+   * @return A string key representing the full namespace prefix
+   */
+  private static String buildProjectPrefix(Topology topology, Configuration config) {
+    if (!config.isProjectNamespacingEnabled()) {
+      return topology.getContext();
+    }
+    StringBuilder sb = new StringBuilder();
+    sb.append(topology.getContext());
+    Map<String, Object> fullContext = topology.asFullContext();
+    for (String key : topology.getOrder()) {
+      sb.append(PREFIX_SEPARATOR);
+      Object value = fullContext.get(key);
+      sb.append(value != null ? value.toString() : "");
+    }
+    return sb.toString();
+  }
+
   public static Map<String, Topology> build(String fileOrDir) throws IOException {
     return build(fileOrDir, "", new Configuration());
   }
@@ -37,17 +61,21 @@ public final class TopologyObjectBuilder {
     List<Topology> topologies = parseListOfTopologies(fileOrDir, config, plans);
     Map<String, Topology> collection = new HashMap<>();
     for (Topology topology : topologies) {
+      String projectPrefix = buildProjectPrefix(topology, config);
       String context = topology.getContext();
-      if (!config.areMultipleContextPerDirEnabled()
-          && (!collection.containsKey(context) && collection.size() == 1)) {
+      // Check if we're seeing a new context (not just a new prefix within same context)
+      boolean hasNewContext =
+          collection.keySet().stream()
+              .noneMatch(key -> key.equals(context) || key.startsWith(context + PREFIX_SEPARATOR));
+      if (!config.areMultipleContextPerDirEnabled() && (hasNewContext && collection.size() >= 1)) {
         // the parsing found a new topology with a different context, as it is not enabled
         // it should be flagged as error
         throw new IOException("Topologies from different contexts are not allowed");
       }
-      if (!collection.containsKey(context)) {
-        collection.put(context, topology);
+      if (!collection.containsKey(projectPrefix)) {
+        collection.put(projectPrefix, topology);
       } else {
-        Topology mainTopology = collection.get(context);
+        Topology mainTopology = collection.get(projectPrefix);
         List<String> projectNames =
             mainTopology.getProjects().stream().map(p -> p.getName().toLowerCase()).toList();
         for (Project project : topology.getProjects()) {
@@ -55,8 +83,8 @@ public final class TopologyObjectBuilder {
             throw new IOException(
                 "Trying to add a project with name "
                     + project.getName()
-                    + " in a sub topology (context: "
-                    + mainTopology.getContext()
+                    + " in a sub topology (prefix: "
+                    + projectPrefix
                     + ") that already contain the same project. Merging projects is not yet supported");
           }
           mainTopology.addProject(project);
@@ -74,14 +102,14 @@ public final class TopologyObjectBuilder {
             throw new IOException(
                 "Trying to add special_topic with name "
                     + specialTopic.getName()
-                    + " in a topology (context: "
-                    + mainTopology.getContext()
+                    + " in a topology (prefix: "
+                    + projectPrefix
                     + "). Each special topic should only be"
                     + " defined once.");
           }
           mainTopology.addSpecialTopic(specialTopic);
         }
-        collection.put(context, mainTopology);
+        collection.put(projectPrefix, mainTopology);
       }
     }
     return collection;
