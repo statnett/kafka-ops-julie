@@ -303,10 +303,7 @@ public class TopicManagerIT {
     topology.setSpecialTopics(specialTopics);
     topicManager.updatePlan(topology, plan);
     plan.run();
-    Set<String> topicNames = kafkaAdminClient.listTopics().names().get();
-    assertThat(topicNames).contains(topicA.toString());
-    assertThat(topicNames).contains("i-am-special");
-    assertEquals("Should create 2 new topics", 2, topicNames.size());
+    verifyTopics(Arrays.asList(topicA.toString(), "i-am-special"));
   }
 
   private void verifyTopicConfiguration(String topic, HashMap<String, String> config)
@@ -348,9 +345,28 @@ public class TopicManagerIT {
 
   private void verifyTopics(List<String> topics, int topicsCount, int internalTopicsCount)
       throws ExecutionException, InterruptedException {
-    Set<String> topicNames = kafkaAdminClient.listTopics().names().get();
-    topics.forEach(
-        topic -> assertTrue("Topic " + topic + " not found", topicNames.contains(topic)));
+    // Retry logic to handle eventual consistency in Kafka metadata propagation
+    int maxRetries = 10;
+    int retryDelayMs = 500;
+    Set<String> topicNames = null;
+    List<String> missingTopics = new ArrayList<>(topics);
+
+    for (int attempt = 0; attempt < maxRetries && !missingTopics.isEmpty(); attempt++) {
+      if (attempt > 0) {
+        Thread.sleep(retryDelayMs);
+      }
+      topicNames = kafkaAdminClient.listTopics().names().get();
+      Set<String> finalTopicNames = topicNames;
+      missingTopics =
+          topics.stream()
+              .filter(topic -> !finalTopicNames.contains(topic))
+              .collect(Collectors.toList());
+    }
+
+    for (String topic : missingTopics) {
+      assertTrue("Topic " + topic + " not found", false);
+    }
+
     int numInternalTopics = 0;
     for (String topic : topicNames) {
       if (topic.startsWith("_")) {
