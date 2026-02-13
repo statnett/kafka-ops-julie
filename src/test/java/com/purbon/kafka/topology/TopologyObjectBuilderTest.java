@@ -26,6 +26,16 @@ public class TopologyObjectBuilderTest {
   @Test
   public void buildTopicNameTest() throws IOException {
     String fileOrDirPath = TestUtils.getResourceFilename("/dir");
+    var map = TopologyObjectBuilder.build(fileOrDirPath);
+    assertThat(map).hasSize(1);
+    for (var entry : map.entrySet()) {
+      assertThat(entry.getValue().getProjects()).hasSize(5);
+    }
+  }
+
+  @Test
+  public void buildTopicNameTest_withNamespaces() throws IOException {
+    String fileOrDirPath = TestUtils.getResourceFilename("/dir");
     var props = new Properties();
     props.put(JULIE_PROJECT_NAMESPACE_ENABLED, "true");
     Configuration config = new Configuration(new HashMap<>(), props);
@@ -116,6 +126,13 @@ public class TopologyObjectBuilderTest {
   @Test(expected = IOException.class)
   public void buildOutOfMultipleToposIfNotEnabled() throws IOException {
     String fileOrDirPath = TestUtils.getResourceFilename("/dir_with_multiple");
+    TopologyObjectBuilder.build(fileOrDirPath);
+  }
+
+  @Test(expected = IOException.class)
+  public void shouldRaiseAnExceptionIfTryingToParseMultipleTopologiesWithSharedProjects()
+      throws IOException {
+    String fileOrDirPath = TestUtils.getResourceFilename("/dir_with_prob");
     TopologyObjectBuilder.build(fileOrDirPath);
   }
 
