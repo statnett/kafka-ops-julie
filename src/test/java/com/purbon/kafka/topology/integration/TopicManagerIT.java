@@ -356,10 +356,7 @@ public class TopicManagerIT {
       }
       topicNames = kafkaAdminClient.listTopics().names().get();
       Set<String> finalTopicNames = topicNames;
-      missingTopics =
-          topics.stream()
-              .filter(topic -> !finalTopicNames.contains(topic))
-              .toList();
+      missingTopics = topics.stream().filter(topic -> !finalTopicNames.contains(topic)).toList();
     }
 
     for (String topic : missingTopics) {

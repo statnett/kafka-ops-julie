@@ -45,6 +45,41 @@ public class TopologyObjectBuilderTest {
     cliOps.put(BROKERS_OPTION, "");
     var props = new Properties();
     props.put(JULIE_ENABLE_MULTIPLE_CONTEXT_PER_DIR, "true");
+    Configuration config = new Configuration(cliOps, props);
+    String fileOrDirPath = TestUtils.getResourceFilename("/dir_with_multiple");
+    var map = TopologyObjectBuilder.build(fileOrDirPath, config);
+    assertThat(map).hasSize(2);
+    for (var entry : map.entrySet()) {
+      assertThat(entry.getValue().getProjects()).hasSize(4);
+    }
+    var contextTopology = map.get("contextOrg");
+    assertThat(contextTopology.getOrder().get(0)).isEqualTo("source");
+    assertThat(contextTopology.getOrder().get(1)).isEqualTo("foo");
+    assertThat(contextTopology.getOrder().get(2)).isEqualTo("bar");
+    assertThat(contextTopology.getOrder().get(3)).isEqualTo("zet");
+    var context = map.get("context2");
+    assertThat(context.getOrder()).hasSize(3);
+    assertThat(context.getOrder().get(0)).isEqualTo("source2");
+    assertThat(context.getOrder().get(1)).isEqualTo("foo2");
+    assertThat(context.getOrder().get(2)).isEqualTo("bar2");
+    var projects =
+        Arrays.asList(
+            "context2.source2.foo.bar.projectFoo.",
+            "context2.source2.foo.bar.projectBar.",
+            "context2.source2.foo.bar.projectZet.",
+            "context2.source2.foo.bar.projectBear.");
+    assertThat(context.getProjects()).hasSize(4);
+    for (Project proj : context.getProjects()) {
+      assertThat(projects).contains(proj.namePrefix());
+    }
+  }
+
+  @Test
+  public void buildOutOfMultipleTopos_withNamespaces() throws IOException {
+    Map<String, String> cliOps = new HashMap<>();
+    cliOps.put(BROKERS_OPTION, "");
+    var props = new Properties();
+    props.put(JULIE_ENABLE_MULTIPLE_CONTEXT_PER_DIR, "true");
     props.put(JULIE_PROJECT_NAMESPACE_ENABLED, "true");
     Configuration config = new Configuration(cliOps, props);
     String fileOrDirPath = TestUtils.getResourceFilename("/dir_with_multiple");
