@@ -50,6 +50,10 @@ public class CommandLineInterface {
   public static final String VALIDATE_OPTION = "validate";
   public static final String VALIDATE_DESC = "Only run configured validations in your topology";
 
+  public static final String PROJECT_NAMESPACE_OPTION = "enable-project-namespaces";
+  public static final String PROJECT_NAMESPACE_DESC =
+      "Enable project namespaces when grouping topologies.";
+
   public static final String HELP_OPTION = "help";
   public static final String HELP_DESC = "Prints usage information.";
 
@@ -85,6 +89,7 @@ public class CommandLineInterface {
             DONT_WARN_FOR_PROJECTS_WITHOUT_TOPICS_DESC));
     options.addOption(noArgOption(QUIET_OPTION, QUIET_DESC));
     options.addOption(noArgOption(VALIDATE_OPTION, VALIDATE_DESC));
+    options.addOption(noArgOption(PROJECT_NAMESPACE_OPTION, PROJECT_NAMESPACE_DESC));
     options.addOption(noArgOption(VERSION_OPTION, VERSION_DESC));
     options.addOption(noArgOption(HELP_OPTION, HELP_DESC));
     return options;
@@ -144,6 +149,7 @@ public class CommandLineInterface {
         String.valueOf(cmd.hasOption(DONT_WARN_FOR_PROJECTS_WITHOUT_TOPICS_OPTION)));
     config.put(QUIET_OPTION, String.valueOf(cmd.hasOption(QUIET_OPTION)));
     config.put(VALIDATE_OPTION, String.valueOf(cmd.hasOption(VALIDATE_OPTION)));
+    config.put(PROJECT_NAMESPACE_OPTION, String.valueOf(cmd.hasOption(PROJECT_NAMESPACE_OPTION)));
     config.put(
         OVERRIDING_CLIENT_CONFIG_OPTION, cmd.getOptionValue(OVERRIDING_CLIENT_CONFIG_OPTION));
     config.put(CLIENT_CONFIG_OPTION, cmd.getOptionValue(CLIENT_CONFIG_OPTION));

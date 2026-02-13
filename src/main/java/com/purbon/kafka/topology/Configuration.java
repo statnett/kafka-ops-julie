@@ -535,6 +535,13 @@ public class Configuration {
     return config.getBoolean(JULIE_ENABLE_MULTIPLE_CONTEXT_PER_DIR);
   }
 
+  public boolean isProjectNamespacingEnabled() {
+    if (cliParams.containsKey(CommandLineInterface.PROJECT_NAMESPACE_OPTION)) {
+      return Boolean.parseBoolean(cliParams.get(CommandLineInterface.PROJECT_NAMESPACE_OPTION));
+    }
+    return config.getBoolean(JULIE_PROJECT_NAMESPACE_ENABLED);
+  }
+
   public String getKafkaBackendStateTopic() {
     return getString(JULIE_KAFKA_STATE_TOPIC);
   }

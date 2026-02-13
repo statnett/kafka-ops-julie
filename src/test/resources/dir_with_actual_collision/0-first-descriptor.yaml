@@ -1,0 +1,11 @@
+---
+context: "ctx"
+source: "src"
+privacy: "public"
+projects:
+  - name: "prj"
+    topics:
+      - name: "inbox"
+        config:
+          replication.factor: "1"
+          num.partitions: "10"

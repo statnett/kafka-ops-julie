@@ -1,0 +1,11 @@
+---
+context: "ctx"
+source: "src"
+privacy: "public"
+projects:
+  - name: "projectBeta"
+    topics:
+      - name: "topic2"
+        config:
+          replication.factor: "1"
+          num.partitions: "5"

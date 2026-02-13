@@ -71,6 +71,7 @@ public class CLITest {
     map.put(VALIDATE_OPTION, "false");
     map.put(DONT_WARN_FOR_READ_ONLY_STREAMS_OPTION, "false");
     map.put(DONT_WARN_FOR_PROJECTS_WITHOUT_TOPICS_OPTION, "false");
+    map.put(PROJECT_NAMESPACE_OPTION, "false");
     return map;
   }
 }
