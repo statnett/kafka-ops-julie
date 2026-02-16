@@ -65,15 +65,10 @@ public class Subject {
   }
 
   public String buildSubjectName(Topic topic) throws IOException {
-    switch (topic.getSubjectNameStrategy()) {
-      case TOPIC_NAME_STRATEGY:
-        return topic + "-" + kind.label;
-      case RECORD_NAME_STRATEGY:
-        return recordTypeAsString();
-      case TOPIC_RECORD_NAME_STRATEGY:
-        return topic + "-" + recordTypeAsString();
-      default:
-        return "";
-    }
+    return switch (topic.getSubjectNameStrategy()) {
+      case TOPIC_NAME_STRATEGY -> topic + "-" + kind.label;
+      case RECORD_NAME_STRATEGY -> recordTypeAsString();
+      case TOPIC_RECORD_NAME_STRATEGY -> topic + "-" + recordTypeAsString();
+    };
   }
 }

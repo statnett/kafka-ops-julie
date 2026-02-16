@@ -11,7 +11,7 @@ public class QuotasClientBindingsBuilder {
   private static final String PRODUCER_BYTE_RATE = "producer_byte_rate";
   private static final String REQUEST_RATE = "request_percentage";
 
-  Quota quota = null;
+  Quota quota;
 
   public QuotasClientBindingsBuilder(Quota quota) {
     this.quota = quota;

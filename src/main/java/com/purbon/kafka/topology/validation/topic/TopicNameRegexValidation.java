@@ -33,7 +33,6 @@ public class TopicNameRegexValidation implements TopicValidation {
   @Override
   public void valid(Topic topic) throws ValidationException {
     LOGGER.trace(String.format("Applying Topic Name Regex Validation [%s]", topicNamePattern));
-
     if (!topic.getName().matches(topicNamePattern)) {
       String msg =
           String.format("Topic name '%s' does not follow regex: %s", topic, topicNamePattern);

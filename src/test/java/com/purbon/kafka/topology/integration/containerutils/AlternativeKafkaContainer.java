@@ -92,6 +92,9 @@ public class AlternativeKafkaContainer extends GenericContainer<AlternativeKafka
     }
     beforeStartupPreparations();
     createStartupScript();
+    /* enable next line to get output from the container */
+    // followOutput(outputFrame ->
+    // System.out.println(outputFrame.getUtf8StringWithoutLineEnding()));
   }
 
   /** Subclasses may override. */
@@ -108,7 +111,6 @@ public class AlternativeKafkaContainer extends GenericContainer<AlternativeKafka
                 .replaceAll(":" + KAFKA_PORT, ":" + getMappedPort(KAFKA_PORT))
                 .replaceAll("OTHER://0\\.0\\.0\\.0", "OTHER://kafka")
                 .replaceAll("0\\.0\\.0\\.0", getHost()));
-
     final String startupScript =
         overrideStartupScript(
             "#!/bin/bash\n"

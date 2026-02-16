@@ -60,9 +60,7 @@ public class Connector extends DynamicUser {
       Optional<String> group,
       Optional<String> cluster_id,
       Optional<List<String>> connectors) {
-
     super(principal, topics, observerPrincipals);
-
     this.configs_topic = configs_topic;
     this.status_topic = status_topic;
     this.offset_topic = offset_topic;

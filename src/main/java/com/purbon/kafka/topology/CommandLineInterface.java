@@ -2,11 +2,13 @@ package com.purbon.kafka.topology;
 
 import static java.lang.System.exit;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.cli.*;
+import org.apache.commons.cli.help.HelpFormatter;
 
 public class CommandLineInterface {
 
@@ -48,6 +50,10 @@ public class CommandLineInterface {
   public static final String VALIDATE_OPTION = "validate";
   public static final String VALIDATE_DESC = "Only run configured validations in your topology";
 
+  public static final String PROJECT_NAMESPACE_OPTION = "enable-project-namespaces";
+  public static final String PROJECT_NAMESPACE_DESC =
+      "Enable project namespaces when grouping topologies.";
+
   public static final String HELP_OPTION = "help";
   public static final String HELP_DESC = "Prints usage information.";
 
@@ -61,120 +67,49 @@ public class CommandLineInterface {
   private Options options;
 
   public CommandLineInterface() {
-    formatter = new HelpFormatter();
+    formatter = HelpFormatter.builder().setShowSince(false).get();
     parser = new DefaultParser();
     options = buildOptions();
   }
 
   private Options buildOptions() {
-
-    final Option topologyFileOption =
-        Option.builder().longOpt(TOPOLOGY_OPTION).hasArg().desc(TOPOLOGY_DESC).required().build();
-
-    final Option plansFileOption =
-        Option.builder().longOpt(PLANS_OPTION).hasArg().desc(PLANS_DESC).required(false).build();
-
-    final Option brokersListOption =
-        Option.builder()
-            .longOpt(BROKERS_OPTION)
-            .hasArg()
-            .desc(BROKERS_DESC)
-            .required(false)
-            .build();
-
-    final Option clientConfigFileOption =
-        Option.builder()
-            .longOpt(CLIENT_CONFIG_OPTION)
-            .hasArg()
-            .desc(CLIENT_CONFIG_DESC)
-            .required()
-            .build();
-
-    final Option overridingAdminClientConfigFileOption =
-        Option.builder()
-            .longOpt(OVERRIDING_CLIENT_CONFIG_OPTION)
-            .hasArg()
-            .desc(OVERRIDING_CLIENT_CONFIG_DESC)
-            .required(false)
-            .build();
-
-    final Option dryRunOption =
-        Option.builder()
-            .longOpt(DRY_RUN_OPTION)
-            .hasArg(false)
-            .desc(DRY_RUN_DESC)
-            .required(false)
-            .build();
-
-    final Option recursiveOption =
-        Option.builder()
-            .longOpt(RECURSIVE_OPTION)
-            .hasArg(false)
-            .desc(RECURSIVE_DESC)
-            .required(false)
-            .build();
-
-    final Option dontWarnForReadOnlyStreamsOption =
-        Option.builder()
-            .longOpt(DONT_WARN_FOR_READ_ONLY_STREAMS_OPTION)
-            .hasArg(false)
-            .desc(DONT_WARN_FOR_READ_ONLY_STREAMS_DESC)
-            .required(false)
-            .build();
-
-    final Option dontWarnForProjectsWithoutTopicsOption =
-        Option.builder()
-            .longOpt(DONT_WARN_FOR_PROJECTS_WITHOUT_TOPICS_OPTION)
-            .hasArg(false)
-            .desc(DONT_WARN_FOR_PROJECTS_WITHOUT_TOPICS_DESC)
-            .required(false)
-            .build();
-
-    final Option quietOption =
-        Option.builder()
-            .longOpt(QUIET_OPTION)
-            .hasArg(false)
-            .desc(QUIET_DESC)
-            .required(false)
-            .build();
-
-    final Option validateOption =
-        Option.builder()
-            .longOpt(VALIDATE_OPTION)
-            .hasArg(false)
-            .desc(VALIDATE_DESC)
-            .required(false)
-            .build();
-
-    final Option versionOption =
-        Option.builder()
-            .longOpt(VERSION_OPTION)
-            .hasArg(false)
-            .desc(VERSION_DESC)
-            .required(false)
-            .build();
-
-    final Option helpOption =
-        Option.builder().longOpt(HELP_OPTION).hasArg(false).desc(HELP_DESC).required(false).build();
-
     final Options options = new Options();
-
-    options.addOption(topologyFileOption);
-    options.addOption(plansFileOption);
-    options.addOption(brokersListOption);
-    options.addOption(clientConfigFileOption);
-
-    options.addOption(overridingAdminClientConfigFileOption);
-    options.addOption(dryRunOption);
-    options.addOption(recursiveOption);
-    options.addOption(dontWarnForReadOnlyStreamsOption);
-    options.addOption(dontWarnForProjectsWithoutTopicsOption);
-    options.addOption(quietOption);
-    options.addOption(validateOption);
-    options.addOption(versionOption);
-    options.addOption(helpOption);
-
+    options.addOption(requiredArgOption(TOPOLOGY_OPTION, TOPOLOGY_DESC));
+    options.addOption(argOption(PLANS_OPTION, PLANS_DESC));
+    options.addOption(argOption(BROKERS_OPTION, BROKERS_DESC));
+    options.addOption(requiredArgOption(CLIENT_CONFIG_OPTION, CLIENT_CONFIG_DESC));
+    options.addOption(argOption(OVERRIDING_CLIENT_CONFIG_OPTION, OVERRIDING_CLIENT_CONFIG_DESC));
+    options.addOption(noArgOption(DRY_RUN_OPTION, DRY_RUN_DESC));
+    options.addOption(noArgOption(RECURSIVE_OPTION, RECURSIVE_DESC));
+    options.addOption(
+        noArgOption(DONT_WARN_FOR_READ_ONLY_STREAMS_OPTION, DONT_WARN_FOR_READ_ONLY_STREAMS_DESC));
+    options.addOption(
+        noArgOption(
+            DONT_WARN_FOR_PROJECTS_WITHOUT_TOPICS_OPTION,
+            DONT_WARN_FOR_PROJECTS_WITHOUT_TOPICS_DESC));
+    options.addOption(noArgOption(QUIET_OPTION, QUIET_DESC));
+    options.addOption(noArgOption(VALIDATE_OPTION, VALIDATE_DESC));
+    options.addOption(noArgOption(PROJECT_NAMESPACE_OPTION, PROJECT_NAMESPACE_DESC));
+    options.addOption(noArgOption(VERSION_OPTION, VERSION_DESC));
+    options.addOption(noArgOption(HELP_OPTION, HELP_DESC));
     return options;
+  }
+
+  private Option argOption(final String longOption, final String description) {
+    return Option.builder().longOpt(longOption).hasArg().desc(description).required(false).get();
+  }
+
+  private Option requiredArgOption(final String longOption, final String description) {
+    return Option.builder().longOpt(longOption).hasArg().desc(description).required().get();
+  }
+
+  private Option noArgOption(final String longOption, final String description) {
+    return Option.builder()
+        .longOpt(longOption)
+        .hasArg(false)
+        .desc(description)
+        .required(false)
+        .get();
   }
 
   public static void main(String[] args) {
@@ -191,9 +126,7 @@ public class CommandLineInterface {
   public void run(String[] args) throws Exception {
     printHelpOrVersion(args);
     CommandLine cmd = parseArgsOrExit(args);
-
     Map<String, String> config = parseConfig(cmd);
-
     processTopology(
         cmd.getOptionValue(TOPOLOGY_OPTION), cmd.getOptionValue(PLANS_OPTION, "default"), config);
     if (!cmd.hasOption(DRY_RUN_OPTION) && !cmd.hasOption(VALIDATE_OPTION)) {
@@ -216,20 +149,17 @@ public class CommandLineInterface {
         String.valueOf(cmd.hasOption(DONT_WARN_FOR_PROJECTS_WITHOUT_TOPICS_OPTION)));
     config.put(QUIET_OPTION, String.valueOf(cmd.hasOption(QUIET_OPTION)));
     config.put(VALIDATE_OPTION, String.valueOf(cmd.hasOption(VALIDATE_OPTION)));
+    config.put(PROJECT_NAMESPACE_OPTION, String.valueOf(cmd.hasOption(PROJECT_NAMESPACE_OPTION)));
     config.put(
         OVERRIDING_CLIENT_CONFIG_OPTION, cmd.getOptionValue(OVERRIDING_CLIENT_CONFIG_OPTION));
     config.put(CLIENT_CONFIG_OPTION, cmd.getOptionValue(CLIENT_CONFIG_OPTION));
-    config.put(
-        OVERRIDING_CLIENT_CONFIG_OPTION, cmd.getOptionValue(OVERRIDING_CLIENT_CONFIG_OPTION));
     return config;
   }
 
   private void printHelpOrVersion(String[] args) {
-
     List<String> listOfArgs = Arrays.asList(args);
-
     if (listOfArgs.contains("--" + HELP_OPTION)) {
-      formatter.printHelp(APP_NAME, options);
+      printHelp();
       exit(0);
     } else if (listOfArgs.contains("--" + VERSION_OPTION)) {
       System.out.println(JulieOps.getVersion());
@@ -243,10 +173,18 @@ public class CommandLineInterface {
       cmd = parser.parse(options, args);
     } catch (ParseException e) {
       System.out.println("Parsing failed cause of " + e.getMessage());
-      formatter.printHelp("cli", options);
+      printHelp();
       exit(1);
     }
     return cmd;
+  }
+
+  private void printHelp() {
+    try {
+      formatter.printHelp(APP_NAME, "", options, "", false);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   void processTopology(String topologyFile, String plansFile, Map<String, String> config)

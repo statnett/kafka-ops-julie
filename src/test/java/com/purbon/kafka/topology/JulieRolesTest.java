@@ -31,39 +31,33 @@ public class JulieRolesTest {
   @Test
   public void testSerdes() throws IOException {
     JulieRoles roles = parser.deserialise(TestUtils.getResourceFile("/roles-rbac.yaml"));
-
     assertThat(roles.getRoles()).hasSize(2);
     for (JulieRole role : roles.getRoles()) {
       assertThat(role.getName()).isIn("app", "other");
     }
-
     JulieRole role = roles.get("app");
     List<String> resources =
         role.getAcls().stream().map(JulieRoleAcl::getResourceType).collect(Collectors.toList());
     assertThat(resources).contains("Topic", "Group", "Subject", "Connector");
-
     assertThat(role.getName()).isEqualTo("app");
     assertThat(role.getAcls()).hasSize(9);
-    assertThat(role.getAcls().get(0).getRole()).isEqualTo("ResourceOwner");
-
+    assertThat(role.getAcls().getFirst().getRole()).isEqualTo("ResourceOwner");
     role = roles.get("other");
     resources =
         role.getAcls().stream().map(JulieRoleAcl::getResourceType).collect(Collectors.toList());
     assertThat(resources).contains("Topic");
     assertThat(role.getName()).isEqualTo("other");
     assertThat(role.getAcls()).hasSize(2);
-
     TopologySerdes topologySerdes =
         new TopologySerdes(new Configuration(), TopologySerdes.FileType.YAML, new PlanMap());
     Topology topology = topologySerdes.deserialise(TestUtils.getResourceFile("/descriptor.yaml"));
-
-    var project = topology.getProjects().get(0);
+    var project = topology.getProjects().getFirst();
     for (Map.Entry<String, List<Other>> entry : project.getOthers().entrySet()) {
       if (!entry.getKey().equals("app")) {
         continue;
       }
       role = roles.get(entry.getKey());
-      var other = entry.getValue().get(0);
+      var other = entry.getValue().getFirst();
       var acls =
           role.getAcls().stream()
               .map(
@@ -99,7 +93,7 @@ public class JulieRolesTest {
         continue;
       }
       var role = roles.get(entry.getKey());
-      var other = entry.getValue().get(0);
+      var other = entry.getValue().getFirst();
       var acls =
           role.getAcls().stream()
               .map(
@@ -116,7 +110,6 @@ public class JulieRolesTest {
                   })
               .toList();
       var names = acls.stream().map(JulieRoleAcl::getResourceName).toList();
-
       var expected =
           new String[] {
             "test-cluster-status",
@@ -127,9 +120,7 @@ public class JulieRolesTest {
             "test-mm.checkpoints.internal",
             "mirrormaker2-heartbeat"
           };
-
       Assert.assertEquals(expected.length, names.size());
-
       for (String t : expected) {
         Assert.assertTrue(names.contains(t));
       }
@@ -140,7 +131,6 @@ public class JulieRolesTest {
   public void testTopologyValidationException() throws IOException {
     JulieRoles roles = parser.deserialise(TestUtils.getResourceFile("/roles.yaml"));
     TopologySerdes topologySerdes = new TopologySerdes();
-
     Topology topology = topologySerdes.deserialise(TestUtils.getResourceFile("/descriptor.yaml"));
     roles.validateTopology(topology);
   }
@@ -149,7 +139,6 @@ public class JulieRolesTest {
   public void testTopologyValidationCorrect() throws IOException {
     JulieRoles roles = parser.deserialise(TestUtils.getResourceFile("/roles-goodTest.yaml"));
     TopologySerdes topologySerdes = new TopologySerdes();
-
     Topology topology = topologySerdes.deserialise(TestUtils.getResourceFile("/descriptor.yaml"));
     roles.validateTopology(topology);
   }
@@ -158,9 +147,7 @@ public class JulieRolesTest {
   public void testTopologyMerge() throws IOException {
     JulieRoles roles1 = parser.deserialise(TestUtils.getResourceFile("/roles.yaml"));
     JulieRoles roles2 = parser.deserialise(TestUtils.getResourceFile("/roles2.yaml"));
-
     JulieRoles roles = roles1.merge(roles2);
-
     assert roles.get("app") != null;
     assert roles.get("app2") != null;
     assert roles.get("other") != null;
@@ -223,9 +210,7 @@ public class JulieRolesTest {
     JulieRoles roles1 = parser.deserialise(TestUtils.getResourceFile("/roles-mirrormaker.yaml"));
     JulieRoles roles2 = parser.deserialise(TestUtils.getResourceFile("/roles2.yaml"));
     JulieRoles roles = roles1.merge(roles2);
-
     TopologySerdes topologySerdes = new TopologySerdes();
-
     Topology topology =
         topologySerdes.deserialise(
             TestUtils.getResourceFile("/descriptor-with-special-topics-and-roles.yaml"));
@@ -236,9 +221,7 @@ public class JulieRolesTest {
   public void testDefaultAllowPerssionTypeInRole() throws IOException {
     JulieRoles roles =
         parser.deserialise(TestUtils.getResourceFile("/roles-with-default-allow.yaml"));
-
     var role = roles.get("defaultAllow");
-
     Assert.assertEquals("ALLOW", role.getAcls().getFirst().getPermissionType());
   }
 }

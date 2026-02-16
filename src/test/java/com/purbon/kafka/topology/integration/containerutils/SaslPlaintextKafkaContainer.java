@@ -25,7 +25,7 @@ public final class SaslPlaintextKafkaContainer extends AlternativeKafkaContainer
   public SaslPlaintextKafkaContainer(final DockerImageName dockerImageName) {
     super(dockerImageName);
     /* Note difference between 0.0.0.0 and localhost: The former will be replaced by the container IP. */
-    withExposedPorts(KAFKA_PORT - 1, KAFKA_PORT, KAFKA_CONTROLLER_PORT);
+    withExposedPorts(KAFKA_PORT - 1, KAFKA_PORT);
     withEnv(
         "KAFKA_LISTENERS",
         "SASL_PLAINTEXT://0.0.0.0:"

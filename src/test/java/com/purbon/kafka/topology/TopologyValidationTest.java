@@ -22,14 +22,11 @@ public class TopologyValidationTest {
 
   @Test
   public void testPositiveExecutionOnCamelCaseNames() {
-
     Topology topology =
         parser.deserialise(TestUtils.getResourceFile("/descriptor-with-camelCaseNames.yml"));
-
     Configuration config =
         createTopologyBuilderConfig(
             "com.purbon.kafka.topology.validation.topology.CamelCaseNameFormatValidation");
-
     TopologyValidator validator = new TopologyValidator(config);
     List<String> results = validator.validate(topology);
     assertThat(results).isEmpty();
@@ -37,15 +34,12 @@ public class TopologyValidationTest {
 
   @Test
   public void testInvalidExecutionBecauseOfNumberOfPartitions() {
-
     Topology topology =
         parser.deserialise(TestUtils.getResourceFile("/descriptor-with-camelCaseNames.yml"));
-
     Configuration config =
         createTopologyBuilderConfig(
             "com.purbon.kafka.topology.validation.topology.CamelCaseNameFormatValidation",
             "com.purbon.kafka.topology.validation.topic.PartitionNumberValidation");
-
     TopologyValidator validator = new TopologyValidator(config);
     List<String> results = validator.validate(topology);
     assertThat(results).hasSize(0);
@@ -53,14 +47,11 @@ public class TopologyValidationTest {
 
   @Test
   public void testInvalidExecutionWithFailedValidation() {
-
     Topology topology = parser.deserialise(TestUtils.getResourceFile("/descriptor.yaml"));
-
     Configuration config =
         createTopologyBuilderConfig(
             "com.purbon.kafka.topology.validation.topology.CamelCaseNameFormatValidation",
             "com.purbon.kafka.topology.validation.topic.PartitionNumberValidation");
-
     TopologyValidator validator = new TopologyValidator(config);
     List<String> results = validator.validate(topology);
     assertThat(results).hasSize(5);
@@ -78,12 +69,10 @@ public class TopologyValidationTest {
   @Test
   public void regexpValidationShouldFindPatterns() {
     Topology topology = parser.deserialise(TestUtils.getResourceFile("/descriptor.yaml"));
-
     Configuration config =
         createTopologyBuilderConfig(
             "com.purbon.kafka.topology.validation.topology.CamelCaseNameFormatValidation",
             "com.purbon.kafka.topology.validation.topic.TopicNameRegexValidation");
-
     TopologyValidator validator = new TopologyValidator(config);
     List<String> results = validator.validate(topology);
     assertThat(results).hasSize(1);
@@ -91,24 +80,19 @@ public class TopologyValidationTest {
 
   @Test(expected = IllegalStateException.class)
   public void testUsingDeprecatedValidationsConfig() {
-
     Topology topology = parser.deserialise(TestUtils.getResourceFile("/descriptor.yaml"));
-
     Configuration config = createTopologyBuilderConfig("topology.CamelCaseNameFormatValidation");
-
     TopologyValidator validator = new TopologyValidator(config);
     List<String> results = validator.validate(topology);
     assertThat(results).hasSize(1);
-    assertThat(results.get(0)).isEqualTo("Project name does not follow the camelCase format: foo");
+    assertThat(results.getFirst())
+        .isEqualTo("Project name does not follow the camelCase format: foo");
   }
 
   @Test(expected = IllegalStateException.class)
   public void testUsingUnknownClassName() {
-
     Topology topology = parser.deserialise(TestUtils.getResourceFile("/descriptor.yaml"));
-
     Configuration config = createTopologyBuilderConfig("not.available.Validation");
-
     TopologyValidator validator = new TopologyValidator(config);
     validator.validate(topology);
   }
@@ -117,7 +101,6 @@ public class TopologyValidationTest {
     Map<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
     cliOps.put(CLIENT_CONFIG_OPTION, "/fooBar");
-
     Properties props = new Properties();
     props.put(TOPOLOGY_VALIDATIONS_CONFIG, Arrays.asList(validations));
     props.put(TOPOLOGY_VALIDATIONS_TOPIC_NAME_REGEXP, "[a-zA-Z0-9.-]*");

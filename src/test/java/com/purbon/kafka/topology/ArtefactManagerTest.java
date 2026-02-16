@@ -63,23 +63,17 @@ public class ArtefactManagerTest {
 
   @Test
   public void testClientSelection() {
-
     Map<String, ArtefactClient> clients = new HashMap<>();
     clients.put("server0", mockClient1);
     clients.put("server1", mockClient2);
-
     String file = TestUtils.getResourceFilename("/descriptor.yaml");
-
     MyArtefactManager artefactManager = new MyArtefactManager(clients, new Configuration(), file);
-
     Artefact server0Artefact = new KafkaConnectArtefact("/path", "server0", "foo", null);
     ArtefactClient selectedClient = artefactManager.selectClient(server0Artefact);
     assertThat(selectedClient).isEqualTo(mockClient1);
-
     Artefact server1Artefact = new KafkaConnectArtefact("/path", "server1", "foo", null);
     ArtefactClient selectedClient1 = artefactManager.selectClient(server1Artefact);
     assertThat(selectedClient1).isEqualTo(mockClient2);
-
     Artefact serverBarArtefact = new KafkaConnectArtefact("/path", "bar", "foo", null);
     ArtefactClient selectedClientBar = artefactManager.selectClient(serverBarArtefact);
     assertThat(selectedClientBar).isNull();

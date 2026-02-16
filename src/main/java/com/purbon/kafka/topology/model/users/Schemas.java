@@ -11,7 +11,6 @@ public class Schemas extends User {
 
   public Schemas() {
     super("");
-
     // using default role RESOURCE_OWNER and non-prefixed (literal) binding
     // for backward compatibility
     this.role = "ResourceOwner";

@@ -49,7 +49,6 @@ public class ExecutionPlan {
     this.plan = plan;
     this.outputStream = outputStream;
     this.auditor = auditor;
-
     this.bindings = new HashSet<>();
     this.serviceAccounts = new HashSet<>();
     this.topics = new HashSet<>();
@@ -57,7 +56,6 @@ public class ExecutionPlan {
     this.ksqlStreams = new HashSet<>();
     this.ksqlTables = new HashSet<>();
     this.backendController = backendController;
-
     if (backendController.size() > 0) {
       this.bindings.addAll(backendController.getBindings());
       this.serviceAccounts.addAll(backendController.getServiceAccounts());
@@ -152,7 +150,6 @@ public class ExecutionPlan {
           serviceAccounts.addAll(createAction.getPrincipals());
         }
       }
-
       if (action instanceof CreateArtefactAction) {
         Artefact artefact = ((CreateArtefactAction) action).getArtefact();
         if (artefact instanceof KafkaConnectArtefact) {

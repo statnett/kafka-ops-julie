@@ -8,8 +8,6 @@ import com.purbon.kafka.topology.validation.TopologyValidation;
 
 public class CamelCaseNameFormatValidation implements TopologyValidation {
 
-  private String camelCasePattern = "([a-z]+[A-Z]+\\w+)+";
-
   @Override
   public void valid(Topology topology) throws ValidationException {
 
@@ -23,6 +21,7 @@ public class CamelCaseNameFormatValidation implements TopologyValidation {
   }
 
   private void matches(String name, String clazz) throws ValidationException {
+    final String camelCasePattern = "([a-z]+[A-Z]+\\w+)+";
     if (!name.matches(camelCasePattern)) {
       String msg = String.format("%s name does not follow the camelCase format: %s", clazz, name);
       throw new ValidationException(msg);

@@ -42,24 +42,19 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
   public List<TopologyAclBinding> buildBindingsForConnect(
       Connector connector, String topicPrefixNotInUse) {
     assertNoObserverPrincipals(connector);
-
     String principal = connector.getPrincipal();
     Stream<String> readTopics = Utils.asNullableStream(connector.getTopics().get("read"));
     Stream<String> writeTopics = Utils.asNullableStream(connector.getTopics().get("write"));
-
     List<AclBinding> acls = new ArrayList<>();
-
     List<String> topics =
         asList(
             connector.statusTopicString(),
             connector.offsetTopicString(),
             connector.configsTopicString());
-
     for (String topic : topics) {
       acls.add(buildLiteralTopicLevelAcl(principal, topic, AclOperation.READ));
       acls.add(buildLiteralTopicLevelAcl(principal, topic, AclOperation.WRITE));
     }
-
     if (config.enabledConnectorTopicCreateAcl()) {
       ResourcePattern resourcePattern =
           new ResourcePattern(ResourceType.CLUSTER, KAFKA_CLUSTER_NAME, PatternType.LITERAL);
@@ -67,21 +62,17 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
           new AccessControlEntry(principal, "*", AclOperation.CREATE, AclPermissionType.ALLOW);
       acls.add(new AclBinding(resourcePattern, entry));
     }
-
     ResourcePattern resourcePattern =
         new ResourcePattern(ResourceType.GROUP, connector.groupString(), PatternType.LITERAL);
     AccessControlEntry entry =
         new AccessControlEntry(principal, "*", AclOperation.READ, AclPermissionType.ALLOW);
     acls.add(new AclBinding(resourcePattern, entry));
-
     readTopics
         .map(topic -> buildLiteralTopicLevelAcl(principal, topic, AclOperation.READ))
         .forEach(acls::add);
-
     writeTopics
         .map(topic -> buildLiteralTopicLevelAcl(principal, topic, AclOperation.WRITE))
         .forEach(acls::add);
-
     return toList(acls.stream());
   }
 
@@ -139,11 +130,6 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
   }
 
   @Override
-  public List<TopologyAclBinding> buildBindingsForControlCenter(String principal, String appId) {
-    return toList(controlCenterStream(principal, appId));
-  }
-
-  @Override
   public Collection<TopologyAclBinding> buildBindingsForKSqlServer(KsqlServerInstance ksqlServer) {
     return toList(ksqlServerStream(ksqlServer));
   }
@@ -157,7 +143,6 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
   @Override
   public Collection<TopologyAclBinding> buildBindingsForJulieRole(
       Other other, String name, List<JulieRoleAcl> acls) throws IOException {
-
     List<TopologyAclBinding> bindings = new ArrayList<>();
     for (JulieRoleAcl acl : acls) {
       var resourceType = ResourceType.fromString(acl.getResourceType());
@@ -208,13 +193,11 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
 
   private Stream<AclBinding> producerAclsStream(Producer producer, String topic, boolean prefixed) {
     PatternType patternType = prefixed ? PatternType.PREFIXED : PatternType.LITERAL;
-
     List<AclBinding> bindings = new ArrayList<>();
     String principal = producer.getPrincipal();
     Stream.of(AclOperation.DESCRIBE, AclOperation.WRITE)
         .map(aclOperation -> buildTopicLevelAcl(principal, topic, patternType, aclOperation))
         .forEach(bindings::add);
-
     producer
         .getTransactionId()
         .ifPresent(
@@ -232,7 +215,6 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
                       evaluateResourcePatternType(transactionId),
                       AclOperation.WRITE));
             });
-
     if (producer.getTransactionId().isPresent() || producer.getIdempotence().isPresent()) {
       ResourcePattern resourcePattern =
           new ResourcePattern(ResourceType.CLUSTER, "kafka-cluster", PatternType.LITERAL);
@@ -241,7 +223,6 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
               producer.getPrincipal(), "*", AclOperation.IDEMPOTENT_WRITE, AclPermissionType.ALLOW);
       bindings.add(new AclBinding(resourcePattern, entry));
     }
-
     return bindings.stream();
   }
 
@@ -265,18 +246,13 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
       List<String> readTopics,
       List<String> writeTopics,
       boolean eos) {
-
     List<AclBinding> acls = new ArrayList<>();
-
     readTopics.forEach(
         topic -> acls.add(buildLiteralTopicLevelAcl(principal, topic, AclOperation.READ)));
-
     writeTopics.forEach(
         topic -> acls.add(buildLiteralTopicLevelAcl(principal, topic, AclOperation.WRITE)));
-
     acls.add(buildPrefixedTopicLevelAcl(principal, prefix, AclOperation.ALL));
     acls.add(buildPrefixedGroupLevelAcl(principal, prefix, AclOperation.READ));
-
     if (observerPrincipals != null) {
       observerPrincipals.forEach(
           observerPrincipal ->
@@ -294,7 +270,6 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
                   buildPrefixedGroupLevelAcl(
                       observerPrincipal.getPrincipal(), prefix, AclOperation.READ)));
     }
-
     if (eos) {
       acls.add(buildPrefixedTransactionIdLevelAcl(principal, prefix, AclOperation.WRITE));
       acls.add(buildPrefixedTransactionIdLevelAcl(principal, prefix, AclOperation.DESCRIBE));
@@ -311,7 +286,6 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
                         observerPrincipal.getPrincipal(), prefix, AclOperation.DESCRIBE)));
       }
     }
-
     return acls.stream();
   }
 
@@ -329,86 +303,35 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
                     buildLiteralTopicLevelAcl(
                         principal, schemaRegistry.topicString(), aclOperation))
             .collect(Collectors.toList());
-
     bindings.add(
         buildLiteralTopicLevelAcl(
             principal, schemaRegistry.consumerOffsetsTopicString(), AclOperation.DESCRIBE));
-
     bindings.add(
         buildLiteralGroupLevelAcl(principal, schemaRegistry.groupString(), AclOperation.READ));
-
-    return bindings.stream();
-  }
-
-  private Stream<AclBinding> controlCenterStream(String principal, String appId) {
-    List<AclBinding> bindings = new ArrayList<>();
-
-    bindings.add(buildPrefixedGroupLevelAcl(principal, appId, AclOperation.READ));
-    bindings.add(buildPrefixedGroupLevelAcl(principal, appId + "-command", AclOperation.READ));
-    bindings.add(buildLiteralGroupLevelAcl(principal, "*", AclOperation.DESCRIBE));
-
-    asList(
-            config.getConfluentMonitoringTopic(),
-            config.getConfluentCommandTopic(),
-            config.getConfluentMetricsTopic())
-        .forEach(
-            topic ->
-                Stream.of(
-                        AclOperation.WRITE,
-                        AclOperation.READ,
-                        AclOperation.CREATE,
-                        AclOperation.DESCRIBE)
-                    .map(aclOperation -> buildLiteralTopicLevelAcl(principal, topic, aclOperation))
-                    .forEach(bindings::add));
-
-    Stream.of(AclOperation.WRITE, AclOperation.READ, AclOperation.CREATE, AclOperation.DESCRIBE)
-        .map(
-            aclOperation ->
-                buildPrefixedTopicLevelAcl(principal, "_confluent-controlcenter", aclOperation))
-        .forEach(bindings::add);
-
-    bindings.add(buildLiteralTopicLevelAcl(principal, "*", AclOperation.CREATE));
-
-    ResourcePattern resourcePattern =
-        new ResourcePattern(ResourceType.CLUSTER, "kafka-cluster", PatternType.LITERAL);
-    AccessControlEntry entry =
-        new AccessControlEntry(principal, "*", AclOperation.DESCRIBE, AclPermissionType.ALLOW);
-    bindings.add(new AclBinding(resourcePattern, entry));
-
-    entry =
-        new AccessControlEntry(
-            principal, "*", AclOperation.DESCRIBE_CONFIGS, AclPermissionType.ALLOW);
-    bindings.add(new AclBinding(resourcePattern, entry));
     return bindings.stream();
   }
 
   private Stream<AclBinding> ksqlServerStream(KsqlServerInstance ksqlServer) {
     String principal = ksqlServer.getPrincipal();
-
     List<AclBinding> bindings = new ArrayList<>();
-
     ResourcePattern resourcePattern =
         new ResourcePattern(ResourceType.CLUSTER, "kafka-cluster", PatternType.LITERAL);
     AccessControlEntry entry =
         new AccessControlEntry(
             principal, "*", AclOperation.DESCRIBE_CONFIGS, AclPermissionType.ALLOW);
     bindings.add(new AclBinding(resourcePattern, entry));
-
     bindings.add(
         buildPrefixedTopicLevelAcl(principal, ksqlServer.internalTopics(), AclOperation.ALL));
     bindings.add(
         buildLiteralTopicLevelAcl(principal, ksqlServer.processingLogTopic(), AclOperation.ALL));
     bindings.add(
         buildPrefixedGroupLevelAcl(principal, ksqlServer.consumerGroupPrefix(), AclOperation.ALL));
-
     return bindings.stream();
   }
 
   private Stream<AclBinding> ksqlAppStream(KSqlApp app, String prefix) {
     String principal = app.getPrincipal();
-
     List<AclBinding> bindings = new ArrayList<>();
-
     Optional<List<String>> readTopics = Optional.ofNullable(app.getTopics().get("read"));
     readTopics.ifPresent(
         topics -> {
@@ -416,7 +339,6 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
             bindings.add(buildLiteralTopicLevelAcl(principal, topic, AclOperation.READ));
           }
         });
-
     Optional<List<String>> writeTopics = Optional.ofNullable(app.getTopics().get("write"));
     writeTopics.ifPresent(
         topics -> {
@@ -424,10 +346,8 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
             bindings.add(buildLiteralTopicLevelAcl(principal, topic, AclOperation.WRITE));
           }
         });
-
     bindings.add(buildPrefixedTopicLevelAcl(principal, prefix, AclOperation.ALL));
     bindings.add(buildPrefixedGroupLevelAcl(principal, prefix, AclOperation.ALL));
-
     return bindings.stream();
   }
 
@@ -475,14 +395,11 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
       final String topic,
       final PatternType patternType,
       final AclOperation aclOperation) {
-    switch (patternType) {
-      case LITERAL:
-        return buildLiteralTopicLevelAcl(principal, topic, aclOperation);
-      case PREFIXED:
-        return buildPrefixedTopicLevelAcl(principal, topic, aclOperation);
-      default:
-        throw new RuntimeException("Unsupported pattern type: " + patternType);
-    }
+    return switch (patternType) {
+      case LITERAL -> buildLiteralTopicLevelAcl(principal, topic, aclOperation);
+      case PREFIXED -> buildPrefixedTopicLevelAcl(principal, topic, aclOperation);
+      default -> throw new RuntimeException("Unsupported pattern type: " + patternType);
+    };
   }
 
   private AclBinding buildLiteralTopicLevelAcl(String principal, String topic, AclOperation op) {
@@ -498,14 +415,11 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
       final String transactionId,
       final PatternType patternType,
       final AclOperation aclOperation) {
-    switch (patternType) {
-      case LITERAL:
-        return buildLiteralTransactionIdLevelAcl(principal, transactionId, aclOperation);
-      case PREFIXED:
-        return buildPrefixedTransactionIdLevelAcl(principal, transactionId, aclOperation);
-      default:
-        throw new RuntimeException("Unsupported pattern type: " + patternType);
-    }
+    return switch (patternType) {
+      case LITERAL -> buildLiteralTransactionIdLevelAcl(principal, transactionId, aclOperation);
+      case PREFIXED -> buildPrefixedTransactionIdLevelAcl(principal, transactionId, aclOperation);
+      default -> throw new RuntimeException("Unsupported pattern type: " + patternType);
+    };
   }
 
   private AclBinding buildLiteralTransactionIdLevelAcl(
@@ -529,14 +443,11 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
       final String group,
       final PatternType patternType,
       final AclOperation aclOperation) {
-    switch (patternType) {
-      case LITERAL:
-        return buildLiteralGroupLevelAcl(principal, group, aclOperation);
-      case PREFIXED:
-        return buildPrefixedGroupLevelAcl(principal, group, aclOperation);
-      default:
-        throw new RuntimeException("Unsupported pattern type: " + patternType);
-    }
+    return switch (patternType) {
+      case LITERAL -> buildLiteralGroupLevelAcl(principal, group, aclOperation);
+      case PREFIXED -> buildPrefixedGroupLevelAcl(principal, group, aclOperation);
+      default -> throw new RuntimeException("Unsupported pattern type: " + patternType);
+    };
   }
 
   private AclBinding buildLiteralGroupLevelAcl(String principal, String group, AclOperation op) {

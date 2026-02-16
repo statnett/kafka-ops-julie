@@ -71,7 +71,6 @@ public class TopologyAclBinding implements Comparable<TopologyAclBinding> {
       String principal,
       String pattern,
       String permissionType) {
-
     ResourceType resourceType = ResourceType.valueOf(resourceTypeString);
     return new TopologyAclBinding(
         resourceType.name(), resourceName, host, operation, principal, pattern, permissionType);
@@ -82,12 +81,9 @@ public class TopologyAclBinding implements Comparable<TopologyAclBinding> {
   }
 
   public TopologyAclBinding(AclBinding binding) {
-
     this.aclBindingOptional = Optional.of(binding);
-
     AccessControlEntry entry = binding.entry();
     ResourcePattern pattern = binding.pattern();
-
     this.resourceType = pattern.resourceType().name();
     this.resourceName = pattern.name();
     this.principal = entry.principal();

@@ -33,11 +33,8 @@ public class AccessControlProviderFactoryTest {
 
   @Test
   public void testACLsConfig() throws IOException {
-
     Configuration config = new Configuration(cliOps, props);
-
     AccessControlProviderFactory factory = new AccessControlProviderFactory(config, adminClient);
-
     Assert.assertTrue(factory.get() instanceof SimpleAclsProvider);
   }
 }

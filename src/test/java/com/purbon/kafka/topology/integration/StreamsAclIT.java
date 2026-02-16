@@ -59,17 +59,13 @@ public final class StreamsAclIT {
     final StreamsBuilder builder = new StreamsBuilder();
     KStream<Object, Object> source = builder.stream(TOPIC_A);
     source.filter((key, val) -> true).to(TOPIC_C);
-
     final TestStreams streams =
         TestStreams.create(
             container, ContainerTestUtils.STREAMS_USERNAME, STREAMS_APP_ID, builder.build());
-
     streams.start();
-
     await()
         .atMost(MAX_TEST_SEC_BEFORE_GIVING_UP, SECONDS)
         .until(streams::isTopicAuthorizationExceptionThrown);
-
     streams.close();
   }
 
@@ -80,16 +76,13 @@ public final class StreamsAclIT {
         TestProducer.create(container, ContainerTestUtils.PRODUCER_USERNAME)) {
       values = producer.produceSomeStrings(TOPIC_A);
     }
-
     final StreamsBuilder builder = new StreamsBuilder();
     KStream<Object, Object> source = builder.stream(TOPIC_A);
     source.filter((key, val) -> values.stream().anyMatch(v -> v.equals(val))).to(TOPIC_B);
-
     final TestStreams streams =
         TestStreams.create(
             container, ContainerTestUtils.STREAMS_USERNAME, STREAMS_APP_ID, builder.build());
     streams.start();
-
     try (final TestConsumer consumer =
         TestConsumer.create(container, ContainerTestUtils.CONSUMER_USERNAME, CONSUMER_GROUP)) {
       consumer.consumeForAWhile(
@@ -100,7 +93,6 @@ public final class StreamsAclIT {
           });
     }
     streams.close();
-
     assertThat(values).isEmpty();
   }
 
@@ -111,10 +103,8 @@ public final class StreamsAclIT {
         TestProducer.create(container, ContainerTestUtils.PRODUCER_USERNAME)) {
       values = producer.produceSomeStrings(TOPIC_A);
     }
-
     final StreamsBuilder builder = new StreamsBuilder();
     KStream<String, String> source = builder.stream(TOPIC_A);
-
     // Just re-group by using value as key, groupBy requires new internal topics
     source
         .groupBy((key, value) -> value)
@@ -122,12 +112,10 @@ public final class StreamsAclIT {
         .filter((key, val) -> values.stream().anyMatch(v -> v.equals(key)))
         .toStream()
         .to(TOPIC_B);
-
     final TestStreams streams =
         TestStreams.create(
             container, ContainerTestUtils.STREAMS_USERNAME, STREAMS_APP_ID, builder.build());
     streams.start();
-
     try (final TestConsumer consumer =
         TestConsumer.create(container, ContainerTestUtils.CONSUMER_USERNAME, CONSUMER_GROUP)) {
       consumer.consumeForAWhile(
@@ -138,7 +126,6 @@ public final class StreamsAclIT {
           });
     }
     streams.close();
-
     assertThat(values).isEmpty();
   }
 }

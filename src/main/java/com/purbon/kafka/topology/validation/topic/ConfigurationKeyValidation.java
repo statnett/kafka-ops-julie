@@ -43,7 +43,7 @@ public class ConfigurationKeyValidation implements TopicValidation {
   }
 
   private Map<String, String> getTopicConfig(Topic topic) {
-    Topic clonedTopic = ((Topic) topic).clone();
+    Topic clonedTopic = topic.clone();
     return clonedTopic.getRawConfig();
   }
 }

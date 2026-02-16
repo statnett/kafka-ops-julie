@@ -40,30 +40,7 @@ public class ReplicationFactorValidation implements TopicValidation {
   }
 
   private boolean validateReplicationFactor(short topicValue) throws ValidationException {
-    boolean result;
-    switch (replicationFactorOp) {
-      case "gt":
-        result = topicValue > replicationFactorValue;
-        break;
-      case "lt":
-        result = topicValue < replicationFactorValue;
-        break;
-      case "eq":
-        result = topicValue == replicationFactorValue;
-        break;
-      case "gte":
-        result = topicValue >= replicationFactorValue;
-        break;
-      case "lte":
-        result = topicValue <= replicationFactorValue;
-        break;
-      case "ne":
-        result = topicValue != replicationFactorValue;
-        break;
-      default:
-        throw new ValidationException("Invalid Operation code in use " + replicationFactorOp);
-    }
-    return result;
+    return TopicValidationUtils.compare(topicValue, replicationFactorOp, replicationFactorValue);
   }
 
   private static String getReplicationFactorOp(Configuration config) throws ConfigurationException {

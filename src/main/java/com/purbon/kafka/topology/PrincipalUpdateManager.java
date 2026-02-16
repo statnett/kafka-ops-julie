@@ -28,7 +28,7 @@ public class PrincipalUpdateManager extends AbstractPrincipalManager {
       Map<String, ServiceAccount> accounts) {
     LOGGER.debug(
         "Updating accounts for principals = "
-            + principals.stream().collect(Collectors.joining(","))
+            + String.join(",", principals)
             + " accounts = "
             + accounts.values().stream()
                 .map(ServiceAccount::toString)
@@ -39,7 +39,6 @@ public class PrincipalUpdateManager extends AbstractPrincipalManager {
             .filter(wishPrincipal -> !accounts.containsKey(wishPrincipal))
             .map(principal -> new ServiceAccount("-1", principal, MANAGED_BY))
             .collect(Collectors.toSet());
-
     if (!principalsToBeCreated.isEmpty()) {
       plan.add(new CreateAccounts(provider, principalsToBeCreated));
     }

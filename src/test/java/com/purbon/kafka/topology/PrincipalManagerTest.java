@@ -56,18 +56,14 @@ public class PrincipalManagerTest {
 
   @Before
   public void before() throws IOException {
-
     Files.deleteIfExists(Paths.get(".cluster-state"));
     backendController = new BackendController();
-
     cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
     props = new Properties();
-
     props.put(JULIE_ENABLE_PRINCIPAL_MANAGEMENT, "true");
     props.put(TOPOLOGY_STATE_FROM_CLUSTER, "false");
     props.put(ALLOW_DELETE_PRINCIPALS, true);
-
     plan = ExecutionPlan.init(backendController, mockPrintStream);
     config = new Configuration(cliOps, props);
     principalUpdateManager = new PrincipalUpdateManager(provider, config);
@@ -76,7 +72,6 @@ public class PrincipalManagerTest {
 
   @Test
   public void testFreshGeneration() throws IOException {
-
     Topology topology = new TopologyImpl();
     topology.setContext("context");
     Project project = new ProjectImpl("foo");
@@ -84,18 +79,14 @@ public class PrincipalManagerTest {
         Arrays.asList(new Consumer("consumer-principal"), new Consumer("consumer-principal")));
     project.setProducers(Collections.singletonList(new Producer("producer-principal")));
     topology.addProject(project);
-
     doNothing().when(provider).configure();
-
     principalUpdateManager.updatePlan(topology, plan);
     principalDeleteManager.updatePlan(topology, plan);
-
     Set<ServiceAccount> accounts =
         new HashSet<>(
             Arrays.asList(
                 new ServiceAccount("-1", "consumer-principal", MANAGED_BY),
                 new ServiceAccount("-1", "producer-principal", MANAGED_BY)));
-
     assertThat(plan.getActions()).hasSize(1);
     assertThat(plan.getActions()).containsAnyOf(new CreateAccounts(provider, accounts));
     backendController.flushAndClose();
@@ -103,28 +94,22 @@ public class PrincipalManagerTest {
 
   @Test
   public void testFreshTopicLevelGeneration() throws IOException {
-
     Topology topology = new TopologyImpl();
     topology.setContext("context");
     Project project = new ProjectImpl("foo");
     Topic topic = new Topic("baa");
     topic.setConsumers(Collections.singletonList(new Consumer("topicConsumer-principal")));
     topic.setProducers(Collections.singletonList(new Producer("topicProducer-principal")));
-
     project.addTopic(topic);
     topology.addProject(project);
-
     doNothing().when(provider).configure();
-
     principalUpdateManager.updatePlan(topology, plan);
     principalDeleteManager.updatePlan(topology, plan);
-
     Set<ServiceAccount> accounts =
         new HashSet<>(
             Arrays.asList(
                 new ServiceAccount("-1", "topicConsumer-principal", MANAGED_BY),
                 new ServiceAccount("-1", "topicProducer-principal", MANAGED_BY)));
-
     assertThat(plan.getActions()).hasSize(1);
     assertThat(plan.getActions()).containsAnyOf(new CreateAccounts(provider, accounts));
     backendController.flushAndClose();
@@ -132,48 +117,37 @@ public class PrincipalManagerTest {
 
   @Test
   public void testDeleteAccountsRequired() throws IOException {
-
     Topology topology = new TopologyImpl();
     topology.setContext("context");
     Project project = new ProjectImpl("foo");
     project.setConsumers(Collections.singletonList(new Consumer("consumer")));
     project.setProducers(Collections.singletonList(new Producer("producer")));
     topology.addProject(project);
-
     doNothing().when(provider).configure();
-
     doReturn(new ServiceAccount("123", "consumer", MANAGED_BY))
         .when(provider)
         .createServiceAccount(eq("consumer"), eq(MANAGED_BY));
-
     doReturn(new ServiceAccount("124", "producer", MANAGED_BY))
         .when(provider)
         .createServiceAccount(eq("producer"), eq(MANAGED_BY));
-
     principalUpdateManager.updatePlan(topology, plan);
     principalDeleteManager.updatePlan(topology, plan);
     plan.run();
     assertThat(plan.getServiceAccounts()).hasSize(2);
-
     topology = new TopologyImpl();
     topology.setContext("context");
     project = new ProjectImpl("foo");
     project.setConsumers(Collections.singletonList(new Consumer("consumer")));
     topology.addProject(project);
-
     backendController = new BackendController();
     plan = ExecutionPlan.init(backendController, mockPrintStream);
     principalUpdateManager.updatePlan(topology, plan);
     principalDeleteManager.updatePlan(topology, plan);
-
     Collection<ServiceAccount> accounts =
         Arrays.asList(new ServiceAccount("124", "producer", MANAGED_BY));
-
     assertThat(plan.getActions()).hasSize(1);
     assertThat(plan.getActions()).containsAnyOf(new ClearAccounts(provider, accounts));
-
     plan.run();
-
     assertThat(plan.getServiceAccounts()).hasSize(1);
     assertThat(plan.getServiceAccounts())
         .contains(new ServiceAccount("123", "consumer", MANAGED_BY));
@@ -182,50 +156,38 @@ public class PrincipalManagerTest {
   @Test
   public void testNotRunIfConfigNotExperimental() throws IOException {
     props.put(JULIE_ENABLE_PRINCIPAL_MANAGEMENT, "false");
-
     config = new Configuration(cliOps, props);
     principalUpdateManager = new PrincipalUpdateManager(provider, config);
     principalDeleteManager = new PrincipalDeleteManager(provider, config);
-
     Topology topology = new TopologyImpl();
-
     principalUpdateManager.updatePlan(topology, plan);
     principalDeleteManager.updatePlan(topology, plan);
-
     verify(mockPlan, times(0)).add(any(Action.class));
     backendController.flushAndClose();
   }
 
   @Test
   public void testToProcessOnlySelectedPrincipals() throws IOException {
-
     props.put(SERVICE_ACCOUNT_MANAGED_PREFIXES, Collections.singletonList("pro"));
-
     config = new Configuration(cliOps, props);
     principalUpdateManager = new PrincipalUpdateManager(provider, config);
     principalDeleteManager = new PrincipalDeleteManager(provider, config);
-
     Topology topology = new TopologyImpl();
     topology.setContext("context");
     Project project = new ProjectImpl("foo");
     project.setConsumers(Collections.singletonList(new Consumer("consumer")));
     project.setProducers(Collections.singletonList(new Producer("producer")));
     topology.addProject(project);
-
     doNothing().when(provider).configure();
-
     doReturn(new ServiceAccount("123", "consumer", MANAGED_BY))
         .when(provider)
         .createServiceAccount(eq("consumer"), eq(MANAGED_BY));
-
     doReturn(new ServiceAccount("124", "producer", MANAGED_BY))
         .when(provider)
         .createServiceAccount(eq("producer"), eq(MANAGED_BY));
-
     principalUpdateManager.updatePlan(topology, plan);
     principalDeleteManager.updatePlan(topology, plan);
     plan.run();
-
     assertThat(plan.getServiceAccounts()).hasSize(1);
   }
 }

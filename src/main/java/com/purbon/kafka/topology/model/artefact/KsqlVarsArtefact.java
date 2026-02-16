@@ -4,6 +4,7 @@ import java.util.Map;
 
 @TypeArtefact(name = "VARS")
 public class KsqlVarsArtefact extends KsqlArtefact {
+
   private Map<String, String> sessionVars;
   private static final String KSQLDB_VARS_NAME = "SESSION_VARS";
 

@@ -137,14 +137,11 @@ public class Topic implements Cloneable {
   }
 
   private String toString(String projectPrefix) {
-    switch (topicNamePattern) {
-      case "default":
-        return defaultTopicStructureString(projectPrefix);
-      case "name":
-        return name;
-      default:
-        return patternBasedTopicNameStructureString();
-    }
+    return switch (topicNamePattern) {
+      case "default" -> defaultTopicStructureString(projectPrefix);
+      case "name" -> name;
+      default -> patternBasedTopicNameStructureString();
+    };
   }
 
   private String patternBasedTopicNameStructureString() {
@@ -164,15 +161,12 @@ public class Topic implements Cloneable {
       sb.append(projectPrefix);
     }
     sb.append(getName());
-
     if (getDataType().isPresent()) {
       sb.append(appConfig.getTopicPrefixSeparator()).append(getDataType().get());
     }
-
     if (!dlqPrefix.isBlank()) {
       sb.append(appConfig.getTopicPrefixSeparator()).append(dlqPrefix);
     }
-
     return sb.toString();
   }
 

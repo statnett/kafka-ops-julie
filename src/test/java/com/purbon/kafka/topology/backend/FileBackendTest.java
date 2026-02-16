@@ -55,7 +55,6 @@ public class FileBackendTest {
   public void shouldParseStateFileSuccessfully() throws IOException {
     File file = TestUtils.getResourceFile("/stateFile.json");
     String content = Files.readString(file.toPath());
-
     var backend = (BackendState) JSON.toObject(content, BackendState.class);
     assertThat(backend.getTopics()).hasSize(6);
     assertThat(backend.getBindings()).hasSize(49);
@@ -81,29 +80,21 @@ public class FileBackendTest {
             principal,
             "LITERAL",
             AclPermissionType.ALLOW.name());
-
     TestTopologyBuilder builder =
         TestTopologyBuilder.createProject().addTopic("foo").addTopic("bar");
-
     Topic fooTopic = builder.getTopic("foo");
     Topic barTopic = builder.getTopic("bar");
-
     BackendState state = new BackendState();
     state.addBindings(Collections.singleton(binding));
     state.addTopics(Arrays.asList(fooTopic.toString(), barTopic.toString()));
-
     backend.createOrOpen(Mode.TRUNCATE);
     backend.save(state);
     backend.close();
-
     backend = new FileBackend();
     backend.createOrOpen();
-
     BackendState recoveredState = backend.load();
-
     Set<TopologyAclBinding> bindings = recoveredState.getBindings();
     Set<String> topics = recoveredState.getTopics();
-
     assertThat(bindings).hasSize(1);
     assertThat(bindings).contains(binding);
     assertThat(topics).hasSize(2);

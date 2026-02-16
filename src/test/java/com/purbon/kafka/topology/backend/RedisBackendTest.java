@@ -39,19 +39,15 @@ public class RedisBackendTest {
 
   @Test
   public void testSaveBindings() throws IOException {
-
     BackendState state = buildBackendState();
     stateProcessor.save(state);
-
     verify(jedis, times(1)).set(eq(bucket), any());
   }
 
   @Test
   public void testDataLoading() throws IOException {
-
     BackendState mockedState = buildBackendState();
     when(jedis.get(eq(bucket))).thenReturn(mockedState.asPrettyJson());
-
     BackendState state = stateProcessor.load();
     assertEquals(1, state.size());
     assertTrue(state.getBindings().iterator().hasNext());
@@ -69,7 +65,6 @@ public class RedisBackendTest {
             "principal",
             "LITERAL",
             AclPermissionType.ALLOW.name());
-
     BackendState state = new BackendState();
     state.addBindings(Collections.singleton(binding));
     return state;

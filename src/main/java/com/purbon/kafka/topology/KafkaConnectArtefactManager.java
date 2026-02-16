@@ -62,14 +62,10 @@ public class KafkaConnectArtefactManager extends ArtefactManager {
                   }
                 })
             .collect(Collectors.toList());
-
     List<IOException> errors =
-        list.stream()
-            .filter(Either::isLeft)
-            .map(e -> (IOException) e.getLeft().get())
-            .collect(Collectors.toList());
+        list.stream().filter(Either::isLeft).map(e -> (IOException) e.getLeft().get()).toList();
     if (!errors.isEmpty()) {
-      throw new IOException(errors.get(0));
+      throw new IOException(errors.getFirst());
     }
 
     return list.stream()

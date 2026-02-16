@@ -12,8 +12,8 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 
 public final class TestConsumer implements Closeable {
 
-  /* This timeout includes the time spent fetching meta data, which may actually be several hundred ms.
-   * If the timeout is too short, the poll function will return after fetching meta data, but before
+  /* This timeout includes the time spent fetching metadata, which may actually be several hundred ms.
+   * If the timeout is too short, the poll function will return after fetching metadata, but before
    * actually trying to access the topic, thus not throwing the exception we are looking for. */
   private static final long MAX_MS_TO_CONSUME = 60 * 1000L;
   private final KafkaConsumer<String, String> consumer;

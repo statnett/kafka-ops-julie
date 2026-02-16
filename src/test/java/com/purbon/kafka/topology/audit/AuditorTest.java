@@ -26,9 +26,7 @@ public class AuditorTest {
     var accounts = new HashSet<ServiceAccount>();
     accounts.add(new ServiceAccount("1", "name", "description"));
     accounts.add(new ServiceAccount("1", "eman", "noitpircsed"));
-
     var action = new CreateAccounts(provider, accounts);
-
     var auditor = new Auditor(appender);
     auditor.log(action);
     verify(appender, times(1))
@@ -38,7 +36,6 @@ public class AuditorTest {
                 + "  \"resource_name\" : \"rn://create.account/com.purbon.kafka.topology.actions.accounts.CreateAccounts/name\",\n"
                 + "  \"operation\" : \"com.purbon.kafka.topology.actions.BaseAccountsAction$1\"\n"
                 + "}");
-
     verify(appender, times(1))
         .log(
             "{\n"

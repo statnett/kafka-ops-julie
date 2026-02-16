@@ -46,17 +46,14 @@ public class KSqlArtefactManager extends ArtefactManager {
   @Override
   protected List<? extends Artefact> findArtefactsToBeDeleted(
       Collection<? extends Artefact> currentArtefacts, Set<Artefact> artefacts) {
-
     var artefactsList =
         currentArtefacts.stream()
             .filter(a -> !artefacts.contains(a))
             .sorted((o1, o2) -> -1 * ((KsqlArtefact) o1).compareTo((KsqlArtefact) o2))
             .collect(Collectors.toCollection(LinkedList::new));
-
     Map<String, LinkedList<KsqlArtefact>> artefactsMap = new HashMap<>();
     artefactsMap.put("table", new LinkedList<>());
     artefactsMap.put("stream", new LinkedList<>());
-
     artefactsList.forEach(
         (Consumer<Artefact>)
             artefact -> {
@@ -66,7 +63,6 @@ public class KSqlArtefactManager extends ArtefactManager {
                 artefactsMap.get("stream").add((KsqlArtefact) artefact);
               }
             });
-
     LinkedList<KsqlArtefact> toDeleteArtefactsList = new LinkedList<>();
     for (String key : Arrays.asList("table", "stream")) {
       artefactsMap.get(key).descendingIterator().forEachRemaining(toDeleteArtefactsList::add);
@@ -91,16 +87,11 @@ public class KSqlArtefactManager extends ArtefactManager {
                   }
                 })
             .collect(Collectors.toList());
-
     List<IOException> errors =
-        list.stream()
-            .filter(Either::isLeft)
-            .map(e -> (IOException) e.getLeft().get())
-            .collect(Collectors.toList());
+        list.stream().filter(Either::isLeft).map(e -> (IOException) e.getLeft().get()).toList();
     if (!errors.isEmpty()) {
-      throw new IOException(errors.get(0));
+      throw new IOException(errors.getFirst());
     }
-
     return list.stream()
         .filter(Either::isRight)
         .flatMap(
@@ -134,7 +125,7 @@ public class KSqlArtefactManager extends ArtefactManager {
                   KsqlArtefacts kSql = project.getKsqlArtefacts();
                   return Stream.concat(
                       Stream.concat(kSql.getStreams().stream(), kSql.getTables().stream()),
-                      Collections.singletonList(kSql.getVars()).stream());
+                      Stream.of(kSql.getVars()));
                 })
         .sorted()
         .collect(Collectors.toCollection(LinkedHashSet::new));

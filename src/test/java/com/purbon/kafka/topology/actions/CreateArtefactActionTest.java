@@ -20,10 +20,8 @@ public class CreateArtefactActionTest {
 
   @Test
   public void shouldComposeDetailedViewOfProperties() {
-
     var artefacts = new ArrayList<Artefact>();
     var artefact = new KafkaConnectArtefact("path", "label", "name", null);
-
     var action = new CreateArtefactAction(client, "/foo/bar", artefacts, artefact);
     var refs = action.refs();
     assertThat(refs).hasSize(1);

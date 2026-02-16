@@ -60,22 +60,15 @@ public class SchemaRegistryManagerIT {
   @Before
   public void configure() throws IOException {
     Files.deleteIfExists(Paths.get(".cluster-state"));
-
     parser = new TopologySerdes();
-
     Properties props = new Properties();
     props.put(TOPOLOGY_TOPIC_STATE_FROM_CLUSTER, "false");
     props.put(ALLOW_DELETE_TOPICS, true);
-
     HashMap<String, String> cliOps = new HashMap<>();
     cliOps.put(BROKERS_OPTION, "");
-
     config = new Configuration(cliOps, props);
-
     this.plan = ExecutionPlan.init(new BackendController(), System.out);
-
     RestService restService = new RestService(schemaRegistryContainer.getUrl());
-
     List<SchemaProvider> providers =
         Arrays.asList(
             new AvroSchemaProvider(), new JsonSchemaProvider(), new ProtobufSchemaProvider());
@@ -86,17 +79,12 @@ public class SchemaRegistryManagerIT {
   public void testSchemaSetupForAvroDefaults() throws IOException, RestClientException {
     AdminClient kafkaAdminClient = ContainerTestUtils.getSaslJulieAdminClient(container);
     TopologyBuilderAdminClient adminClient = new TopologyBuilderAdminClient(kafkaAdminClient);
-
     File file = TestUtils.getResourceFile("/descriptor-schemas-avro.yaml");
-
     SchemaRegistryManager schemaRegistryManager =
         new SchemaRegistryManager(schemaRegistryClient, file.getAbsolutePath());
-
     TopicManager topicManager = new TopicManager(adminClient, schemaRegistryManager, config);
-
     topicManager.updatePlan(parser.deserialise(file), plan);
     plan.run();
-
     verifySubject(
         "schemas.avro.foo.bar.avro-value",
         "schemas.avro.foo.cat.avro-key",
@@ -107,17 +95,12 @@ public class SchemaRegistryManagerIT {
   public void testSchemaSetupForJsonDefaults() throws IOException, RestClientException {
     AdminClient kafkaAdminClient = ContainerTestUtils.getSaslJulieAdminClient(container);
     TopologyBuilderAdminClient adminClient = new TopologyBuilderAdminClient(kafkaAdminClient);
-
     File file = TestUtils.getResourceFile("/descriptor-schemas-json.yaml");
-
     SchemaRegistryManager schemaRegistryManager =
         new SchemaRegistryManager(schemaRegistryClient, file.getAbsolutePath());
-
     TopicManager topicManager = new TopicManager(adminClient, schemaRegistryManager, config);
-
     topicManager.updatePlan(parser.deserialise(file), plan);
     plan.run();
-
     verifySubject("schemas.json.foo.foo.json-value");
   }
 
@@ -125,17 +108,12 @@ public class SchemaRegistryManagerIT {
   public void testSchemaSetupForProtoBufDefaults() throws IOException, RestClientException {
     AdminClient kafkaAdminClient = ContainerTestUtils.getSaslJulieAdminClient(container);
     TopologyBuilderAdminClient adminClient = new TopologyBuilderAdminClient(kafkaAdminClient);
-
     File file = TestUtils.getResourceFile("/descriptor-schemas-proto.yaml");
-
     SchemaRegistryManager schemaRegistryManager =
         new SchemaRegistryManager(schemaRegistryClient, file.getAbsolutePath());
-
     TopicManager topicManager = new TopicManager(adminClient, schemaRegistryManager, config);
-
     topicManager.updatePlan(parser.deserialise(file), plan);
     plan.run();
-
     verifySubject("schemas.proto.foo.foo.proto-value");
   }
 
@@ -143,23 +121,16 @@ public class SchemaRegistryManagerIT {
   public void testSchemaSetupWithContentInUTF() throws IOException, RestClientException {
     AdminClient kafkaAdminClient = ContainerTestUtils.getSaslJulieAdminClient(container);
     TopologyBuilderAdminClient adminClient = new TopologyBuilderAdminClient(kafkaAdminClient);
-
     File file = TestUtils.getResourceFile("/descriptor-schemas-utf.yaml");
-
     SchemaRegistryManager schemaRegistryManager =
         new SchemaRegistryManager(schemaRegistryClient, file.getAbsolutePath());
-
     TopicManager topicManager = new TopicManager(adminClient, schemaRegistryManager, config);
-
     topicManager.updatePlan(parser.deserialise(file), plan);
     plan.run();
-
     String subjectName = "schemas.utf.foo.bar.avro-value";
     verifySubject(subjectName);
-
     SchemaMetadata schemaMetadata = schemaRegistryClient.getLatestSchemaMetadata(subjectName);
     String schema = schemaMetadata.getSchema();
-
     assertThat(schema).contains("Näme");
     assertThat(schema).contains("Äge");
   }

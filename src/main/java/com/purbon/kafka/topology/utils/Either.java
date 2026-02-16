@@ -3,6 +3,7 @@ package com.purbon.kafka.topology.utils;
 import java.util.Optional;
 
 public class Either<L, R> {
+
   private final L left;
   private final R right;
 

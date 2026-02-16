@@ -1,6 +1,5 @@
 package com.purbon.kafka.topology;
 
-import com.purbon.kafka.topology.model.Component;
 import com.purbon.kafka.topology.model.JulieRoleAcl;
 import com.purbon.kafka.topology.model.users.*;
 import com.purbon.kafka.topology.model.users.platform.KsqlServerInstance;
@@ -29,15 +28,7 @@ public interface BindingsBuilderProvider {
   List<TopologyAclBinding> buildPrefixedBindingsForProducers(
       Collection<Producer> principals, String resource);
 
-  default TopologyAclBinding setPredefinedRole(
-      String principal, String predefinedRole, String topicPrefix) {
-    // NOOP
-    return null;
-  }
-
   List<TopologyAclBinding> buildBindingsForSchemaRegistry(SchemaRegistryInstance schemaRegistry);
-
-  List<TopologyAclBinding> buildBindingsForControlCenter(String principal, String appId);
 
   default List<TopologyAclBinding> setSchemaAuthorization(
       String principal,
@@ -51,11 +42,6 @@ public interface BindingsBuilderProvider {
 
   default List<TopologyAclBinding> setConnectorAuthorization(
       String principal, List<String> connectors) {
-    return Collections.emptyList();
-  }
-
-  default List<TopologyAclBinding> setClusterLevelRole(
-      String role, String principal, Component component) throws IOException {
     return Collections.emptyList();
   }
 

@@ -76,7 +76,6 @@ public class KsqlApiClient implements ArtefactClient {
                 + "- "
                 + sql.substring(0, 40));
       }
-
       var result = client.executeStatement(sql).get();
       return new QueryResponse(result).asMap();
     } catch (InterruptedException | ExecutionException e) {
@@ -129,7 +128,6 @@ public class KsqlApiClient implements ArtefactClient {
       e.printStackTrace();
       throw new IOException(e);
     }
-
     return infos.stream()
         .map(tableInfo -> new KsqlTableArtefact("", server.getHost(), tableInfo.getName()))
         .map(this::artefactToString)
@@ -154,7 +152,6 @@ public class KsqlApiClient implements ArtefactClient {
       e.printStackTrace();
       throw new IOException(e);
     }
-
     return infos.stream()
         .filter(e -> !"KSQL_PROCESSING_LOG".equalsIgnoreCase(e.getName()))
         .map(queryInfo -> new KsqlStreamArtefact("", server.getHost(), queryInfo.getName()))
@@ -166,7 +163,6 @@ public class KsqlApiClient implements ArtefactClient {
   @Override
   public Collection<? extends Artefact> getClusterState() throws IOException {
     List<KsqlArtefact> ksqlArtefacts = new ArrayList<>();
-
     listStreams().stream()
         .map(
             json -> {
@@ -179,7 +175,6 @@ public class KsqlApiClient implements ArtefactClient {
             })
         .filter(Objects::nonNull)
         .forEach(ksqlArtefacts::add);
-
     listTables().stream()
         .map(
             json -> {
@@ -192,7 +187,6 @@ public class KsqlApiClient implements ArtefactClient {
             })
         .filter(Objects::nonNull)
         .forEach(ksqlArtefacts::add);
-
     return ksqlArtefacts;
   }
 }

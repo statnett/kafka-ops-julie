@@ -15,7 +15,7 @@ public final class ByteArrayChunkerTest {
     final byte[] bytes = new byte[0];
     final List<byte[]> chunks = chunker.chunk(bytes);
     Assert.assertEquals(1, chunks.size());
-    Assert.assertEquals(HEADER_SIZE, chunks.get(0).length);
+    Assert.assertEquals(HEADER_SIZE, chunks.getFirst().length);
   }
 
   @Test

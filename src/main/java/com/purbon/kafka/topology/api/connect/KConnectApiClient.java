@@ -49,6 +49,7 @@ public class KConnectApiClient extends JulieHttpClient implements ArtefactClient
     throw new IOException("Not implemented in this context");
   }
 
+  @Override
   public List<String> list() throws IOException {
     JsonNode node = doList();
     return ImmutableList.copyOf(node.fieldNames());
@@ -84,7 +85,6 @@ public class KConnectApiClient extends JulieHttpClient implements ArtefactClient
   @Override
   public Map<String, Object> add(String name, String config) throws IOException {
     String url = String.format("/connectors/%s/config", name);
-
     Map<String, Object> map = JSON.toMap(config);
     if (mayBeAConfigRecord(map)) {
       var content = map.get("config");
@@ -93,7 +93,6 @@ public class KConnectApiClient extends JulieHttpClient implements ArtefactClient
       }
       config = JSON.asString(content);
     }
-
     String response = doPut(url, config);
     return JSON.toMap(response);
   }
@@ -103,6 +102,7 @@ public class KConnectApiClient extends JulieHttpClient implements ArtefactClient
     return keySet.contains("config") && keySet.contains("name") && keySet.size() == 2;
   }
 
+  @Override
   public void delete(String connector) throws IOException {
     doDelete("/connectors/" + connector + "/", "");
   }
@@ -110,11 +110,9 @@ public class KConnectApiClient extends JulieHttpClient implements ArtefactClient
   public String status(String connectorName) throws IOException {
     Response response = doGet("/connectors/" + connectorName + "/status");
     Map<String, Object> map = JSON.toMap(response.getResponseAsString());
-
     if (map.containsKey("error_code")) {
       throw new IOException(map.get("message").toString());
     }
-
     return ((Map<String, String>) map.get("connector")).get("state");
   }
 

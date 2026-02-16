@@ -22,9 +22,7 @@ public class AccessControlProviderFactory {
   }
 
   public AccessControlProvider get() throws IOException {
-
     String accessControlClassName = config.getAccessControlClassName();
-
     try {
       Class<?> clazz = Class.forName(accessControlClassName);
       switch (accessControlClassName) {
@@ -52,7 +50,6 @@ public class AccessControlProviderFactory {
 
   public BindingsBuilderProvider builder() throws IOException {
     String accessControlClass = config.getAccessControlClassName();
-
     try {
       if (accessControlClass.equalsIgnoreCase(ACCESS_CONTROL_DEFAULT_CLASS)) {
         return new AclsBindingsBuilder(config);
