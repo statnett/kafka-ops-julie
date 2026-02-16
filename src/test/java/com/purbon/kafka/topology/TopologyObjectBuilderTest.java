@@ -137,11 +137,14 @@ public class TopologyObjectBuilderTest {
   }
 
   @Test(expected = IOException.class)
-  public void shouldRaiseAnExceptionIfTryingToParseMultipleTopologiesWithActualCollision()
+  public void shouldRaiseAnExceptionWhenThereIsActualCollectionWithNamespacesEnabled()
       throws IOException {
+    var props = new Properties();
+    props.put(JULIE_PROJECT_NAMESPACE_ENABLED, "true");
+    Configuration config = new Configuration(new HashMap<>(), props);
     // This directory has two files with the SAME prefix (ctx.src.public) but same project name
     String fileOrDirPath = TestUtils.getResourceFilename("/dir_with_actual_collision");
-    TopologyObjectBuilder.build(fileOrDirPath);
+    TopologyObjectBuilder.build(fileOrDirPath, config);
   }
 
   @Test
