@@ -1,5 +1,13 @@
 # Changelog
 
+## [6.2.5](https://github.com/statnett/kafka-ops-julie/compare/v6.2.4...v6.2.5) (2026-04-29)
+
+
+### Bug Fixes
+
+* **deps:** update dependency com.fasterxml.jackson:jackson-bom to v2.21.3 ([#704](https://github.com/statnett/kafka-ops-julie/issues/704)) ([32f4a21](https://github.com/statnett/kafka-ops-julie/commit/32f4a21ee4b1d861e6519ad4b37c15c9524b0502))
+* **deps:** update dependency com.typesafe:config to v1.4.7 ([#702](https://github.com/statnett/kafka-ops-julie/issues/702)) ([182df03](https://github.com/statnett/kafka-ops-julie/commit/182df03a4931e4b45e8b1c11e2e64db8cb05dcbc))
+
 ## [6.2.4](https://github.com/statnett/kafka-ops-julie/compare/v6.2.3...v6.2.4) (2026-04-28)
 
 
