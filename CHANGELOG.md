@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.4.0](https://github.com/statnett/kafka-ops-julie/compare/v6.3.0...v6.4.0) (2026-05-07)
+
+
+### Features
+
+* add support for backup principal ([#716](https://github.com/statnett/kafka-ops-julie/issues/716)) ([d9ecdb2](https://github.com/statnett/kafka-ops-julie/commit/d9ecdb210f2e42b47581c9928decd98c548f36a3))
+
 ## [6.3.0](https://github.com/statnett/kafka-ops-julie/compare/v6.2.5...v6.3.0) (2026-05-06)
 
 
