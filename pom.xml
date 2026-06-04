@@ -222,7 +222,7 @@
     <mockito.version>5.23.0</mockito.version>
     <slf4j.version>2.0.18</slf4j.version>
     <testcontainers.version>2.0.5</testcontainers.version>
-    <typesafe.version>1.4.8</typesafe.version>
+    <typesafe.version>1.4.9</typesafe.version>
   </properties>
 
   <dependencies>
