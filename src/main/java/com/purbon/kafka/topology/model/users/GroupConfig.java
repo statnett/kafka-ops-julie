@@ -4,6 +4,11 @@ import java.util.Optional;
 
 public class GroupConfig {
 
+  public static final Long DEFAULT_HEARTBEAT_INTERVAL_MS = 5000L;
+  public static final Integer DEFAULT_NUM_STANDBY_REPLICAS = 0;
+  public static final Long DEFAULT_SESSION_TIMEOUT_MS = 45000L;
+  public static final Long DEFAULT_INITIAL_REBALANCE_MS = 3000L;
+
   private Optional<String> groupId;
   private Optional<Long> sessionTimeoutMs;
   private Optional<Long> heartbeatIntervalMs;
