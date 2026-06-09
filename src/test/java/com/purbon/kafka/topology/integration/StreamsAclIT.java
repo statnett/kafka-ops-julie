@@ -90,11 +90,6 @@ public final class StreamsAclIT {
     streamWithInternalTopics(ContainerTestUtils.BACKUP_USERNAME);
   }
 
-  @Test
-  public void testStreamWithGroupConfig() {
-    // TODO:
-  }
-
   public void simpleStream(String consumerUsername) {
     Set<String> values;
     try (final TestProducer producer =
