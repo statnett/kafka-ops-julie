@@ -28,6 +28,7 @@ public final class ContainerTestUtils {
   public static final String NO_ACCESS_USERNAME = "no-access-user";
   public static final String PRODUCER_USERNAME = "producer";
   public static final String CONSUMER_USERNAME = "consumer";
+  public static final String BACKUP_USERNAME = "backup-user";
   public static final String OTHER_PRODUCER_USERNAME = "other-producer";
   public static final String OTHER_CONSUMER_USERNAME = "other-consumer";
   public static final String STREAMS_USERNAME = "streamsapp";

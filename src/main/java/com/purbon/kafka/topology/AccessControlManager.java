@@ -212,6 +212,9 @@ public class AccessControlManager implements ExecutionPlanUpdater {
     for (Topic topic : topics) {
       final String fullTopicName = topic.toString();
       Set<Consumer> consumers = new HashSet(topic.getConsumers());
+      if (topic.isBackupWanted()) {
+        consumers.add(new Consumer(config.getJulieBackupPrincipal()));
+      }
       if (includeProjectLevel) {
         consumers.addAll(project.getConsumers());
       }

@@ -175,4 +175,6 @@ public final class Constants {
 
   public static final String JULIE_HTTP_RETRY_TIMES = "julie.http.retry.times";
   public static final String JULIE_HTTP_BACKOFF_TIME_MS = "julie.http.retry.backoff.time.ms";
+
+  public static final String JULIE_BACKUP_PRINCIPAL = "julie.backup.principal";
 }

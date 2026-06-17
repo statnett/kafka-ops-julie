@@ -558,6 +558,10 @@ public class Configuration {
     return julieInstanceId;
   }
 
+  public String getJulieBackupPrincipal() {
+    return getString(JULIE_BACKUP_PRINCIPAL);
+  }
+
   private String julieInstanceId = "";
   private static final int defaultJulieInstanceIDLength = 10;
 

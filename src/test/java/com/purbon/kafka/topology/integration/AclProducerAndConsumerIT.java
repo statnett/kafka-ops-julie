@@ -28,6 +28,7 @@ public final class AclProducerAndConsumerIT {
             .withUser(ContainerTestUtils.NO_ACCESS_USERNAME)
             .withUser(ContainerTestUtils.PRODUCER_USERNAME)
             .withUser(ContainerTestUtils.CONSUMER_USERNAME)
+            .withUser(ContainerTestUtils.BACKUP_USERNAME)
             .withUser(ContainerTestUtils.OTHER_PRODUCER_USERNAME)
             .withUser(ContainerTestUtils.OTHER_CONSUMER_USERNAME);
     container.start();
@@ -69,6 +70,21 @@ public final class AclProducerAndConsumerIT {
     try (final TestConsumer consumer =
         TestConsumer.create(container, ContainerTestUtils.NO_ACCESS_USERNAME, CONSUMER_GROUP)) {
       consumer.consumeForAWhile(TOPIC, null);
+    }
+  }
+
+  @Test(expected = TopicAuthorizationException.class)
+  public void shouldNotBackupWithoutPermission() {
+    try (final TestConsumer consumer =
+        TestConsumer.create(container, ContainerTestUtils.BACKUP_USERNAME, CONSUMER_GROUP)) {
+      consumer.consumeForAWhile(TOPIC, null);
+    }
+  }
+
+  public void shouldBackupWithPermission() {
+    try (final TestConsumer consumer =
+        TestConsumer.create(container, ContainerTestUtils.BACKUP_USERNAME, CONSUMER_GROUP)) {
+      consumer.consumeForAWhile(OTHER_TOPIC, null);
     }
   }
 

@@ -42,6 +42,8 @@ projects:
               - "topicC"
     streams:
       - principal: "User:App0"
+        metadata:
+          backup-allowed: true
         topics:
           read:
             - "topicA"
@@ -93,6 +95,8 @@ projects:
           value.format: "JSON"
           value.compatibility: "BACKWARD"
         name: "bar"
+        metadata:
+          backup-allowed: true
         config:
           replication.factor: "1"
           num.partitions: "1"

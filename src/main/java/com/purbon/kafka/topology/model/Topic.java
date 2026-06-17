@@ -192,6 +192,25 @@ public class Topic implements Cloneable {
     this.consumers.addAll(consumers);
   }
 
+  @JsonIgnore
+  public boolean isBackupWanted() {
+    if (metadata == null) {
+      return false;
+    }
+    final String allowBackupString = metadata.get("allow-backup");
+    if (allowBackupString == null) {
+      return false;
+    }
+    if ("true".equals(allowBackupString)) {
+      return true;
+    }
+    if ("false".equals(allowBackupString)) {
+      return false;
+    }
+    throw new IllegalArgumentException(
+        "allow-backup must be true or false, not " + allowBackupString);
+  }
+
   public void setProducers(List<Producer> producers) {
     this.producers.clear();
     this.producers.addAll(producers);

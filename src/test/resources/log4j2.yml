@@ -4,6 +4,7 @@ configuration:
   appenders:
     console:
       name: Console
+      target: SYSTEM_ERR
       patternLayout:
         Pattern: "[%-5level] %d{HH:mm:ss.SSS} [%t] %c{1} - %msg%n"
 

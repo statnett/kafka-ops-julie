@@ -18,6 +18,8 @@ projects:
       - principal: "User:other-consumer"
     topics:
       - name: "other-producer-and-consumer-test-topic"
+        metadata:
+          allow-backup: true
         config:
           replication.factor: "1"
           num.partitions: "1"

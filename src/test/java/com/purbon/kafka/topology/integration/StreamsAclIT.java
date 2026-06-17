@@ -34,6 +34,7 @@ public final class StreamsAclIT {
         new SaslPlaintextKafkaContainer()
             .withUser(ContainerTestUtils.PRODUCER_USERNAME)
             .withUser(ContainerTestUtils.CONSUMER_USERNAME)
+            .withUser(ContainerTestUtils.BACKUP_USERNAME)
             .withUser(ContainerTestUtils.STREAMS_USERNAME);
     container.start();
   }
@@ -71,6 +72,25 @@ public final class StreamsAclIT {
 
   @Test
   public void testSimpleStream() {
+    simpleStream(ContainerTestUtils.CONSUMER_USERNAME);
+  }
+
+  @Test
+  public void testStreamWithInternalTopics() {
+    streamWithInternalTopics(ContainerTestUtils.CONSUMER_USERNAME);
+  }
+
+  @Test
+  public void testBackupOfSimpleStream() {
+    simpleStream(ContainerTestUtils.BACKUP_USERNAME);
+  }
+
+  @Test
+  public void testBackupOfStreamWithInternalTopics() {
+    streamWithInternalTopics(ContainerTestUtils.BACKUP_USERNAME);
+  }
+
+  public void simpleStream(String consumerUsername) {
     Set<String> values;
     try (final TestProducer producer =
         TestProducer.create(container, ContainerTestUtils.PRODUCER_USERNAME)) {
@@ -84,7 +104,7 @@ public final class StreamsAclIT {
             container, ContainerTestUtils.STREAMS_USERNAME, STREAMS_APP_ID, builder.build());
     streams.start();
     try (final TestConsumer consumer =
-        TestConsumer.create(container, ContainerTestUtils.CONSUMER_USERNAME, CONSUMER_GROUP)) {
+        TestConsumer.create(container, consumerUsername, CONSUMER_GROUP)) {
       consumer.consumeForAWhile(
           TOPIC_B,
           (key, value) -> {
@@ -96,8 +116,7 @@ public final class StreamsAclIT {
     assertThat(values).isEmpty();
   }
 
-  @Test
-  public void testStreamWithInternalTopics() {
+  public void streamWithInternalTopics(String consumerUser) {
     final Set<String> values;
     try (final TestProducer producer =
         TestProducer.create(container, ContainerTestUtils.PRODUCER_USERNAME)) {
@@ -117,7 +136,7 @@ public final class StreamsAclIT {
             container, ContainerTestUtils.STREAMS_USERNAME, STREAMS_APP_ID, builder.build());
     streams.start();
     try (final TestConsumer consumer =
-        TestConsumer.create(container, ContainerTestUtils.CONSUMER_USERNAME, CONSUMER_GROUP)) {
+        TestConsumer.create(container, consumerUser, CONSUMER_GROUP)) {
       consumer.consumeForAWhile(
           TOPIC_B,
           (key, value) -> {
