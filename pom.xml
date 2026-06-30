@@ -4,7 +4,7 @@
 
   <groupId>com.purbon.kafka</groupId>
   <artifactId>julie-ops</artifactId>
-  <version>6.4.3-SNAPSHOT</version>
+  <version>6.4.4-SNAPSHOT</version>
 
   <name>A Kafka operations manager, julie ops</name>
   <description>
@@ -208,9 +208,9 @@
     <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
     <!-- dependencies -->
     <assertj.version>3.27.7</assertj.version>
-    <aws.java.sdk.version>2.46.17</aws.java.sdk.version>
+    <aws.java.sdk.version>2.46.18</aws.java.sdk.version>
     <commons.version>1.11.0</commons.version>
-    <confluent.version>8.2.1</confluent.version>
+    <confluent.version>8.3.0</confluent.version>
     <gcp.java.sdk.version>26.84.0</gcp.java.sdk.version>
     <jackson.version>2.22.0</jackson.version>
     <jedis.version>7.5.2</jedis.version>
@@ -220,6 +220,7 @@
     <log4j.version>2.26.0</log4j.version>
     <lombok.version>1.18.46</lombok.version>
     <mockito.version>5.23.0</mockito.version>
+    <protobuf.version>4.35.1</protobuf.version>
     <slf4j.version>2.0.18</slf4j.version>
     <testcontainers.version>2.0.5</testcontainers.version>
     <typesafe.version>1.4.9</typesafe.version>
@@ -268,6 +269,26 @@
       <groupId>io.confluent</groupId>
       <artifactId>kafka-protobuf-provider</artifactId>
       <version>${confluent.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.protobuf</groupId>
+          <artifactId>protobuf-java</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.protobuf</groupId>
+          <artifactId>protobuf-java-util</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java</artifactId>
+      <version>${protobuf.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java-util</artifactId>
+      <version>${protobuf.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.kafka</groupId>

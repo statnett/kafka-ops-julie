@@ -1,5 +1,26 @@
 # Changelog
 
+## [6.4.3](https://github.com/statnett/kafka-ops-julie/compare/v6.4.2...v6.4.3) (2026-06-30)
+
+
+### Bug Fixes
+
+* **deps:** update aws-java-sdk-v2 monorepo ([#767](https://github.com/statnett/kafka-ops-julie/issues/767)) ([bb3eb6d](https://github.com/statnett/kafka-ops-julie/commit/bb3eb6d02adebdadefb9d0f9886a2d93e3c72a5a))
+* **deps:** update aws-java-sdk-v2 monorepo to v2.46.10 ([#754](https://github.com/statnett/kafka-ops-julie/issues/754)) ([45310e8](https://github.com/statnett/kafka-ops-julie/commit/45310e8ca4df6da261518d5fcf7bf7c602d4c750))
+* **deps:** update aws-java-sdk-v2 monorepo to v2.46.12 ([#756](https://github.com/statnett/kafka-ops-julie/issues/756)) ([341116c](https://github.com/statnett/kafka-ops-julie/commit/341116cca717c59a980bd739db19404d5c27566e))
+* **deps:** update aws-java-sdk-v2 monorepo to v2.46.13 ([#761](https://github.com/statnett/kafka-ops-julie/issues/761)) ([8839a09](https://github.com/statnett/kafka-ops-julie/commit/8839a096d63b142520311c7136001044fb503a41))
+* **deps:** update aws-java-sdk-v2 monorepo to v2.46.14 ([#763](https://github.com/statnett/kafka-ops-julie/issues/763)) ([f129f01](https://github.com/statnett/kafka-ops-julie/commit/f129f012ac45ffae0aaef3ec756b7570300d3e3d))
+* **deps:** update aws-java-sdk-v2 monorepo to v2.46.15 ([#766](https://github.com/statnett/kafka-ops-julie/issues/766)) ([56cbcdc](https://github.com/statnett/kafka-ops-julie/commit/56cbcdc8e9b89a06ab4d022ec8143b99d513361d))
+* **deps:** update aws-java-sdk-v2 monorepo to v2.46.3 ([#750](https://github.com/statnett/kafka-ops-julie/issues/750)) ([a557957](https://github.com/statnett/kafka-ops-julie/commit/a557957ead98db59b4c32a2384532647d1c8469c))
+* **deps:** update aws-java-sdk-v2 monorepo to v2.46.5 ([#752](https://github.com/statnett/kafka-ops-julie/issues/752)) ([10a2331](https://github.com/statnett/kafka-ops-julie/commit/10a2331438fe4f6e4b8f2caeed554319fe231986))
+* **deps:** update aws-java-sdk-v2 monorepo to v2.46.6 ([#753](https://github.com/statnett/kafka-ops-julie/issues/753)) ([5a9da08](https://github.com/statnett/kafka-ops-julie/commit/5a9da089a85a41b0d6cde38f6c792d3a7cf23429))
+* **deps:** update confluent.version to v8.3.0 ([#769](https://github.com/statnett/kafka-ops-julie/issues/769)) ([0c822e4](https://github.com/statnett/kafka-ops-julie/commit/0c822e4a9e1013f7b1d833a6cde6550dc828bf29))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.46.18 ([#770](https://github.com/statnett/kafka-ops-julie/issues/770)) ([0ab1733](https://github.com/statnett/kafka-ops-julie/commit/0ab1733b1b1af8cc4111a6e247ff84b97b1ed2ec))
+* **deps:** update gcp.java.sdk.version to v26.84.0 ([#755](https://github.com/statnett/kafka-ops-julie/issues/755)) ([bf717b3](https://github.com/statnett/kafka-ops-julie/commit/bf717b3a07e1b836034e5e94654c331ece89cceb))
+* **deps:** update ksqldb.client.version to v8.3.0 ([#760](https://github.com/statnett/kafka-ops-julie/issues/760)) ([a2dcd20](https://github.com/statnett/kafka-ops-julie/commit/a2dcd2089ea3ebb9347d93c27ccfb2804fd83876))
+* **deps:** update protobuf monorepo to v4.35.1 ([#771](https://github.com/statnett/kafka-ops-julie/issues/771)) ([42da6f0](https://github.com/statnett/kafka-ops-julie/commit/42da6f0d64ec58e2ca5558e3bac50f2791e8805c))
+* **deps:** update typesafe.version to v1.4.9 ([#749](https://github.com/statnett/kafka-ops-julie/issues/749)) ([5bbe4c9](https://github.com/statnett/kafka-ops-julie/commit/5bbe4c9877c63c330f692dba9991dd0e2f353b80))
+
 ## [6.4.2](https://github.com/statnett/kafka-ops-julie/compare/v6.4.1...v6.4.2) (2026-06-04)
 
 
