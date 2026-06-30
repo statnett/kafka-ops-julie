@@ -220,7 +220,7 @@
     <log4j.version>2.26.0</log4j.version>
     <lombok.version>1.18.46</lombok.version>
     <mockito.version>5.23.0</mockito.version>
-    <protobuf.version>4.34.0</protobuf.version>
+    <protobuf.version>4.35.1</protobuf.version>
     <slf4j.version>2.0.18</slf4j.version>
     <testcontainers.version>2.0.5</testcontainers.version>
     <typesafe.version>1.4.9</typesafe.version>
