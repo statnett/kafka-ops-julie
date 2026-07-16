@@ -1,0 +1,27 @@
+---
+context: "context"
+projects:
+  - name: "streamsproject"
+    streams:
+      - principal: "User:streamsapp"
+        applicationId: "streams-appid"
+        groupConfig:
+          groupId: "GroupA"
+          sessionTimeoutMs: 60000
+          heartbeatIntervalMs: 6000
+          numStandbyReplicas: 2
+          initialRebalanceDelayMs: 2000
+        topics:
+          read:
+            - topic-A
+          write:
+            - topic-B
+    producers:
+      - principal: "User:producer"
+    consumers:
+      - principal: "User:consumer"
+    topics:
+      - name: topic-A
+        config:
+          replication.factor: "1"
+          num.partitions: "1"
