@@ -8,12 +8,7 @@ import com.purbon.kafka.topology.api.adminclient.AclBuilder;
 import com.purbon.kafka.topology.model.DynamicUser;
 import com.purbon.kafka.topology.model.JulieRoleAcl;
 import com.purbon.kafka.topology.model.User;
-import com.purbon.kafka.topology.model.users.Connector;
-import com.purbon.kafka.topology.model.users.Consumer;
-import com.purbon.kafka.topology.model.users.KSqlApp;
-import com.purbon.kafka.topology.model.users.KStream;
-import com.purbon.kafka.topology.model.users.Other;
-import com.purbon.kafka.topology.model.users.Producer;
+import com.purbon.kafka.topology.model.users.*;
 import com.purbon.kafka.topology.model.users.platform.KsqlServerInstance;
 import com.purbon.kafka.topology.model.users.platform.SchemaRegistryInstance;
 import com.purbon.kafka.topology.roles.TopologyAclBinding;
@@ -185,6 +180,13 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
     return bindings;
   }
 
+  // TODO: figure out the difference between this method and the one in
+  // ../rbac/RBACBindingsBuilder.java
+  @Override
+  public Collection<TopologyAclBinding> buildBindingForMirrorMaker2(MirrorMaker2 mm2) {
+    return toList(mirrorMaker2Stream(mm2));
+  }
+
   private List<TopologyAclBinding> toList(Stream<AclBinding> bindingStream) {
     return bindingStream.map(TopologyAclBinding::new).collect(Collectors.toList());
   }
@@ -346,6 +348,45 @@ public class AclsBindingsBuilder implements BindingsBuilderProvider {
         });
     bindings.add(buildPrefixedTopicLevelAcl(principal, prefix, AclOperation.ALL));
     bindings.add(buildPrefixedGroupLevelAcl(principal, prefix, AclOperation.ALL));
+    return bindings.stream();
+  }
+
+  // TODO: core ACL construction logic
+  private Stream<AclBinding> mirrorMaker2Stream(MirrorMaker2 mm2) {
+
+    String principal = mm2.getPrincipal();
+
+    List<AclBinding> bindings = new ArrayList<>();
+    bindings.add(buildLiteralTopicLevelAcl(principal, mm2.configsTopicString(), AclOperation.ALL));
+    bindings.add(buildLiteralTopicLevelAcl(principal, mm2.offsetTopicString(), AclOperation.ALL));
+    bindings.add(buildLiteralTopicLevelAcl(principal, mm2.statusTopicString(), AclOperation.ALL));
+
+    if (mm2.getRole() == MirrorMaker2.Role.producer) {
+      mm2.getSourceTopics().stream()
+          .filter(Optional::isPresent)
+          .map(t -> buildLiteralTopicLevelAcl(principal, t.get(), AclOperation.READ));
+    } else {
+      mm2.getTargetTopics().stream()
+          .filter(Optional::isPresent)
+          .map(t -> buildLiteralTopicLevelAcl(principal, t.get(), AclOperation.WRITE));
+
+      // TODO: this topic is always required, should cause an exception if not present
+      if (mm2.getOffsetSyncsTopic().isPresent()) {
+        bindings.add(
+            buildLiteralTopicLevelAcl(principal, mm2.offsetSyncsTopicString(), AclOperation.WRITE));
+      }
+
+      if (mm2.getCheckpointsTopic().isPresent()) {
+        bindings.add(
+            buildLiteralTopicLevelAcl(principal, mm2.checkpointsTopicString(), AclOperation.WRITE));
+      }
+
+      if (mm2.getHeartbeatsTopic().isPresent()) {
+        bindings.add(
+            buildLiteralTopicLevelAcl(principal, mm2.heartbeatsTopicString(), AclOperation.WRITE));
+      }
+    }
+
     return bindings.stream();
   }
 
