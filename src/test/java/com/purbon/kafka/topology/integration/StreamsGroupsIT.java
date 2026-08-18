@@ -29,7 +29,7 @@ public final class StreamsGroupsIT {
   private static final String CONSUMER_GROUP = "streams-appid";
 
   private static SaslPlaintextKafkaContainer container;
-  private static AdminClient adminClient;
+  private AdminClient adminClient;
 
   @BeforeClass
   public static void beforeClass() {

@@ -37,7 +37,7 @@ projects:
         applicationId: "streams-app-b"
         groupConfig:
           groupId: "streams-app-b"
-          sessionTimeout: 50000
+          sessionTimeoutMs: 50000
           numStandByReplicas: 6
         topics:
           read:
