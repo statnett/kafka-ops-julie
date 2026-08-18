@@ -25,3 +25,9 @@ projects:
         config:
           replication.factor: "1"
           num.partitions: "1"
+      - name: topic-B
+        metadata:
+          allow-backup: true
+        config:
+          replication.factor: "1"
+          num.partitions: "1"
