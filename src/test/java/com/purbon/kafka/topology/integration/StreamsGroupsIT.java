@@ -29,15 +29,17 @@ public final class StreamsGroupsIT {
   private static final String CONSUMER_GROUP = "streams-appid";
 
   private static SaslPlaintextKafkaContainer container;
+  private static AdminClient adminClient;
 
   @BeforeClass
   public static void beforeClass() {
     container =
-        new SaslPlaintextKafkaContainer()
-            .withUser(ContainerTestUtils.PRODUCER_USERNAME)
-            .withUser(ContainerTestUtils.CONSUMER_USERNAME)
-            .withUser(ContainerTestUtils.BACKUP_USERNAME)
-            .withUser(ContainerTestUtils.STREAMS_USERNAME);
+            new SaslPlaintextKafkaContainer()
+                    .withUser(ContainerTestUtils.PRODUCER_USERNAME)
+                    .withUser(ContainerTestUtils.CONSUMER_USERNAME)
+                    .withUser(ContainerTestUtils.BACKUP_USERNAME)
+                    .withUser("streamsapp-a")
+                    .withUser("streamsapp-b");
     container.start();
   }
 
@@ -51,13 +53,13 @@ public final class StreamsGroupsIT {
     ContainerTestUtils.clearAclsAndTopics(container);
     ContainerTestUtils.populateAcls(
         container, "/streams-groups-it.yaml", "/integration-tests.properties");
+    adminClient = ContainerTestUtils.getSaslJulieAdminClient(container);
   }
 
   @Test
   public void shouldOverrideGroupConfigs() {
-    AdminClient adminClient = ContainerTestUtils.getSaslJulieAdminClient(container);
     try {
-      ConfigResource groupResource = new ConfigResource(ConfigResource.Type.GROUP, CONSUMER_GROUP);
+      ConfigResource groupResource = new ConfigResource(ConfigResource.Type.GROUP, "streamsapp-group-a");
       Map<ConfigResource, Config> result =
           adminClient
               .describeConfigs(
@@ -84,5 +86,26 @@ public final class StreamsGroupsIT {
     } catch (InterruptedException | ExecutionException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  @Test
+  public void shouldFallbackToDefaultsIfNotSpecified() {
+    ConfigResource groupResource = new ConfigResource(ConfigResource.Type.GROUP, "streams-app-group-b");
+      try {
+          Map<ConfigResource, Config> result = adminClient
+                  .describeConfigs(
+                          Collections.singleton(new ConfigResource(ConfigResource.Type.GROUP, "streamsapp-group-b")),
+                          new DescribeConfigsOptions())
+                  .all()
+                  .get();
+          assertTrue(result.containsKey(groupResource));
+          Config config = result.get(groupResource);
+          assertEquals("50000", config.get("streams.session.timeout.ms").value());
+          assertEquals("5000",  config.get("streams.heartbeat.interval.ms").value());
+          assertEquals("6", config.get("streams.num.standby.replicas").value());
+          assertEquals("3000", config.get("streams.initial.rebalance.delay.ms").value());
+      } catch (InterruptedException | ExecutionException e) {
+          throw new RuntimeException(e);
+      }
   }
 }
