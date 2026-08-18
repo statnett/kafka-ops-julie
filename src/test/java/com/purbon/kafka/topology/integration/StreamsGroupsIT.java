@@ -26,7 +26,7 @@ public final class StreamsGroupsIT {
   public static final String NUM_STANDBY_REPLICAS = "2";
   public static final String SESSION_TIMEOUT_MS = "60000";
   public static final String INITIAL_REBALANCE_MS = "2000";
-  private static final String CONSUMER_GROUP = "streams-consumer-test-consumer-group";
+  private static final String CONSUMER_GROUP = "streams-appid";
 
   private static SaslPlaintextKafkaContainer container;
 
