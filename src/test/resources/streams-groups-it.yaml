@@ -6,7 +6,7 @@ projects:
       - principal: "User:streamsapp"
         applicationId: "streams-appid"
         groupConfig:
-          groupId: "GroupA"
+          groupId: "streams-appid"
           sessionTimeoutMs: 60000
           heartbeatIntervalMs: 6000
           numStandbyReplicas: 2
