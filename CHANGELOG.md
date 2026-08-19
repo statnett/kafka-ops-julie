@@ -1,5 +1,15 @@
 # Changelog
 
+## [6.4.6](https://github.com/statnett/kafka-ops-julie/compare/v6.4.5...v6.4.6) (2026-08-19)
+
+
+### Bug Fixes
+
+* **deps:** update dependency com.fasterxml.jackson:jackson-bom to v2.22.2 ([#809](https://github.com/statnett/kafka-ops-julie/issues/809)) ([fb943f3](https://github.com/statnett/kafka-ops-julie/commit/fb943f361be0b9d4834caf8c3d65eda702f57ef3))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.53.1 ([#808](https://github.com/statnett/kafka-ops-julie/issues/808)) ([bbe282d](https://github.com/statnett/kafka-ops-julie/commit/bbe282d32d70479e41a99877becb2019894c45b6))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.53.2 ([#811](https://github.com/statnett/kafka-ops-julie/issues/811)) ([d89f8d4](https://github.com/statnett/kafka-ops-julie/commit/d89f8d4a6e5651a264a1876d82b3ceeb3d33b055))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.53.3 ([#812](https://github.com/statnett/kafka-ops-julie/issues/812)) ([5330f6d](https://github.com/statnett/kafka-ops-julie/commit/5330f6da6e1571db5e763552f678d45cfbde586c))
+
 ## [6.4.5](https://github.com/statnett/kafka-ops-julie/compare/v6.4.4...v6.4.5) (2026-08-13)
 
 
