@@ -7,12 +7,16 @@ import com.purbon.kafka.topology.model.users.GroupConfig;
 import com.purbon.kafka.topology.model.users.Quota;
 import com.purbon.kafka.topology.quotas.QuotasClientBindingsBuilder;
 import com.purbon.kafka.topology.roles.TopologyAclBinding;
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
-import org.apache.kafka.clients.admin.*;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.AlterConfigOp;
 import org.apache.kafka.clients.admin.AlterConfigOp.OpType;
+import org.apache.kafka.clients.admin.Config;
+import org.apache.kafka.clients.admin.ConfigEntry;
+import org.apache.kafka.clients.admin.GroupListing;
+import org.apache.kafka.clients.admin.ListTopicsOptions;
+import org.apache.kafka.clients.admin.NewPartitions;
+import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.common.acl.AccessControlEntryFilter;
 import org.apache.kafka.common.acl.AclBinding;
 import org.apache.kafka.common.acl.AclBindingFilter;
@@ -30,6 +34,23 @@ import org.apache.kafka.common.resource.ResourcePatternFilter;
 import org.apache.kafka.common.resource.ResourceType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+
+import static org.apache.kafka.coordinator.group.GroupConfig.*;
 
 public class TopologyBuilderAdminClient {
 
@@ -275,35 +296,91 @@ public class TopologyBuilderAdminClient {
     }
   }
 
+  public Set<GroupConfig> describeGroups() {
+    Set<GroupConfig> describeGroups = new LinkedHashSet<>();
+    try {
+      final Set<String> groupIds =
+          adminClient.listGroups().all().get().stream()
+              .map(GroupListing::groupId)
+              .collect(Collectors.toSet());
+
+      final List<ConfigResource> resources =
+          groupIds.stream().map(groupId -> new ConfigResource(Type.GROUP, groupId)).toList();
+
+      Map<ConfigResource, Config> configs = adminClient.describeConfigs(resources).all().get();
+
+      for (Map.Entry<ConfigResource, Config> entry : configs.entrySet()) {
+        GroupConfig groupConfig = new GroupConfig();
+        groupConfig.setGroupId(entry.getKey().name());
+
+        final String heartbeatIntervalMs =
+            entry.getValue().get(STREAMS_HEARTBEAT_INTERVAL_MS_CONFIG).value();
+        groupConfig.setHeartbeatIntervalMs(Optional.of(Integer.valueOf(heartbeatIntervalMs)));
+
+        final String numStandbyReplicas =
+            entry.getValue().get(STREAMS_NUM_STANDBY_REPLICAS_CONFIG).value();
+        groupConfig.setNumStandbyReplicas(Optional.of(Integer.valueOf(numStandbyReplicas)));
+
+        final String sessionTimeoutMs =
+            entry.getValue().get(STREAMS_SESSION_TIMEOUT_MS_CONFIG).value();
+        groupConfig.setSessionTimeoutMs(Optional.of(Integer.valueOf(sessionTimeoutMs)));
+
+        final String rebalanceDelaysMs =
+            entry.getValue().get(STREAMS_INITIAL_REBALANCE_DELAY_MS_CONFIG).value();
+        groupConfig.setInitialRebalanceDelayMs(Optional.of(Integer.valueOf(rebalanceDelaysMs)));
+
+        describeGroups.add(groupConfig);
+      }
+
+      return describeGroups;
+    } catch (ExecutionException | InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
   public void updateGroupConfig(GroupConfig groupConfig) {
     try {
       List<AlterConfigOp> alterConfigOps = new ArrayList<>();
-      for (final String configKey : groupConfig.getConfigProperties()) {
-        final Optional<Integer> configValue = groupConfig.getConfigValueForKey(configKey);
-        if (configValue.isPresent()) {
-          alterConfigOps.add(
-              new AlterConfigOp(
-                  new ConfigEntry(configKey, String.valueOf(configValue.get())), OpType.SET));
-        } else {
-          final ConfigResource configResource = new ConfigResource(Type.GROUP, configKey);
-          Map<ConfigResource, Config> brokerDefaults =
-              this.adminClient.describeConfigs(Collections.singleton(configResource)).all().get();
-          if (!brokerDefaults.containsKey(configResource)) {
-            LOGGER.error(
-                "Expected singleton response from broker for describe config for '{}', got: {}",
-                configKey,
-                brokerDefaults.size());
-            throw new IllegalStateException(
-                "Expected singleton response from broker for describe config for '"
-                    + configKey
-                    + "', got: "
-                    + brokerDefaults.size());
-          }
-          final String defaultConfig = brokerDefaults.get(configResource).get(configKey).value();
-          alterConfigOps.add(
-              new AlterConfigOp(new ConfigEntry(configKey, defaultConfig), OpType.SET));
-        }
+
+      if(groupConfig.getHeartbeatIntervalMs().isPresent()) {
+        alterConfigOps.add(new AlterConfigOp(new ConfigEntry(STREAMS_HEARTBEAT_INTERVAL_MS_CONFIG, String.valueOf(groupConfig.getHeartbeatIntervalMs().get())), OpType.SET));
+      } else {
+        alterConfigOps.add(new AlterConfigOp(new ConfigEntry(STREAMS_HEARTBEAT_INTERVAL_MS_CONFIG, null), OpType.DELETE));
       }
+
+      if(groupConfig.getNumStandbyReplicas().isPresent()) {
+        alterConfigOps.add(new AlterConfigOp(new ConfigEntry(STREAMS_NUM_STANDBY_REPLICAS_CONFIG, String.valueOf(groupConfig.getNumStandbyReplicas().get())), OpType.SET));
+      } else {
+        alterConfigOps.add(new AlterConfigOp(new ConfigEntry(STREAMS_NUM_STANDBY_REPLICAS_CONFIG, null), OpType.DELETE));
+      }
+
+      if(groupConfig.getSessionTimeoutMs().isPresent()) {
+        alterConfigOps.add(new AlterConfigOp(new ConfigEntry(STREAMS_SESSION_TIMEOUT_MS_CONFIG, String.valueOf(groupConfig.getSessionTimeoutMs().get())), OpType.SET));
+      } else {
+        alterConfigOps.add(new AlterConfigOp(new ConfigEntry(STREAMS_SESSION_TIMEOUT_MS_CONFIG, null), OpType.DELETE));
+      }
+
+      if(groupConfig.getInitialRebalanceDelayMs().isPresent()) {
+        alterConfigOps.add(new AlterConfigOp(new ConfigEntry(STREAMS_INITIAL_REBALANCE_DELAY_MS_CONFIG, String.valueOf(groupConfig.getInitialRebalanceDelayMs().get())), OpType.SET));
+      } else {
+        alterConfigOps.add(new AlterConfigOp(new ConfigEntry(STREAMS_INITIAL_REBALANCE_DELAY_MS_CONFIG, null), OpType.DELETE));
+      }
+//        alterConfigOps.add(
+//                new AlterConfigOp(
+//                        new ConfigEntry(STREAMS_HEARTBEAT_INTERVAL_MS_CONFIG, String.valueOf(groupConfig.getHeartbeatIntervalMs().orElse(5000))),
+//                        OpType.SET));
+//        alterConfigOps.add(
+//                new AlterConfigOp(
+//                        new ConfigEntry(STREAMS_NUM_STANDBY_REPLICAS_CONFIG, String.valueOf(groupConfig.getNumStandbyReplicas().orElse(0))),
+//                        OpType.SET));
+//        alterConfigOps.add(
+//                new AlterConfigOp(
+//                        new ConfigEntry(STREAMS_SESSION_TIMEOUT_MS_CONFIG, String.valueOf(groupConfig.getSessionTimeoutMs().orElse(45000))),
+//                        OpType.SET));
+//        alterConfigOps.add(
+//                new AlterConfigOp(
+//                        new ConfigEntry(STREAMS_INITIAL_REBALANCE_DELAY_MS_CONFIG, String.valueOf(groupConfig.getInitialRebalanceDelayMs().orElse(3000))),
+//                        OpType.SET));
       Map<ConfigResource, Collection<AlterConfigOp>> configs =
           Map.of(new ConfigResource(Type.GROUP, groupConfig.getGroupId()), alterConfigOps);
       this.adminClient.incrementalAlterConfigs(configs).all().get();
@@ -313,14 +390,34 @@ public class TopologyBuilderAdminClient {
     }
   }
 
-  public void resetGroupConfig(GroupConfig groupConfig) {
+  public void resetGroupConfig(final List<String> groups) {
     try {
-      List<AlterConfigOp> resetConfigOps = new ArrayList<>();
-      for (final String configKey : groupConfig.getConfigProperties()) {
-        resetConfigOps.add(new AlterConfigOp(new ConfigEntry(configKey, null), OpType.DELETE));
-      }
-      Map<ConfigResource, Collection<AlterConfigOp>> configs =
-          Map.of(new ConfigResource(Type.GROUP, groupConfig.getGroupId()), resetConfigOps);
+      List<AlterConfigOp> resetConfigOps = List.of(
+              new AlterConfigOp(
+                      new ConfigEntry(STREAMS_HEARTBEAT_INTERVAL_MS_CONFIG, null), OpType.DELETE),
+              new AlterConfigOp(
+                      new ConfigEntry(STREAMS_INITIAL_REBALANCE_DELAY_MS_CONFIG, null), OpType.DELETE),
+              new AlterConfigOp(
+                      new ConfigEntry(STREAMS_NUM_STANDBY_REPLICAS_CONFIG, null), OpType.DELETE),
+              new AlterConfigOp(
+                      new ConfigEntry(STREAMS_SESSION_TIMEOUT_MS_CONFIG, null), OpType.DELETE)
+      );
+//
+//      resetConfigOps.add(
+//          new AlterConfigOp(
+//              new ConfigEntry(STREAMS_HEARTBEAT_INTERVAL_MS_CONFIG, null), OpType.DELETE));
+//      resetConfigOps.add(
+//          new AlterConfigOp(
+//              new ConfigEntry(STREAMS_INITIAL_REBALANCE_DELAY_MS_CONFIG, null), OpType.DELETE));
+//      resetConfigOps.add(
+//          new AlterConfigOp(
+//              new ConfigEntry(STREAMS_NUM_STANDBY_REPLICAS_CONFIG, null), OpType.DELETE));
+//      resetConfigOps.add(
+//          new AlterConfigOp(
+//              new ConfigEntry(STREAMS_SESSION_TIMEOUT_MS_CONFIG, null), OpType.DELETE));
+
+      Map<ConfigResource, Collection<AlterConfigOp>> configs = new LinkedHashMap<>();
+      groups.forEach(g -> configs.put(new ConfigResource(Type.GROUP, g), resetConfigOps));
       this.adminClient.incrementalAlterConfigs(configs).all().get();
     } catch (InterruptedException | ExecutionException e) {
       LOGGER.error(e);

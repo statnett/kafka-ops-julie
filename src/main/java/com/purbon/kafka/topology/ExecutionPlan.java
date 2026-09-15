@@ -197,7 +197,7 @@ public class ExecutionPlan {
       if (action instanceof UpdateGroupConfigAction) {
         streams.add(((UpdateGroupConfigAction) action).getGroupID());
       } else if (action instanceof ResetGroupConfigAction) {
-        streams.add(((ResetGroupConfigAction) action).getGroupID());
+        streams = new HashSet<>(((ResetGroupConfigAction) action).getGroupsToReset());
       }
     }
   }
