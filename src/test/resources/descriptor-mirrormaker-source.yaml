@@ -1,0 +1,24 @@
+---
+context: "contextOrg"
+source: "source"
+projects:
+  - name: "foo"
+    mirrormaker:
+      - role: consumer
+        principal: "User:banana"
+        group: "test-group"
+        status-topic: "test-cluster-status"
+        offset-topic: "test-cluster-offsets"
+        config-topic: "test-cluster-configs"
+        source-topics:
+          - "source-topic-A"
+          - "source-topic-B"
+    topics:
+      - name: "source-topic-A"
+        config:
+          replication.factor: "1"
+          num.partitions: "1"
+      - name: "source-topic-B"
+        config:
+          replication.factor: "1"
+          num.partitions: "1"

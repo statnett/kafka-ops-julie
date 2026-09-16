@@ -3,15 +3,15 @@ context: "contextOrg"
 source: "source"
 projects:
   - name: "foo"
-    mirrorMaker:
+    mirrormaker:
       - principal: "User:banana"
         group: "test-group"
-        statusTopic: "test-cluster-status"
-        offsetTopic: "test-cluster-offsets"
-        configTopic: "test-cluster-configs"
-        targetPrefix: "target-prefix."
-        offsetSyncTopic: "mm2-offset-syncs.test-mm.internal"
-        checkpointsTopic: "test-mm.checkpoints.internal"
+        status-topic: "test-cluster-status"
+        offset-topic: "test-cluster-offsets"
+        config-topic: "test-cluster-configs"
+        target-prefix: "target-prefix."
+        offset-sync-topic: "mm2-offset-syncs.test-mm.internal"
+        checkpoint-topic: "test-mm.checkpoints.internal"
     denyTopic:
       - principal: "User:banana"
         group: "test-group"
