@@ -1,9 +1,8 @@
 package com.purbon.kafka.topology.model.users;
 
+import java.util.Optional;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Optional;
 
 @Setter
 @Getter

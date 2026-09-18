@@ -1,5 +1,9 @@
 package com.purbon.kafka.topology.integration;
 
+import static com.purbon.kafka.topology.CommandLineInterface.BROKERS_OPTION;
+import static com.purbon.kafka.topology.Constants.TOPOLOGY_TOPIC_STATE_FROM_CLUSTER;
+import static org.junit.Assert.*;
+
 import com.purbon.kafka.topology.BackendController;
 import com.purbon.kafka.topology.Configuration;
 import com.purbon.kafka.topology.ExecutionPlan;
@@ -16,16 +20,6 @@ import com.purbon.kafka.topology.model.Topology;
 import com.purbon.kafka.topology.model.User;
 import com.purbon.kafka.topology.model.users.GroupConfig;
 import com.purbon.kafka.topology.model.users.KStream;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.Config;
-import org.apache.kafka.clients.admin.DescribeConfigsOptions;
-import org.apache.kafka.common.config.ConfigResource;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,10 +30,15 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-
-import static com.purbon.kafka.topology.CommandLineInterface.BROKERS_OPTION;
-import static com.purbon.kafka.topology.Constants.TOPOLOGY_TOPIC_STATE_FROM_CLUSTER;
-import static org.junit.Assert.*;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.Config;
+import org.apache.kafka.clients.admin.DescribeConfigsOptions;
+import org.apache.kafka.common.config.ConfigResource;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class GroupConfigManagerIT {
 
@@ -114,33 +113,36 @@ public class GroupConfigManagerIT {
     Set<GroupConfig> groups = groupConfigManager.loadClusterState(plan);
     assertEquals(1, groups.size());
 
-    // NOTE: when fetching state from `plan`, the resulting objects contain empty fields, causing these assertions to fail
-//    GroupConfig observedResetStreamGroupConfig = groups.stream().toList().getFirst();
-//    Assert.assertTrue(observedResetStreamGroupConfig.getSessionTimeoutMs().isPresent());
-//    final int resetSessionTimeoutMs = observedResetStreamGroupConfig.getSessionTimeoutMs().get();
-//    Assert.assertEquals(60000, resetSessionTimeoutMs);
-//    Assert.assertTrue(observedResetStreamGroupConfig.getHeartbeatIntervalMs().isPresent());
-//    final int resetHeartbeatIntervalMs =
-//        observedResetStreamGroupConfig.getHeartbeatIntervalMs().get();
-//    Assert.assertEquals(5000, resetHeartbeatIntervalMs);
-//    Assert.assertTrue(observedResetStreamGroupConfig.getNumStandbyReplicas().isPresent());
-//    final int resetNumStandbyReplicas =
-//        observedResetStreamGroupConfig.getNumStandbyReplicas().get();
-//    Assert.assertEquals(0, resetNumStandbyReplicas);
-//    Assert.assertTrue(observedResetStreamGroupConfig.getInitialRebalanceDelayMs().isPresent());
-//    final int resetInitialRebalanceDelayMs =
-//        observedResetStreamGroupConfig.getInitialRebalanceDelayMs().get();
-//    Assert.assertEquals(3000, resetInitialRebalanceDelayMs);
+    // NOTE: when fetching state from `plan`, the resulting objects contain empty fields, causing
+    // these assertions to fail
+    //    GroupConfig observedResetStreamGroupConfig = groups.stream().toList().getFirst();
+    //    Assert.assertTrue(observedResetStreamGroupConfig.getSessionTimeoutMs().isPresent());
+    //    final int resetSessionTimeoutMs =
+    // observedResetStreamGroupConfig.getSessionTimeoutMs().get();
+    //    Assert.assertEquals(60000, resetSessionTimeoutMs);
+    //    Assert.assertTrue(observedResetStreamGroupConfig.getHeartbeatIntervalMs().isPresent());
+    //    final int resetHeartbeatIntervalMs =
+    //        observedResetStreamGroupConfig.getHeartbeatIntervalMs().get();
+    //    Assert.assertEquals(5000, resetHeartbeatIntervalMs);
+    //    Assert.assertTrue(observedResetStreamGroupConfig.getNumStandbyReplicas().isPresent());
+    //    final int resetNumStandbyReplicas =
+    //        observedResetStreamGroupConfig.getNumStandbyReplicas().get();
+    //    Assert.assertEquals(0, resetNumStandbyReplicas);
+    //
+    // Assert.assertTrue(observedResetStreamGroupConfig.getInitialRebalanceDelayMs().isPresent());
+    //    final int resetInitialRebalanceDelayMs =
+    //        observedResetStreamGroupConfig.getInitialRebalanceDelayMs().get();
+    //    Assert.assertEquals(3000, resetInitialRebalanceDelayMs);
 
     ConfigResource groupResource = new ConfigResource(ConfigResource.Type.GROUP, "streams-app-a");
     Map<ConfigResource, Config> result =
-            kafkaAdminClient
-                    .describeConfigs(
-                            Collections.singleton(
-                                    new ConfigResource(ConfigResource.Type.GROUP, "streams-app-a")),
-                            new DescribeConfigsOptions())
-                    .all()
-                    .get();
+        kafkaAdminClient
+            .describeConfigs(
+                Collections.singleton(
+                    new ConfigResource(ConfigResource.Type.GROUP, "streams-app-a")),
+                new DescribeConfigsOptions())
+            .all()
+            .get();
     assertTrue(result.containsKey(groupResource));
     Config config = result.get(groupResource);
     assertTrue(config.get("streams.session.timeout.ms").isDefault());

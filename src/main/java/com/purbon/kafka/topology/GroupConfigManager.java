@@ -70,7 +70,6 @@ public class GroupConfigManager implements ExecutionPlanUpdater {
     }
   }
 
-
   public Set<GroupConfig> loadClusterState(final ExecutionPlan plan) {
     if (config.fetchStateFromTheCluster()) {
       return this.adminClient.describeGroups();

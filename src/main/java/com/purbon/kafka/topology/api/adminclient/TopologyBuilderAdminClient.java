@@ -1,5 +1,7 @@
 package com.purbon.kafka.topology.api.adminclient;
 
+import static org.apache.kafka.coordinator.group.GroupConfig.*;
+
 import com.purbon.kafka.topology.actions.topics.TopicConfigUpdatePlan;
 import com.purbon.kafka.topology.model.Topic;
 import com.purbon.kafka.topology.model.User;
@@ -7,6 +9,20 @@ import com.purbon.kafka.topology.model.users.GroupConfig;
 import com.purbon.kafka.topology.model.users.Quota;
 import com.purbon.kafka.topology.quotas.QuotasClientBindingsBuilder;
 import com.purbon.kafka.topology.roles.TopologyAclBinding;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AlterConfigOp;
 import org.apache.kafka.clients.admin.AlterConfigOp.OpType;
@@ -34,23 +50,6 @@ import org.apache.kafka.common.resource.ResourcePatternFilter;
 import org.apache.kafka.common.resource.ResourceType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
-
-import static org.apache.kafka.coordinator.group.GroupConfig.*;
 
 public class TopologyBuilderAdminClient {
 
@@ -342,45 +341,77 @@ public class TopologyBuilderAdminClient {
     try {
       List<AlterConfigOp> alterConfigOps = new ArrayList<>();
 
-      if(groupConfig.getHeartbeatIntervalMs().isPresent()) {
-        alterConfigOps.add(new AlterConfigOp(new ConfigEntry(STREAMS_HEARTBEAT_INTERVAL_MS_CONFIG, String.valueOf(groupConfig.getHeartbeatIntervalMs().get())), OpType.SET));
+      if (groupConfig.getHeartbeatIntervalMs().isPresent()) {
+        alterConfigOps.add(
+            new AlterConfigOp(
+                new ConfigEntry(
+                    STREAMS_HEARTBEAT_INTERVAL_MS_CONFIG,
+                    String.valueOf(groupConfig.getHeartbeatIntervalMs().get())),
+                OpType.SET));
       } else {
-        alterConfigOps.add(new AlterConfigOp(new ConfigEntry(STREAMS_HEARTBEAT_INTERVAL_MS_CONFIG, null), OpType.DELETE));
+        alterConfigOps.add(
+            new AlterConfigOp(
+                new ConfigEntry(STREAMS_HEARTBEAT_INTERVAL_MS_CONFIG, null), OpType.DELETE));
       }
 
-      if(groupConfig.getNumStandbyReplicas().isPresent()) {
-        alterConfigOps.add(new AlterConfigOp(new ConfigEntry(STREAMS_NUM_STANDBY_REPLICAS_CONFIG, String.valueOf(groupConfig.getNumStandbyReplicas().get())), OpType.SET));
+      if (groupConfig.getNumStandbyReplicas().isPresent()) {
+        alterConfigOps.add(
+            new AlterConfigOp(
+                new ConfigEntry(
+                    STREAMS_NUM_STANDBY_REPLICAS_CONFIG,
+                    String.valueOf(groupConfig.getNumStandbyReplicas().get())),
+                OpType.SET));
       } else {
-        alterConfigOps.add(new AlterConfigOp(new ConfigEntry(STREAMS_NUM_STANDBY_REPLICAS_CONFIG, null), OpType.DELETE));
+        alterConfigOps.add(
+            new AlterConfigOp(
+                new ConfigEntry(STREAMS_NUM_STANDBY_REPLICAS_CONFIG, null), OpType.DELETE));
       }
 
-      if(groupConfig.getSessionTimeoutMs().isPresent()) {
-        alterConfigOps.add(new AlterConfigOp(new ConfigEntry(STREAMS_SESSION_TIMEOUT_MS_CONFIG, String.valueOf(groupConfig.getSessionTimeoutMs().get())), OpType.SET));
+      if (groupConfig.getSessionTimeoutMs().isPresent()) {
+        alterConfigOps.add(
+            new AlterConfigOp(
+                new ConfigEntry(
+                    STREAMS_SESSION_TIMEOUT_MS_CONFIG,
+                    String.valueOf(groupConfig.getSessionTimeoutMs().get())),
+                OpType.SET));
       } else {
-        alterConfigOps.add(new AlterConfigOp(new ConfigEntry(STREAMS_SESSION_TIMEOUT_MS_CONFIG, null), OpType.DELETE));
+        alterConfigOps.add(
+            new AlterConfigOp(
+                new ConfigEntry(STREAMS_SESSION_TIMEOUT_MS_CONFIG, null), OpType.DELETE));
       }
 
-      if(groupConfig.getInitialRebalanceDelayMs().isPresent()) {
-        alterConfigOps.add(new AlterConfigOp(new ConfigEntry(STREAMS_INITIAL_REBALANCE_DELAY_MS_CONFIG, String.valueOf(groupConfig.getInitialRebalanceDelayMs().get())), OpType.SET));
+      if (groupConfig.getInitialRebalanceDelayMs().isPresent()) {
+        alterConfigOps.add(
+            new AlterConfigOp(
+                new ConfigEntry(
+                    STREAMS_INITIAL_REBALANCE_DELAY_MS_CONFIG,
+                    String.valueOf(groupConfig.getInitialRebalanceDelayMs().get())),
+                OpType.SET));
       } else {
-        alterConfigOps.add(new AlterConfigOp(new ConfigEntry(STREAMS_INITIAL_REBALANCE_DELAY_MS_CONFIG, null), OpType.DELETE));
+        alterConfigOps.add(
+            new AlterConfigOp(
+                new ConfigEntry(STREAMS_INITIAL_REBALANCE_DELAY_MS_CONFIG, null), OpType.DELETE));
       }
-//        alterConfigOps.add(
-//                new AlterConfigOp(
-//                        new ConfigEntry(STREAMS_HEARTBEAT_INTERVAL_MS_CONFIG, String.valueOf(groupConfig.getHeartbeatIntervalMs().orElse(5000))),
-//                        OpType.SET));
-//        alterConfigOps.add(
-//                new AlterConfigOp(
-//                        new ConfigEntry(STREAMS_NUM_STANDBY_REPLICAS_CONFIG, String.valueOf(groupConfig.getNumStandbyReplicas().orElse(0))),
-//                        OpType.SET));
-//        alterConfigOps.add(
-//                new AlterConfigOp(
-//                        new ConfigEntry(STREAMS_SESSION_TIMEOUT_MS_CONFIG, String.valueOf(groupConfig.getSessionTimeoutMs().orElse(45000))),
-//                        OpType.SET));
-//        alterConfigOps.add(
-//                new AlterConfigOp(
-//                        new ConfigEntry(STREAMS_INITIAL_REBALANCE_DELAY_MS_CONFIG, String.valueOf(groupConfig.getInitialRebalanceDelayMs().orElse(3000))),
-//                        OpType.SET));
+      //        alterConfigOps.add(
+      //                new AlterConfigOp(
+      //                        new ConfigEntry(STREAMS_HEARTBEAT_INTERVAL_MS_CONFIG,
+      // String.valueOf(groupConfig.getHeartbeatIntervalMs().orElse(5000))),
+      //                        OpType.SET));
+      //        alterConfigOps.add(
+      //                new AlterConfigOp(
+      //                        new ConfigEntry(STREAMS_NUM_STANDBY_REPLICAS_CONFIG,
+      // String.valueOf(groupConfig.getNumStandbyReplicas().orElse(0))),
+      //                        OpType.SET));
+      //        alterConfigOps.add(
+      //                new AlterConfigOp(
+      //                        new ConfigEntry(STREAMS_SESSION_TIMEOUT_MS_CONFIG,
+      // String.valueOf(groupConfig.getSessionTimeoutMs().orElse(45000))),
+      //                        OpType.SET));
+      //        alterConfigOps.add(
+      //                new AlterConfigOp(
+      //                        new ConfigEntry(STREAMS_INITIAL_REBALANCE_DELAY_MS_CONFIG,
+      // String.valueOf(groupConfig.getInitialRebalanceDelayMs().orElse(3000))),
+      //                        OpType.SET));
       Map<ConfigResource, Collection<AlterConfigOp>> configs =
           Map.of(new ConfigResource(Type.GROUP, groupConfig.getGroupId()), alterConfigOps);
       this.adminClient.incrementalAlterConfigs(configs).all().get();
@@ -392,29 +423,30 @@ public class TopologyBuilderAdminClient {
 
   public void resetGroupConfig(final List<String> groups) {
     try {
-      List<AlterConfigOp> resetConfigOps = List.of(
+      List<AlterConfigOp> resetConfigOps =
+          List.of(
               new AlterConfigOp(
-                      new ConfigEntry(STREAMS_HEARTBEAT_INTERVAL_MS_CONFIG, null), OpType.DELETE),
+                  new ConfigEntry(STREAMS_HEARTBEAT_INTERVAL_MS_CONFIG, null), OpType.DELETE),
               new AlterConfigOp(
-                      new ConfigEntry(STREAMS_INITIAL_REBALANCE_DELAY_MS_CONFIG, null), OpType.DELETE),
+                  new ConfigEntry(STREAMS_INITIAL_REBALANCE_DELAY_MS_CONFIG, null), OpType.DELETE),
               new AlterConfigOp(
-                      new ConfigEntry(STREAMS_NUM_STANDBY_REPLICAS_CONFIG, null), OpType.DELETE),
+                  new ConfigEntry(STREAMS_NUM_STANDBY_REPLICAS_CONFIG, null), OpType.DELETE),
               new AlterConfigOp(
-                      new ConfigEntry(STREAMS_SESSION_TIMEOUT_MS_CONFIG, null), OpType.DELETE)
-      );
-//
-//      resetConfigOps.add(
-//          new AlterConfigOp(
-//              new ConfigEntry(STREAMS_HEARTBEAT_INTERVAL_MS_CONFIG, null), OpType.DELETE));
-//      resetConfigOps.add(
-//          new AlterConfigOp(
-//              new ConfigEntry(STREAMS_INITIAL_REBALANCE_DELAY_MS_CONFIG, null), OpType.DELETE));
-//      resetConfigOps.add(
-//          new AlterConfigOp(
-//              new ConfigEntry(STREAMS_NUM_STANDBY_REPLICAS_CONFIG, null), OpType.DELETE));
-//      resetConfigOps.add(
-//          new AlterConfigOp(
-//              new ConfigEntry(STREAMS_SESSION_TIMEOUT_MS_CONFIG, null), OpType.DELETE));
+                  new ConfigEntry(STREAMS_SESSION_TIMEOUT_MS_CONFIG, null), OpType.DELETE));
+      //
+      //      resetConfigOps.add(
+      //          new AlterConfigOp(
+      //              new ConfigEntry(STREAMS_HEARTBEAT_INTERVAL_MS_CONFIG, null), OpType.DELETE));
+      //      resetConfigOps.add(
+      //          new AlterConfigOp(
+      //              new ConfigEntry(STREAMS_INITIAL_REBALANCE_DELAY_MS_CONFIG, null),
+      // OpType.DELETE));
+      //      resetConfigOps.add(
+      //          new AlterConfigOp(
+      //              new ConfigEntry(STREAMS_NUM_STANDBY_REPLICAS_CONFIG, null), OpType.DELETE));
+      //      resetConfigOps.add(
+      //          new AlterConfigOp(
+      //              new ConfigEntry(STREAMS_SESSION_TIMEOUT_MS_CONFIG, null), OpType.DELETE));
 
       Map<ConfigResource, Collection<AlterConfigOp>> configs = new LinkedHashMap<>();
       groups.forEach(g -> configs.put(new ConfigResource(Type.GROUP, g), resetConfigOps));
