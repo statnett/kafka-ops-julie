@@ -337,6 +337,44 @@ public class TopologyBuilderAdminClient {
     }
   }
 
+  /**
+   * Fetch the actual, effective group config for a single group from the broker. Fields left at
+   * their broker default (as reported by {@link ConfigEntry#isDefault()}) are represented as {@code
+   * Optional.empty()}, mirroring how a topology descriptor represents "no override"; this lets
+   * callers compare a declared {@link GroupConfig} against the broker's current state with a plain
+   * {@code equals()} to decide whether an update is actually needed.
+   */
+  public GroupConfig describeGroupConfig(final String groupId) {
+    final ConfigResource resource = new ConfigResource(Type.GROUP, groupId);
+    try {
+      Map<ConfigResource, Config> configs =
+          adminClient.describeConfigs(Collections.singleton(resource)).all().get();
+      Config currentConfig = configs.get(resource);
+      GroupConfig groupConfig = new GroupConfig(groupId);
+      if (currentConfig == null) {
+        return groupConfig;
+      }
+      groupConfig.setHeartbeatIntervalMs(
+          nonDefaultIntValue(currentConfig.get(STREAMS_HEARTBEAT_INTERVAL_MS_CONFIG)));
+      groupConfig.setNumStandbyReplicas(
+          nonDefaultIntValue(currentConfig.get(STREAMS_NUM_STANDBY_REPLICAS_CONFIG)));
+      groupConfig.setSessionTimeoutMs(
+          nonDefaultIntValue(currentConfig.get(STREAMS_SESSION_TIMEOUT_MS_CONFIG)));
+      groupConfig.setInitialRebalanceDelayMs(
+          nonDefaultIntValue(currentConfig.get(STREAMS_INITIAL_REBALANCE_DELAY_MS_CONFIG)));
+      return groupConfig;
+    } catch (ExecutionException | InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private static Optional<Integer> nonDefaultIntValue(ConfigEntry entry) {
+    if (entry == null || entry.isDefault() || entry.value() == null) {
+      return Optional.empty();
+    }
+    return Optional.of(Integer.valueOf(entry.value()));
+  }
+
   public void updateGroupConfig(GroupConfig groupConfig) {
     try {
       List<AlterConfigOp> alterConfigOps = new ArrayList<>();

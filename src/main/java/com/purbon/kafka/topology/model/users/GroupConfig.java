@@ -1,11 +1,13 @@
 package com.purbon.kafka.topology.model.users;
 
 import java.util.Optional;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
+@EqualsAndHashCode
 public class GroupConfig {
 
   private String groupId;
