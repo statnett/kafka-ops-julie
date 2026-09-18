@@ -180,6 +180,31 @@
                     <exclude>COPYRIGHT</exclude>
                     <exclude>LICENSE</exclude>
                     <exclude>NOTICE</exclude>
+                    <!-- Build/packaging metadata duplicated by nearly every dependency; harmless
+                         to drop and responsible for the bulk of maven-shade-plugin's "overlapping
+                         classes and resources" warning noise. -->
+                    <exclude>META-INF/maven/**</exclude>
+                    <exclude>META-INF/versions/**</exclude>
+                    <exclude>META-INF/native-image/**</exclude>
+                    <exclude>module-info.class</exclude>
+                    <exclude>**/module-info.class</exclude>
+                    <exclude>*.dtd</exclude>
+                    <exclude>*.xsd</exclude>
+                    <!-- Every dependency jar carries its own META-INF/MANIFEST.MF; the
+                         ManifestResourceTransformer below generates the one manifest the shaded
+                         jar actually needs, so the per-dependency copies are pure noise. -->
+                    <exclude>META-INF/MANIFEST.MF</exclude>
+                    <!-- Per-module build/version diagnostics (surfaced only in client startup
+                         logs/metrics), duplicated identically in name but not in content across
+                         several Confluent/Kafka artifacts, so only one copy could ever "win"
+                         anyway; dropping them avoids an arbitrary, non-deterministic pick. -->
+                    <exclude>git.properties</exclude>
+                    <exclude>kafka/kafka-version.properties</exclude>
+                    <exclude>META-INF/io.netty.versions.properties</exclude>
+                    <!-- Canonical well-known-types .proto sources bundled identically by both
+                         protobuf-java and wire-schema-jvm; only the compiled classes are used at
+                         runtime, not these IDL text files. -->
+                    <exclude>google/protobuf/*.proto</exclude>
                   </excludes>
                 </filter>
               </filters>
@@ -472,6 +497,16 @@
       <artifactId>local-s3-rest</artifactId>
       <version>2.4</version>
       <scope>test</scope>
+      <exclusions>
+        <!-- netty-all bundles its own copy of every individual netty-* module we already pull
+             in at compile/runtime scope (via the AWS SDK and ksqldb/vertx). It is test-only,
+             but its presence in the resolved graph still triggers noisy maven-shade-plugin
+             overlapping-class warnings during packaging. -->
+        <exclusion>
+          <groupId>io.netty</groupId>
+          <artifactId>netty-all</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.wiremock</groupId>
