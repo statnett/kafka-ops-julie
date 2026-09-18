@@ -1,6 +1,7 @@
 package com.purbon.kafka.topology.integration;
 
 import static com.purbon.kafka.topology.CommandLineInterface.BROKERS_OPTION;
+import static com.purbon.kafka.topology.Constants.ALLOW_DELETE_GROUP_CONFIGS;
 import static com.purbon.kafka.topology.Constants.TOPOLOGY_TOPIC_STATE_FROM_CLUSTER;
 import static org.junit.Assert.*;
 
@@ -75,6 +76,7 @@ public class GroupConfigManagerIT {
         new TopologyBuilderAdminClient(kafkaAdminClient);
     Properties properties = new Properties();
     properties.put(TOPOLOGY_TOPIC_STATE_FROM_CLUSTER, "false");
+    properties.put(ALLOW_DELETE_GROUP_CONFIGS, "true");
     HashMap<String, String> cliOpts = new HashMap<>();
     cliOpts.put(BROKERS_OPTION, "");
     plan = ExecutionPlan.init(new BackendController(), System.out);
@@ -85,7 +87,11 @@ public class GroupConfigManagerIT {
 
   @Test
   public void testIdempotenceOnNoChange() throws IOException {
-    // Do not reset actions list, run same again
+    // ExecutionPlan.run() never clears the action list (it is an append-only audit log), so we
+    // must reset it ourselves before checking that re-running with an unchanged groupConfig
+    // schedules no new actions. `initializeTopology()` already applied this exact config, so the
+    // broker's current state should already match the declared one.
+    plan.getActions().clear();
     groupConfigManager.updatePlan(plan, Map.of("project", baseTopology));
     plan.run();
     Assert.assertEquals(0, plan.getActions().size());
@@ -109,31 +115,13 @@ public class GroupConfigManagerIT {
 
     assertTrue(plan.getActions().getFirst() instanceof ResetGroupConfigAction);
 
-    // Should be one existing group after executing plan
+    // Once reset, "streams-app-a" is no longer owned/tracked by JulieOps (its ownership record
+    // was removed by ResetGroupConfigAction), so no groups should remain in the local state.
     Set<GroupConfig> groups = groupConfigManager.loadClusterState(plan);
-    assertEquals(1, groups.size());
+    assertEquals(0, groups.size());
 
-    // NOTE: when fetching state from `plan`, the resulting objects contain empty fields, causing
-    // these assertions to fail
-    //    GroupConfig observedResetStreamGroupConfig = groups.stream().toList().getFirst();
-    //    Assert.assertTrue(observedResetStreamGroupConfig.getSessionTimeoutMs().isPresent());
-    //    final int resetSessionTimeoutMs =
-    // observedResetStreamGroupConfig.getSessionTimeoutMs().get();
-    //    Assert.assertEquals(60000, resetSessionTimeoutMs);
-    //    Assert.assertTrue(observedResetStreamGroupConfig.getHeartbeatIntervalMs().isPresent());
-    //    final int resetHeartbeatIntervalMs =
-    //        observedResetStreamGroupConfig.getHeartbeatIntervalMs().get();
-    //    Assert.assertEquals(5000, resetHeartbeatIntervalMs);
-    //    Assert.assertTrue(observedResetStreamGroupConfig.getNumStandbyReplicas().isPresent());
-    //    final int resetNumStandbyReplicas =
-    //        observedResetStreamGroupConfig.getNumStandbyReplicas().get();
-    //    Assert.assertEquals(0, resetNumStandbyReplicas);
-    //
-    // Assert.assertTrue(observedResetStreamGroupConfig.getInitialRebalanceDelayMs().isPresent());
-    //    final int resetInitialRebalanceDelayMs =
-    //        observedResetStreamGroupConfig.getInitialRebalanceDelayMs().get();
-    //    Assert.assertEquals(3000, resetInitialRebalanceDelayMs);
-
+    // Verify the actual broker-side effect of the reset: all four properties should have
+    // fallen back to their broker default values.
     ConfigResource groupResource = new ConfigResource(ConfigResource.Type.GROUP, "streams-app-a");
     Map<ConfigResource, Config> result =
         kafkaAdminClient
@@ -156,11 +144,13 @@ public class GroupConfigManagerIT {
   }
 
   @Test
-  public void testModifiedGroupConfig() throws IOException {
+  public void testModifiedGroupConfig()
+      throws IOException, ExecutionException, InterruptedException {
     // Reset actions list
     plan.getActions().clear();
     KStream stream = baseTopology.getProjects().getFirst().getStreams().getFirst();
     // Simulate a reset where all fields are removed, except one which is modified from the original
+    //noinspection OptionalGetWithoutIsPresent
     GroupConfig groupConfig = stream.getGroupConfig().get();
     groupConfig.setNumStandbyReplicas(Optional.of(2));
     groupConfig.setSessionTimeoutMs(Optional.empty());
@@ -172,14 +162,25 @@ public class GroupConfigManagerIT {
     groupConfigManager.updatePlan(plan, Map.of("project", baseTopology));
     plan.run();
 
-    Set<GroupConfig> groups = groupConfigManager.loadClusterState(plan);
-    GroupConfig observedResetStreamGroupConfig = groups.stream().toList().getFirst();
+    // Verify against the actual broker state, rather than `loadClusterState(plan)`: with
+    // TOPOLOGY_TOPIC_STATE_FROM_CLUSTER disabled, that method only tracks group IDs locally and
+    // can never carry real field values, so it cannot be used to assert on config content here.
+    ConfigResource groupResource = new ConfigResource(ConfigResource.Type.GROUP, applicationId);
+    Map<ConfigResource, Config> result =
+        kafkaAdminClient
+            .describeConfigs(Collections.singleton(groupResource), new DescribeConfigsOptions())
+            .all()
+            .get();
+    Config config = result.get(groupResource);
 
-    Assert.assertTrue(observedResetStreamGroupConfig.getNumStandbyReplicas().isPresent());
-    final int resetNumStandbyReplicas =
-        observedResetStreamGroupConfig.getNumStandbyReplicas().get();
-    Assert.assertEquals(2, resetNumStandbyReplicas);
-    Assert.assertTrue(observedResetStreamGroupConfig.getInitialRebalanceDelayMs().isPresent());
+    // The modified field must carry it's new, non-default value.
+    assertFalse(config.get("streams.num.standby.replicas").isDefault());
+    assertEquals("2", config.get("streams.num.standby.replicas").value());
+
+    // The removed fields must have fallen back to the broker default.
+    assertTrue(config.get("streams.session.timeout.ms").isDefault());
+    assertTrue(config.get("streams.heartbeat.interval.ms").isDefault());
+    assertTrue(config.get("streams.initial.rebalance.delay.ms").isDefault());
   }
 
   private void initializeTopology() throws IOException {
