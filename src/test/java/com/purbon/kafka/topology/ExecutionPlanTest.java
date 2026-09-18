@@ -7,6 +7,8 @@ import static org.mockito.Mockito.verify;
 
 import com.purbon.kafka.topology.actions.access.ClearBindings;
 import com.purbon.kafka.topology.actions.access.CreateBindings;
+import com.purbon.kafka.topology.actions.groups.ResetGroupConfigAction;
+import com.purbon.kafka.topology.actions.groups.UpdateGroupConfigAction;
 import com.purbon.kafka.topology.actions.topics.CreateTopicAction;
 import com.purbon.kafka.topology.actions.topics.DeleteTopics;
 import com.purbon.kafka.topology.api.adminclient.TopologyBuilderAdminClient;
@@ -15,6 +17,7 @@ import com.purbon.kafka.topology.model.Impl.TopologyImpl;
 import com.purbon.kafka.topology.model.Project;
 import com.purbon.kafka.topology.model.Topic;
 import com.purbon.kafka.topology.model.Topology;
+import com.purbon.kafka.topology.model.users.GroupConfig;
 import com.purbon.kafka.topology.roles.SimpleAclsProvider;
 import com.purbon.kafka.topology.roles.TopologyAclBinding;
 import com.purbon.kafka.topology.utils.TestUtils;
@@ -160,6 +163,32 @@ public class ExecutionPlanTest {
     plan.run();
     verify(adminClient, times(1)).deleteTopics(singletonList(topicFoo.toString()));
     assertEquals(1, backendController.size());
+  }
+
+  @Test
+  public void resetGroupConfigOnlyRemovesResetGroupsFromTrackedStateTest() throws IOException {
+    GroupConfig groupConfigA = new GroupConfig();
+    groupConfigA.setGroupId("app-a");
+    GroupConfig groupConfigB = new GroupConfig();
+    groupConfigB.setGroupId("app-b");
+
+    plan.add(new UpdateGroupConfigAction(adminClient, groupConfigA));
+    plan.add(new UpdateGroupConfigAction(adminClient, groupConfigB));
+    plan.run();
+
+    assertEquals(new HashSet<>(Arrays.asList("app-a", "app-b")), plan.getStreamGroups());
+
+    // Simulate a follow-up run, loading the previously persisted state back in.
+    BackendController backendController = new BackendController();
+    ExecutionPlan plan = ExecutionPlan.init(backendController, mockPrintStream);
+    assertEquals(new HashSet<>(Arrays.asList("app-a", "app-b")), plan.getStreamGroups());
+
+    plan.add(new ResetGroupConfigAction(adminClient, singletonList("app-a")));
+    plan.run();
+
+    verify(adminClient, times(1)).resetGroupConfig(singletonList("app-a"));
+    // Only "app-a" should be dropped from tracked state; "app-b" must remain.
+    assertEquals(new HashSet<>(singletonList("app-b")), plan.getStreamGroups());
   }
 
   private Topology buildTopologyForTest() {
