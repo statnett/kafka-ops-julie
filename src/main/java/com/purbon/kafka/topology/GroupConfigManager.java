@@ -28,46 +28,48 @@ public class GroupConfigManager implements ExecutionPlanUpdater {
 
   @Override
   public void updatePlan(ExecutionPlan plan, Map<String, Topology> topologies) throws IOException {
+    // Ownership set: group IDs that JulieOps has previously applied a groupConfig for. Only
+    // these are eligible to be reset; any other group lacking a `groupConfig` block (e.g. one
+    // never managed by JulieOps, or managed by another tool) must be left untouched.
+    final Set<String> previouslyManagedGroupIds = plan.getStreamGroups();
     for (Map.Entry<String, Topology> entry : topologies.entrySet()) {
       Topology topology = entry.getValue();
-//      Set<String> existingGroupIDs =
-//          loadClusterState(plan).stream().map(GroupConfig::getGroupId).collect(Collectors.toSet());
       Set<Action> createGroups = new LinkedHashSet<>();
-      Set<String> groupsToDelete = new LinkedHashSet<>();
-      Set<List<KStream>> streams = topology
-              .getProjects()
-              .stream()
-              .map(Project::getStreams)
-              .collect(Collectors.toSet());
-      streams.forEach(kStreams -> kStreams.forEach(kStream -> {
-          // NOTE: internal testing showed that not all streams applications use a 1:1
-          // relationship between application ID and group ID. For now, require users to
-          // update applicationID for every group update, and in the future consider
-          // adding an optional `groupId` field with fallback value to `applicationId`
-          final String applicationId = kStream.getApplicationId().orElseThrow();
-          if (kStream.getGroupConfig().isPresent()) {
-              createGroups.add(
-                      new UpdateGroupConfigAction(
-                              this.adminClient, kStream.getGroupConfig().get()));
-          } else {
-              groupsToDelete.add(applicationId);
-          }
-      }));
+      Set<String> declaredGroupIds = new LinkedHashSet<>();
+      Set<List<KStream>> streams =
+          topology.getProjects().stream().map(Project::getStreams).collect(Collectors.toSet());
+      streams.forEach(
+          kStreams ->
+              kStreams.forEach(
+                  kStream -> {
+                    if (kStream.getGroupConfig().isEmpty()) {
+                      // No group configuration declared for this stream: nothing to apply, and an
+                      // applicationId is not required unless a reset is later needed for it.
+                      return;
+                    }
+                    // NOTE: internal testing showed that not all streams applications use a 1:1
+                    // relationship between application ID and group ID. For now, require users to
+                    // update applicationID for every group update, and in the future consider
+                    // adding an optional `groupId` field with fallback value to `applicationId`
+                    final String applicationId = kStream.getApplicationId().orElseThrow();
+                    declaredGroupIds.add(applicationId);
+                    createGroups.add(
+                        new UpdateGroupConfigAction(
+                            this.adminClient, kStream.getGroupConfig().get()));
+                  }));
       if (!createGroups.isEmpty()) {
         createGroups.forEach(plan::add);
       }
-      if(!groupsToDelete.isEmpty()) {
+      if (config.isAllowDeleteGroupConfigs()) {
+        Set<String> groupsToDelete = new LinkedHashSet<>(previouslyManagedGroupIds);
+        groupsToDelete.removeAll(declaredGroupIds);
+        if (!groupsToDelete.isEmpty()) {
           plan.add(new ResetGroupConfigAction(this.adminClient, groupsToDelete.stream().toList()));
+        }
       }
     }
   }
 
-  //  public Set<String> loadClusterState(final ExecutionPlan plan) {
-  //    if (config.fetchStateFromTheCluster()) {
-  //      return this.adminClient.listGroups();
-  //    }
-  //    return plan.getStreamGroups();
-  //  }
 
   public Set<GroupConfig> loadClusterState(final ExecutionPlan plan) {
     if (config.fetchStateFromTheCluster()) {
