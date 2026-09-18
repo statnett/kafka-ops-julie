@@ -3,6 +3,7 @@ package com.purbon.kafka.topology;
 import static com.purbon.kafka.topology.Constants.ALLOW_DELETE_GROUP_CONFIGS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 import com.purbon.kafka.topology.actions.Action;
 import com.purbon.kafka.topology.actions.groups.ResetGroupConfigAction;
@@ -81,6 +82,50 @@ public class GroupConfigManagerTest {
     groupConfig.setNumStandbyReplicas(Optional.of(2));
     KStream kStream = kStreamWithGroupConfig(groupConfig);
     Topology topology = topologyWithStream(kStream);
+
+    GroupConfigManager manager = buildManager(true);
+    manager.updatePlan(plan, Map.of("project", topology));
+
+    List<Action> actions = plan.getActions();
+    assertEquals(1, actions.size());
+    assertTrue(actions.getFirst() instanceof UpdateGroupConfigAction);
+  }
+
+  @Test
+  public void shouldNotScheduleUpdateWhenDeclaredConfigMatchesActualBrokerConfig()
+      throws IOException {
+    GroupConfig groupConfig = new GroupConfig();
+    groupConfig.setGroupId("app-a");
+    groupConfig.setNumStandbyReplicas(Optional.of(2));
+    KStream kStream = kStreamWithGroupConfig(groupConfig);
+    Topology topology = topologyWithStream(kStream);
+
+    // Broker already reflects the declared config: no update should be scheduled.
+    GroupConfig actualGroupConfig = new GroupConfig();
+    actualGroupConfig.setGroupId("app-a");
+    actualGroupConfig.setNumStandbyReplicas(Optional.of(2));
+    when(adminClient.describeGroupConfig("app-a")).thenReturn(actualGroupConfig);
+
+    GroupConfigManager manager = buildManager(true);
+    manager.updatePlan(plan, Map.of("project", topology));
+
+    assertTrue(plan.getActions().isEmpty());
+  }
+
+  @Test
+  public void shouldScheduleUpdateWhenDeclaredConfigDiffersFromActualBrokerConfig()
+      throws IOException {
+    GroupConfig groupConfig = new GroupConfig();
+    groupConfig.setGroupId("app-a");
+    groupConfig.setNumStandbyReplicas(Optional.of(2));
+    KStream kStream = kStreamWithGroupConfig(groupConfig);
+    Topology topology = topologyWithStream(kStream);
+
+    // Broker currently has a different value: an update must be scheduled.
+    GroupConfig actualGroupConfig = new GroupConfig();
+    actualGroupConfig.setGroupId("app-a");
+    actualGroupConfig.setNumStandbyReplicas(Optional.of(1));
+    when(adminClient.describeGroupConfig("app-a")).thenReturn(actualGroupConfig);
 
     GroupConfigManager manager = buildManager(true);
     manager.updatePlan(plan, Map.of("project", topology));

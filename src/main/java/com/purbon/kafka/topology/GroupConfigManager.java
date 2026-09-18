@@ -53,9 +53,17 @@ public class GroupConfigManager implements ExecutionPlanUpdater {
                     // adding an optional `groupId` field with fallback value to `applicationId`
                     final String applicationId = kStream.getApplicationId().orElseThrow();
                     declaredGroupIds.add(applicationId);
-                    createGroups.add(
-                        new UpdateGroupConfigAction(
-                            this.adminClient, kStream.getGroupConfig().get()));
+                    GroupConfig declaredGroupConfig = kStream.getGroupConfig().get();
+                    // Idempotency: only schedule an update when the declared config actually
+                    // differs from what is currently applied on the broker. Without this check,
+                    // every run would re-send the same SET/DELETE operations even when nothing
+                    // changed, mirroring the diffing TopicManager already does for topic configs.
+                    GroupConfig actualGroupConfig =
+                        this.adminClient.describeGroupConfig(declaredGroupConfig.getGroupId());
+                    if (!declaredGroupConfig.equals(actualGroupConfig)) {
+                      createGroups.add(
+                          new UpdateGroupConfigAction(this.adminClient, declaredGroupConfig));
+                    }
                   }));
       if (!createGroups.isEmpty()) {
         createGroups.forEach(plan::add);
