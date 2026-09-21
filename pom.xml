@@ -209,7 +209,7 @@
     <!-- dependencies -->
     <kafka.version>4.3.1</kafka.version>
     <assertj.version>3.27.7</assertj.version>
-    <aws.java.sdk.version>2.54.20</aws.java.sdk.version>
+    <aws.java.sdk.version>2.55.1</aws.java.sdk.version>
     <commons.version>1.11.0</commons.version>
     <confluent.version>8.3.2</confluent.version>
     <gcp.java.sdk.version>26.88.1</gcp.java.sdk.version>
@@ -221,7 +221,7 @@
     <log4j.version>2.26.1</log4j.version>
     <lombok.version>1.18.48</lombok.version>
     <mockito.version>5.23.0</mockito.version>
-    <protobuf.version>4.36.1</protobuf.version>
+    <protobuf.version>4.36.2</protobuf.version>
     <slf4j.version>2.0.19</slf4j.version>
     <testcontainers.version>2.0.5</testcontainers.version>
     <typesafe.version>1.4.9</typesafe.version>
