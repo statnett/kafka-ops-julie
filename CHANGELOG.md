@@ -1,5 +1,19 @@
 # Changelog
 
+## [6.5.4](https://github.com/statnett/kafka-ops-julie/compare/v6.5.3...v6.5.4) (2026-09-25)
+
+
+### Bug Fixes
+
+* **deps:** update dependency com.fasterxml.jackson:jackson-bom to v2.22.3 ([#860](https://github.com/statnett/kafka-ops-julie/issues/860)) ([84d14df](https://github.com/statnett/kafka-ops-julie/commit/84d14dfec75cdf71e65cdef572b0a6198b4a9a1c))
+* **deps:** update dependency com.google.cloud:libraries-bom to v26.89.0 ([#866](https://github.com/statnett/kafka-ops-julie/issues/866)) ([3f298ab](https://github.com/statnett/kafka-ops-julie/commit/3f298ab03dbd2faedba71fc98b41971771c1fb21))
+* **deps:** update dependency org.slf4j:slf4j-api to v2.0.20 ([#862](https://github.com/statnett/kafka-ops-julie/issues/862)) ([d6359c9](https://github.com/statnett/kafka-ops-julie/commit/d6359c9a67142607d859a74c1acf4b0fb3640fdf))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.55.1 ([#858](https://github.com/statnett/kafka-ops-julie/issues/858)) ([2994923](https://github.com/statnett/kafka-ops-julie/commit/299492371ece3f63e51c56e925c30cfa06b11603))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.55.2 ([#861](https://github.com/statnett/kafka-ops-julie/issues/861)) ([f944185](https://github.com/statnett/kafka-ops-julie/commit/f9441850a0427f5c92f43267ec42f52b7316c35f))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.55.3 ([#863](https://github.com/statnett/kafka-ops-julie/issues/863)) ([b0cfbdb](https://github.com/statnett/kafka-ops-julie/commit/b0cfbdba6f2d754a6bbfd16ce637ab889686cf05))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.55.4 ([#865](https://github.com/statnett/kafka-ops-julie/issues/865)) ([34c5f5f](https://github.com/statnett/kafka-ops-julie/commit/34c5f5fbe1a25cf675413fbad8a2a9a92bd78873))
+* **deps:** update protobuf monorepo to v4.36.2 ([#857](https://github.com/statnett/kafka-ops-julie/issues/857)) ([56e764f](https://github.com/statnett/kafka-ops-julie/commit/56e764fedf5d519ba171aaaa575163b9a524463c))
+
 ## [6.5.3](https://github.com/statnett/kafka-ops-julie/compare/v6.5.2...v6.5.3) (2026-09-17)
 
 
