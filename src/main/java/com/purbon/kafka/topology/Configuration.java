@@ -347,6 +347,10 @@ public class Configuration {
     return config.getBoolean(ALLOW_DELETE_KSQL_ARTEFACTS);
   }
 
+  public boolean isAllowDeleteGroupConfigs() {
+    return config.getBoolean(ALLOW_DELETE_GROUP_CONFIGS);
+  }
+
   public boolean isWarnIfReadOnlyStreams() {
     return !Boolean.parseBoolean(
             cliParams.getOrDefault(DONT_WARN_FOR_READ_ONLY_STREAMS_OPTION, "false"))

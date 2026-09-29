@@ -12,10 +12,9 @@ public class ResetGroupConfigAction extends BaseAction {
   private final TopologyBuilderAdminClient adminClient;
   private final List<String> groups;
 
-  public ResetGroupConfigAction(
-          TopologyBuilderAdminClient adminClient, List<String> groups) {
+  public ResetGroupConfigAction(TopologyBuilderAdminClient adminClient, List<String> groups) {
     this.adminClient = adminClient;
-      this.groups = groups;
+    this.groups = groups;
   }
 
   @Override

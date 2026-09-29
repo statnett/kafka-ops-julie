@@ -103,6 +103,7 @@ public class BackendState {
     accounts.clear();
     topics.clear();
     connectors.clear();
+    streams.clear();
     ksqlStreams.clear();
     ksqlTables.clear();
   }
@@ -112,6 +113,7 @@ public class BackendState {
         + accounts.size()
         + topics.size()
         + connectors.size()
+        + streams.size()
         + ksqlTables.size()
         + ksqlStreams.size();
   }

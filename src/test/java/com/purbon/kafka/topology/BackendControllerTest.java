@@ -56,6 +56,23 @@ public class BackendControllerTest {
   }
 
   @Test
+  public void testClusterStateSizeIncludesStreams() {
+    BackendController backend = new BackendController(fileStateProcessor);
+    backend.addStreams(Collections.singleton("app-a"));
+    assertEquals(1, backend.size());
+  }
+
+  @Test
+  public void testResetClearsStreams() {
+    BackendController backend = new BackendController(fileStateProcessor);
+    backend.addStreams(Collections.singleton("app-a"));
+    assertEquals(1, backend.size());
+    backend.reset();
+    assertEquals(0, backend.size());
+    assertEquals(Collections.emptySet(), backend.getStreams());
+  }
+
+  @Test
   public void testStoreBindingsAndServiceAccounts() throws IOException {
     BackendController backend = new BackendController(fileStateProcessor);
     TopologyAclBinding binding =
