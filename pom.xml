@@ -299,7 +299,7 @@
     <dependency>
       <groupId>org.apache.kafka</groupId>
       <artifactId>kafka-group-coordinator</artifactId>
-      <version>${kafka.version}</version>
+      <version>${confluent.version}-ccs</version>
     </dependency>
     <dependency>
       <groupId>org.apache.kafka</groupId>
