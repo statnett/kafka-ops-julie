@@ -1,5 +1,8 @@
 package com.purbon.kafka.topology;
 
+import static org.apache.kafka.coordinator.group.GroupConfig.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 import com.purbon.kafka.topology.api.adminclient.TopologyBuilderAdminClient;
@@ -8,6 +11,7 @@ import com.purbon.kafka.topology.model.Impl.ProjectImpl;
 import com.purbon.kafka.topology.model.Impl.TopologyImpl;
 import com.purbon.kafka.topology.model.users.Connector;
 import com.purbon.kafka.topology.model.users.Consumer;
+import com.purbon.kafka.topology.model.users.GroupConfig;
 import com.purbon.kafka.topology.model.users.KStream;
 import com.purbon.kafka.topology.model.users.Producer;
 import com.purbon.kafka.topology.model.users.platform.SchemaRegistry;
@@ -18,8 +22,13 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.Config;
+import org.apache.kafka.clients.admin.ConfigEntry;
+import org.apache.kafka.clients.admin.ConfigEntry.ConfigSource;
 import org.apache.kafka.clients.admin.CreateAclsResult;
+import org.apache.kafka.clients.admin.DescribeConfigsResult;
 import org.apache.kafka.common.KafkaFuture;
+import org.apache.kafka.common.config.ConfigResource;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -107,6 +116,75 @@ public class TopologyBuilderAdminClientTest {
     accessControlManager.updatePlan(topology, plan);
     plan.run();
     verify(kafkaAdminClient, times(1)).createAcls(anyCollection());
+  }
+
+  @Test
+  public void describeGroupConfigMapsBrokerDefaultsToEmptyOptionals() {
+    ConfigResource groupResource = new ConfigResource(ConfigResource.Type.GROUP, "app-a");
+    Config describeConfig =
+        new Config(
+            List.of(
+                configEntry(
+                    STREAMS_HEARTBEAT_INTERVAL_MS_CONFIG, "5000", ConfigSource.DEFAULT_CONFIG),
+                configEntry(STREAMS_NUM_STANDBY_REPLICAS_CONFIG, "0", ConfigSource.DEFAULT_CONFIG),
+                configEntry(
+                    STREAMS_SESSION_TIMEOUT_MS_CONFIG, "45000", ConfigSource.DEFAULT_CONFIG),
+                configEntry(
+                    STREAMS_INITIAL_REBALANCE_DELAY_MS_CONFIG,
+                    "3000",
+                    ConfigSource.DEFAULT_CONFIG)));
+    mockDescribeConfigs(groupResource, describeConfig);
+
+    GroupConfig actual = adminClient.describeGroupConfig("app-a");
+
+    assertEquals("app-a", actual.getGroupId());
+    assertTrue(actual.getHeartbeatIntervalMs().isEmpty());
+    assertTrue(actual.getNumStandbyReplicas().isEmpty());
+    assertTrue(actual.getSessionTimeoutMs().isEmpty());
+    assertTrue(actual.getInitialRebalanceDelayMs().isEmpty());
+  }
+
+  @Test
+  public void describeGroupConfigMapsExplicitOverridesToPresentValues() {
+    ConfigResource groupResource = new ConfigResource(ConfigResource.Type.GROUP, "app-a");
+    Config describeConfig =
+        new Config(
+            List.of(
+                configEntry(
+                    STREAMS_HEARTBEAT_INTERVAL_MS_CONFIG,
+                    "6500",
+                    ConfigSource.DYNAMIC_TOPIC_CONFIG),
+                configEntry(
+                    STREAMS_NUM_STANDBY_REPLICAS_CONFIG, "1", ConfigSource.DYNAMIC_TOPIC_CONFIG),
+                configEntry(
+                    STREAMS_SESSION_TIMEOUT_MS_CONFIG, "50000", ConfigSource.DYNAMIC_TOPIC_CONFIG),
+                configEntry(
+                    STREAMS_INITIAL_REBALANCE_DELAY_MS_CONFIG,
+                    "4000",
+                    ConfigSource.DYNAMIC_TOPIC_CONFIG)));
+    mockDescribeConfigs(groupResource, describeConfig);
+
+    GroupConfig actual = adminClient.describeGroupConfig("app-a");
+
+    assertEquals("app-a", actual.getGroupId());
+    assertEquals(Optional.of(6500), actual.getHeartbeatIntervalMs());
+    assertEquals(Optional.of(1), actual.getNumStandbyReplicas());
+    assertEquals(Optional.of(50000), actual.getSessionTimeoutMs());
+    assertEquals(Optional.of(4000), actual.getInitialRebalanceDelayMs());
+  }
+
+  private static ConfigEntry configEntry(String name, String value, ConfigSource source) {
+    return new ConfigEntry(name, value, source, false, false, List.of(), null, null);
+  }
+
+  private void mockDescribeConfigs(ConfigResource resource, Config config) {
+    DescribeConfigsResult describeConfigsResult = mock(DescribeConfigsResult.class);
+    doReturn(KafkaFuture.completedFuture(Map.of(resource, config)))
+        .when(describeConfigsResult)
+        .all();
+    doReturn(describeConfigsResult)
+        .when(kafkaAdminClient)
+        .describeConfigs(Collections.singleton(resource));
   }
 
   @Test
