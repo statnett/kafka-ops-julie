@@ -16,6 +16,8 @@ configuration:
         level: info
       - name: org.apache.kafka
         level: warn
+      - name: org.apache.kafka.clients.NetworkClient
+        level: error
       - name: org.apache.kafka.clients.admin.AdminClientConfig
         level: error
       - name: org.apache.kafka.clients.producer.ProducerConfig
