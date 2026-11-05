@@ -1,5 +1,14 @@
 # Changelog
 
+## [6.5.7](https://github.com/statnett/kafka-ops-julie/compare/v6.5.6...v6.5.7) (2026-11-05)
+
+
+### Bug Fixes
+
+* **deps:** update dependency com.hubspot.jinjava:jinjava to v2.8.5 ([#899](https://github.com/statnett/kafka-ops-julie/issues/899)) ([08f60c6](https://github.com/statnett/kafka-ops-julie/commit/08f60c65238af95db24613e3e42f06eb5fc832c4))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.57.8 ([#898](https://github.com/statnett/kafka-ops-julie/issues/898)) ([982ede0](https://github.com/statnett/kafka-ops-julie/commit/982ede033c80df382a0c155ed9fe42279a9ad9b5))
+* **deps:** update dependency software.amazon.awssdk:bom to v2.57.9 ([#901](https://github.com/statnett/kafka-ops-julie/issues/901)) ([01d617b](https://github.com/statnett/kafka-ops-julie/commit/01d617b9ae5f1304c9d104f1f1c117cc0fa20764))
+
 ## [6.5.6](https://github.com/statnett/kafka-ops-julie/compare/v6.5.5...v6.5.6) (2026-10-28)
 
 
