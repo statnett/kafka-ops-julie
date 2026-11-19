@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.5.9](https://github.com/statnett/kafka-ops-julie/compare/v6.5.8...v6.5.9) (2026-11-19)
+
+
+### Bug Fixes
+
+* check state topic existence using less demanding method ([#925](https://github.com/statnett/kafka-ops-julie/issues/925)) ([709c105](https://github.com/statnett/kafka-ops-julie/commit/709c1053ec9a6130d2589f9799b82adfe4f9a9af))
+
 ## [6.5.8](https://github.com/statnett/kafka-ops-julie/compare/v6.5.7...v6.5.8) (2026-11-19)
 
 
