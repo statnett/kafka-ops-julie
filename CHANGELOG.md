@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.5.8](https://github.com/statnett/kafka-ops-julie/compare/v6.5.7...v6.5.8) (2026-11-19)
+
+
+### Bug Fixes
+
+* don't create Kafka Backend producer in dry-run ([#922](https://github.com/statnett/kafka-ops-julie/issues/922)) ([5e1beea](https://github.com/statnett/kafka-ops-julie/commit/5e1beea6480e0ac17d837ef3a16a759aee892653))
+
 ## [6.5.7](https://github.com/statnett/kafka-ops-julie/compare/v6.5.6...v6.5.7) (2026-11-18)
 
 
