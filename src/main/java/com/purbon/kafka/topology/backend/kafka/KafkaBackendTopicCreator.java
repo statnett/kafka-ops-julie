@@ -5,15 +5,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.kafka.clients.admin.Admin;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.Config;
-import org.apache.kafka.clients.admin.ConfigEntry;
-import org.apache.kafka.clients.admin.DescribeClusterResult;
-import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.config.TopicConfig;
+import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -85,9 +82,15 @@ public class KafkaBackendTopicCreator {
 
   private boolean stateTopicExists() {
     try {
-      return admin.listTopics().names().get().stream()
-          .anyMatch(topicName -> topicName.equalsIgnoreCase(config.getKafkaBackendStateTopic()));
-    } catch (Exception e) {
+      admin
+          .describeTopics(Collections.singletonList(config.getKafkaBackendStateTopic()))
+          .allTopicNames()
+          .get();
+      return true;
+    } catch (final Exception e) {
+      if (ExceptionUtils.indexOfType(e, UnknownTopicOrPartitionException.class) >= 0) {
+        return false;
+      }
       throw new RuntimeException(e);
     }
   }
